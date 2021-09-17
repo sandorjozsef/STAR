@@ -1,4 +1,5 @@
 include("JavaClasses.jl")
+using Dates
 
 function convertToJuliaDateTime(J_dateTime::J_DateTime)
     year = jcall(J_dateTime, "getYear", jint, ());

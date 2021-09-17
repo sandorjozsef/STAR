@@ -1,5 +1,5 @@
 using OrdinaryDiffEq
-include("statisticsHelper.jl")
+#include("Statistics\\statisticsHelper.jl")
 
 function ICING2_model_solver(patient, timeSoln, t_start, t_end)
 
@@ -93,7 +93,7 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     end
     timeSoln.T = cat(timeSoln.T, tFinal, dims = 1)
 
-    resampleHourlyBG(patient, timeSoln, t_start);
+    #resampleHourlyBG(patient, timeSoln, t_start);
     
 end
 

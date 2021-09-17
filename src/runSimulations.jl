@@ -5,12 +5,17 @@
 #Pkg.add("DataFrames")
 #Pkg.add("Statistics")
 #Pkg.add("JavaCall")
+#Pkg.add("JLD")
+
 
 include("runSimulationOnPatients.jl")
 
+
+
 srcDir = pwd() * "/src/HU"
-dstDir = pwd() * "/src/Results"
+dstDir = pwd() * "/src/Statistics/JuliaResults"
 
 egp = 1.16
+
 
 runSimulationOnPatients(srcDir, dstDir, egp)
