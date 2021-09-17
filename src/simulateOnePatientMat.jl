@@ -7,8 +7,8 @@ include("STAR_controller_simulator.jl")
 include("JavaCall\\loadSTARData.jl")
 #include("statisticsHelper.jl")
 include("Simulation_Structs.jl")
-using .Simulation_Structs
 
+using .Simulation_Structs
 
 function simulateOnePatientMat(srcPath, dstPath, name, egp)
    
@@ -46,7 +46,6 @@ function simulateOnePatientMat(srcPath, dstPath, name, egp)
 
     #printPatientData(patient);
     #printGUIData(guiData);
-
     #plotPatientBG(patient, dstPath * "/patientsBG/"  * name * ".png");
 
     return patient;

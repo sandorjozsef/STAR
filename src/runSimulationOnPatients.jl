@@ -2,8 +2,9 @@ include("JavaCall\\setup_java_libraries.jl")
 include("simulateOnePatientMat.jl")
 include("Statistics\\Statistics.jl")
 using Dates
-using JLD
 using .Statistics
+using JLD2
+using FileIO
 
     function runSimulationOnPatients(srcDir, dstDir, egp)
 
@@ -29,22 +30,10 @@ using .Statistics
 
                 serPatient = SerializablePatient()
                 serPatient.Greal = patient.Greal
+                serPatient.T = 5.9
 
-                push!(LOAD_PATH, pwd() * "\\src")
-                jldopen("$simFolderOut\\$name.jld", "w") do file
-                    addrequire(file, :Statistics)
-                    write(file, "serPatient", serPatient)
-                end
-
-                #=
-                c = jldopen("$simFolderOut\\$name.jld", "r") do file
-                    read(file, "serPatient")
-                end 
-                println(c.Greal)
-                =#
-                pop!(LOAD_PATH)
-
-
+                save("$simFolderOut\\$name.jld2", Dict("Greal" => serPatient.Greal, "T" => serPatient.T))
+                
                 allHourlyBG = cat(allHourlyBG, patient.hourlyBG, dims = 1)
             end
         end
@@ -52,6 +41,7 @@ using .Statistics
     #writeCSV_ResampledBGStats(allHourlyBG, simFolderOut * "/statistics_hourly_resampled_BG.csv")
 
     #plotCDF(allHourlyBG, simFolderOut)
+    calculate_signDiff_Jul2Mat()
 
     end
 
