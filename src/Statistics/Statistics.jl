@@ -23,7 +23,11 @@ module Statistics
             MatlabPatient.Treal = vec(vars["PatientStruct"]["Treal"])
             MatlabPatient.Name = patientName
             
-            Visualizer.plot_SignDiffBG_Mat2Jul(MatlabPatient, JuliaPatient)
+            try 
+                Visualizer.plot_SignDiffBG_Mat2Jul(MatlabPatient, JuliaPatient) 
+            catch
+                println(patientName)
+            end
             
         end
 
