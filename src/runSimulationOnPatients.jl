@@ -29,7 +29,7 @@ using .Serializer
             serPatient = SerializablePatient()
             serPatient.Greal = patient.Greal
             serPatient.Treal = patient.Treal
-            serialize(serPatient, "$simFolderOut\\$name.jld2")
+            Serializer.serialize(serPatient, "$simFolderOut\\$name.jld2")
 
             allHourlyBG = cat(allHourlyBG, patient.hourlyBG, dims = 1)
         end
@@ -37,8 +37,9 @@ using .Serializer
 
         #writeCSV_ResampledBGStats(allHourlyBG, simFolderOut * "/statistics_hourly_resampled_BG.csv")
         #plotCDF(allHourlyBG, simFolderOut)
-    
-        calculate_signDiff_Jul2Mat(simFolderOut)
+
+        Statistics.calculate_signDiffBG_Mat2Jul(simFolderOut)
+             
 
     end
 

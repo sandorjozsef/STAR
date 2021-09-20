@@ -1,18 +1,19 @@
 module Statistics
 
     include("Serializer.jl")
+    include("Visualizer.jl")
     using MAT
+    using Plots
     using .Serializer
-    
-    export calculate_signDiff_Jul2Mat
-    function calculate_signDiff_Jul2Mat(path)
+    using .Visualizer
+
+    export calculate_signDiffBG_Mat2Jul
+    function calculate_signDiffBG_Mat2Jul(path)
 
         for filename in readdir(path)
 
             JuliaPatient = deserialize(joinpath(path, filename))
-            println("JuliaPatient: ")
-            display(JuliaPatient)
-
+            
             MatlabPatient = SerializablePatient()
             patientName = splitext(filename)[1]
             matlabPath = "$(pwd())\\src\\Statistics\\MatLabResults\\SIM_$patientName.mat"
@@ -20,13 +21,16 @@ module Statistics
             vars = matread(matlabPath)
             MatlabPatient.Greal = vec(vars["PatientStruct"]["Greal"])
             MatlabPatient.Treal = vec(vars["PatientStruct"]["Treal"])
-            println("MatlabPatient: ")
-            display(MatlabPatient)
-
+            MatlabPatient.Name = patientName
+            
+            Visualizer.plot_SignDiffBG_Mat2Jul(MatlabPatient, JuliaPatient)
             
         end
+
         
     end
 
+
+    calculate_signDiffBG_Mat2Jul("D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Simresults-2021-09-20_15_30") 
     
 end

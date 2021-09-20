@@ -8,6 +8,7 @@ module Serializer
     mutable struct SerializablePatient
         Greal::Vector{Float64}
         Treal::Vector{Float64}
+        Name::String
         SerializablePatient() = new()
     end
 
