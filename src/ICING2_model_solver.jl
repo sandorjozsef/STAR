@@ -1,5 +1,5 @@
 using OrdinaryDiffEq
-#include("Statistics\\statisticsHelper.jl")
+include("Statistics\\statisticsHelper.jl")
 
 function ICING2_model_solver(patient, timeSoln, t_start, t_end)
 
@@ -49,7 +49,7 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     indexInterval = findall(x -> x>t_start && x<t_end, patient.u[:,1]);
     
     insulinTime = patient.u[indexInterval, 1];
-    unique(insulinTime)
+   
     pushfirst!(insulinTime, t_start);
     push!(insulinTime, t_end);
     
@@ -71,12 +71,13 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     for i in 1:size(insulinTime, 1)-1
         
         prob = ODEProblem(ICING_model_ODE!, ODEinit, (insulinTime[i], insulinTime[i+1]));
-        num_sol =  solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8);
+        num_sol = solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8);
+        
         ODEinit = num_sol[end];
         
-        tFinal = cat(tFinal, num_sol.t[1:end], dims=1); #index 2:end for no repeating
+        tFinal = cat(tFinal, num_sol.t[2:end], dims=1); #index 2:end for no repeating
 
-        for i in 1:length(num_sol.t)
+        for i in 2:length(num_sol.t) # 2 for no repeating
             IntsFinal[1] = cat(IntsFinal[1], num_sol.u[i][1], dims=1);
             IntsFinal[2] = cat(IntsFinal[2], num_sol.u[i][2], dims=1);
             IntsFinal[3] = cat(IntsFinal[3], num_sol.u[i][3], dims=1);
@@ -93,7 +94,7 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     end
     timeSoln.T = cat(timeSoln.T, tFinal, dims = 1)
 
-    #resampleHourlyBG(patient, timeSoln, t_start);
+    resampleHourlyBG(patient, timeSoln, t_start);
     
 end
 

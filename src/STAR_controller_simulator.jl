@@ -11,8 +11,8 @@ function STAR_controller_simulator(patient, simulation)
         patient.StochasticModel = loadStochasticModelData( pwd() * "/src/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
-        setAge(patient.guiData, 65.0);
-        setFrameSize(patient.guiData, "medium");
+        setAge(patient.guiData, 30.0);
+        setFrameSize(patient.guiData, "large");
         setGender(patient.guiData, "male");
         now_time = J_DateTime(());
         setStartTime(patient.guiData, now_time);
@@ -191,6 +191,8 @@ function STAR_controller_simulator(patient, simulation)
     if isnull(controller_output[2])
         max_available = 1;
     end
+
+    #print(max_available, "  ") 
 
     selection = Int32(min(max_available, longest_allowed, max(1, round(stopped_limit))));
    

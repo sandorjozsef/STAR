@@ -8,6 +8,7 @@ module Serializer
     mutable struct SerializablePatient
         Greal::Vector{Float64}
         Treal::Vector{Float64}
+        hourlyBG::Vector{Float64}
         Name::String
         SerializablePatient() = new()
     end
@@ -18,7 +19,11 @@ module Serializer
         println("type of the fieldname $name is $typ")
         end=#
 
-        save(fullpath, Dict("Greal" => serPatient.Greal, "Treal" => serPatient.Treal))
+        save(fullpath, Dict("Greal" => serPatient.Greal,
+         "Treal" => serPatient.Treal,
+         "hourlyBG" => serPatient.hourlyBG,
+         "Name" => serPatient.Name
+         ))
 
     end
 
@@ -27,9 +32,10 @@ module Serializer
         data = load(fullpath) # it returns a Dictionary
         serPatient.Greal = data["Greal"]
         serPatient.Treal = data["Treal"]
+        serPatient.hourlyBG = data["hourlyBG"]
+        serPatient.Name = data["Name"]
 
         return serPatient
-
     end
 
 end

@@ -2,8 +2,12 @@ include("javaCallHelper.jl")
 include("JavaClasses.jl")
 
 
+using MAT
+
+
 function loadPatientData(patient, fullpath)
 
+    
     #J_PatientStruct = J_PatientStruct_class(())
     J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
    
@@ -17,11 +21,25 @@ function loadPatientData(patient, fullpath)
     patient.DiabeticStatus = jfield(J_PatientStruct, "DiabeticStatus", jint)
     patient.rawSI = jfield(J_PatientStruct, "rawSI", Array{jdouble, 2})
     patient.weight = jfield(J_PatientStruct, "weight", jdouble)
-    
 
+
+#=
+    vars = matread(fullpath)
+            patient.Greal = vec(vars["PatientStruct"]["Greal"])
+            patient.Treal = vec(vars["PatientStruct"]["Treal"])
+            patient.u = vars["PatientStruct"]["u"]
+    patient.P = vars["PatientStruct"]["P"]
+    patient.PN = vars["PatientStruct"]["PN"]
+    patient.Uo = vars["PatientStruct"]["Uo"]
+    patient.Po = vars["PatientStruct"]["Po"]
+    patient.DiabeticStatus = vars["PatientStruct"]["DiabeticStatus"]
+    patient.rawSI = vars["PatientStruct"]["rawSI"]
+    patient.weight = vars["PatientStruct"]["weight"]
+    
+=#
 end
 
-function loadGUIData(guiData, fullpath)
+function loadGUIData(guiData, fullpath, T)
 
     J_GUIData = J_GUIData_class(())
     J_GUIData = jcall(J_GUIData, "loadFromFilename", J_GUIData_class, (JString,), fullpath)
@@ -44,7 +62,6 @@ function loadGUIData(guiData, fullpath)
         d = convertToJuliaDateTime( jfield(J_targetRange, "date", J_DateTime) )
         tLower = jfield(J_targetRange, "targetLower", jdouble)
         tUpper = jfield(J_targetRange, "targetUpper", jdouble)
-        T = TargetRangeData()
         T.date = d
         T.targetLower = tLower
         T.targetUpper = tUpper

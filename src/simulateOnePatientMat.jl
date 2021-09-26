@@ -10,6 +10,7 @@ include("Simulation_Structs.jl")
 
 using .Simulation_Structs
 
+
 function simulateOnePatientMat(srcPath, dstPath, name, egp)
    
     simulation = Simulation();
@@ -17,16 +18,21 @@ function simulateOnePatientMat(srcPath, dstPath, name, egp)
     simulation.measurement_time = 0.0;
     simulation.t_now = 0.0;
     
-    patient = Patient();
-    guiData = GUIData();
-    timeSoln = TimeSoln();
+    patient = Simulation_Structs.Patient();
+    guiData = Simulation_Structs.GUIData();
+    timeSoln = Simulation_Structs.TimeSoln();
+    
+    T = Simulation_Structs.TargetRangeData()
 
     patient.SimulationDate = now();
 
     
-    #loadGUIData(guiData, srcPath * "/" * name * ".GUIData");
+    loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T);
+    println(guiData.TargetRange)
+    println(guiData.Weight)
+    println(guiData.Age)
     loadPatientData(patient, srcPath * "/" * name * ".PatientStruct");
-
+    
     ICING2_model_sim_init(patient, timeSoln, egp);
     
     #Main simulation loop
@@ -43,10 +49,6 @@ function simulateOnePatientMat(srcPath, dstPath, name, egp)
         STAR_controller_simulator(patient, simulation);
 
     end
-
-    #printPatientData(patient);
-    #printGUIData(guiData);
-    #plotPatientBG(patient, dstPath * "/patientsBG/"  * name * ".png");
 
     return patient;
 

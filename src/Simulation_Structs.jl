@@ -19,12 +19,14 @@ mutable struct GUIData
     DefaultInsulinConc::Float64
     DiabeticStatus::Int32
     TargetRange::Array{TargetRangeData,1}
+    J_GuiData::J_GUIData_class
     GUIData() = new()
 end
 
 mutable struct Patient
     Treal::Array{Float64,1}
     Greal::Array{Float64,1}
+    hourlyBG::Array{Float64,1}
     u::Array{Float64,2}
     P::Array{Float64,2}
     PN::Array{Float64,2}
@@ -35,6 +37,7 @@ mutable struct Patient
     rawSI::Array{Float64,2}
     weight::Float64
     guiData::J_GUIData_class
+    originalGuiGata::J_GUIData_class
     patient::J_PatientStruct_class
     StochasticModel::J_StochasticModel
     TimeSoln::J_TimeSoln_class
@@ -69,7 +72,6 @@ mutable struct Patient
     PN_orig
     Treal_orig::Array{Float64,1}
     Greal_orig::Array{Float64,1}
-    hourlyBG::Array{Float64,1}
     P_prior
     GoalFeed
     StoppedFeed

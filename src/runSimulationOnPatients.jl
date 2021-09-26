@@ -1,9 +1,9 @@
 include("JavaCall\\setup_java_libraries.jl")
 include("simulateOnePatientMat.jl")
-include("Statistics\\Statistics.jl")
+include("Statistics\\Julia_Statistics.jl")
 include("Statistics\\Serializer.jl")
 using Dates
-using .Statistics
+using .Julia_Statistics
 using .Serializer
 
     function runSimulationOnPatients(srcDir, dstDir, egp)
@@ -18,29 +18,21 @@ using .Serializer
 
         setup_java_libraries()
 
-        allHourlyBG = []
-
         for name in readdir(srcDir)
             srcPath = joinpath(srcDir, name);
             println("\nProcess patient: ", name);
-           
             @time patient = simulateOnePatientMat(srcPath, simFolderOut, name, egp)
 
-            serPatient = SerializablePatient()
+            serPatient = Serializer.SerializablePatient()
             serPatient.Greal = patient.Greal
             serPatient.Treal = patient.Treal
+            serPatient.hourlyBG = patient.hourlyBG
+            serPatient.Name = name
             Serializer.serialize(serPatient, "$simFolderOut\\$name.jld2")
 
-            allHourlyBG = cat(allHourlyBG, patient.hourlyBG, dims = 1)
         end
         
-
-        #writeCSV_ResampledBGStats(allHourlyBG, simFolderOut * "/statistics_hourly_resampled_BG.csv")
-        #plotCDF(allHourlyBG, simFolderOut)
-
-        Statistics.calculate_signDiffBG_Mat2Jul(simFolderOut)
-             
-
+  
     end
 
 
