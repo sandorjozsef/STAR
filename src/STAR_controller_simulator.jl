@@ -14,6 +14,7 @@ function STAR_controller_simulator(patient, simulation)
         setAge(patient.guiData, 30.0);
         setFrameSize(patient.guiData, "large");
         setGender(patient.guiData, "male");
+        setWeight(patient.guiData, 120.0) 
         now_time = J_DateTime(());
         setStartTime(patient.guiData, now_time);
 

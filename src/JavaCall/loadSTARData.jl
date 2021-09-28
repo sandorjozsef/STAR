@@ -7,8 +7,6 @@ using MAT
 
 function loadPatientData(patient, fullpath)
 
-    
-    #J_PatientStruct = J_PatientStruct_class(())
     J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
    
     patient.Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
@@ -22,9 +20,9 @@ function loadPatientData(patient, fullpath)
     patient.rawSI = jfield(J_PatientStruct, "rawSI", Array{jdouble, 2})
     patient.weight = jfield(J_PatientStruct, "weight", jdouble)
 
-
 #=
-    vars = matread(fullpath)
+
+    vars = matread("D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\HU\\e582c806-b190-40ad-8348-19c92f1e44e1.mat")
             patient.Greal = vec(vars["PatientStruct"]["Greal"])
             patient.Treal = vec(vars["PatientStruct"]["Treal"])
             patient.u = vars["PatientStruct"]["u"]
@@ -35,8 +33,8 @@ function loadPatientData(patient, fullpath)
     patient.DiabeticStatus = vars["PatientStruct"]["DiabeticStatus"]
     patient.rawSI = vars["PatientStruct"]["rawSI"]
     patient.weight = vars["PatientStruct"]["weight"]
-    
-=#
+    =#
+
 end
 
 function loadGUIData(guiData, fullpath, T)

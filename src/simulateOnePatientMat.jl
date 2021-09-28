@@ -4,8 +4,7 @@ include("ICING2_model_sim_init.jl")
 include("ICING2_model_solver.jl")
 include("BG_sensor.jl")
 include("STAR_controller_simulator.jl")
-include("JavaCall\\loadSTARData.jl")
-#include("statisticsHelper.jl")
+include("JavaCall\\loadSTARData.jl") 
 include("Simulation_Structs.jl")
 
 using .Simulation_Structs

@@ -2,8 +2,9 @@ module Serializer
 
     using JLD2
     using FileIO
+    using MAT
 
-    export SerializablePatient, serialize, deserialize
+    export SerializablePatient, serialize, deserialize, deserializeMat
 
     mutable struct SerializablePatient
         Greal::Vector{Float64}
@@ -36,6 +37,15 @@ module Serializer
         serPatient.Name = data["Name"]
 
         return serPatient
+    end
+
+    function deserializeMat(fullpath)
+        MatlabPatient = SerializablePatient()
+        vars = matread(fullpath)
+        MatlabPatient.Greal = vec(vars["PatientStruct"]["Greal"])
+        MatlabPatient.Treal = vec(vars["PatientStruct"]["Treal"])
+
+        return MatlabPatient
     end
 
 end

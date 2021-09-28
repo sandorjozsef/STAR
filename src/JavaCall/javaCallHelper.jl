@@ -36,6 +36,10 @@ end
 
 #------- GUIData -------#
 
+function setWeight(guiData::J_GUIData_class, weight::jdouble)
+    jcall(guiData, "setWeight", Nothing, (jdouble,), weight);
+end
+
 function setAge(guiData::J_GUIData_class, age::jdouble)
     jcall(guiData, "setAge", Nothing, (jdouble,), age);
 end
