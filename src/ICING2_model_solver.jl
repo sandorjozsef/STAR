@@ -83,9 +83,8 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
         
         prob = ODEProblem(ICING_model_ODE!, ODEinit, (insulinTime[i], insulinTime[i+1]));
         num_sol = solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8);
-        
         ODEinit = num_sol[end];
-        
+
         tFinal = cat(tFinal, num_sol.t[2:end], dims=1); #index 2:end for no repeating
 
         for i in 2:length(num_sol.t) # 2 for no repeating

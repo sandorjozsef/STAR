@@ -26,11 +26,11 @@ function simulateOnePatientMat(srcPath, dstPath, name, egp)
     patient.SimulationDate = now();
 
     
-    loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T);
-    println(guiData.TargetRange)
-    println(guiData.Weight)
-    println(guiData.Age)
-    loadPatientData(patient, srcPath * "/" * name * ".PatientStruct");
+    #loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T);
+    #println(guiData.TargetRange)
+    #println(guiData.Weight)
+    #println(guiData.Age)
+    loadPatientData(patient, srcPath * ".mat" );
     
     ICING2_model_sim_init(patient, timeSoln, egp);
     

@@ -19,16 +19,17 @@ using .Serializer
         setup_java_libraries()
 
         for name in readdir(srcDir)
-            srcPath = joinpath(srcDir, name);
-            println("\nProcess patient: ", name);
-            @time patient = simulateOnePatientMat(srcPath, simFolderOut, name, egp)
+            patientname = splitext(name)[1]
+            srcPath = joinpath(srcDir, patientname);
+            println("\nProcess patient: ", patientname);
+            @time patient = simulateOnePatientMat(srcPath, simFolderOut, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
             serPatient.Greal = patient.Greal
             serPatient.Treal = patient.Treal
             serPatient.hourlyBG = patient.hourlyBG
-            serPatient.Name = name
-            Serializer.serialize(serPatient, "$simFolderOut\\$name.jld2")
+            serPatient.Name = patientname
+            Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")
 
         end
         

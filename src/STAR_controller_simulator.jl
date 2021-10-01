@@ -3,18 +3,18 @@ include("JavaCall\\JavaClasses.jl")
 
 function STAR_controller_simulator(patient, simulation)
    
-    TargetLower = 80/18
-    TargetUpper = 145/18
+    TargetLower = 4.4
+    TargetUpper = 8.0
     longest_allowed = 3
 
     if (size(patient.Treal, 1) == 1)
         patient.StochasticModel = loadStochasticModelData( pwd() * "/src/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
-        setAge(patient.guiData, 30.0);
-        setFrameSize(patient.guiData, "large");
+        setAge(patient.guiData, 65.0);
+        setFrameSize(patient.guiData, "medium");
         setGender(patient.guiData, "male");
-        setWeight(patient.guiData, 120.0) 
+        #setWeight(patient.guiData, 120.0) 
         now_time = J_DateTime(());
         setStartTime(patient.guiData, now_time);
 
