@@ -28,24 +28,26 @@ module Serializer
 
     end
 
-    function deserialize(fullpath)
-        serPatient = SerializablePatient()
-        data = load(fullpath) # it returns a Dictionary
-        serPatient.Greal = data["Greal"]
-        serPatient.Treal = data["Treal"]
-        serPatient.hourlyBG = data["hourlyBG"]
-        serPatient.Name = data["Name"]
+    function deserialize(path, patientName, type)
 
-        return serPatient
+        Patient = SerializablePatient()
+        if type == "JUL"
+            data = load(path * "\\$patientName" * ".jld2") # it returns a Dictionary
+            Patient.Greal = data["Greal"]
+            Patient.Treal = data["Treal"]
+            Patient.hourlyBG = data["hourlyBG"]
+            Patient.Name = data["Name"]
+        elseif type == "MAT"
+            vars = matread(path * "\\SIM_$patientName" * ".mat")
+            Patient.Greal = vec(vars["PatientStruct"]["Greal"])
+            Patient.Treal = vec(vars["PatientStruct"]["Treal"])
+            Patient.Name = patientName
+        else
+            throw(ArgumentError("Not existing serializable type."))
+        end
+        
+        return Patient
     end
 
-    function deserializeMat(fullpath)
-        MatlabPatient = SerializablePatient()
-        vars = matread(fullpath)
-        MatlabPatient.Greal = vec(vars["PatientStruct"]["Greal"])
-        MatlabPatient.Treal = vec(vars["PatientStruct"]["Treal"])
-
-        return MatlabPatient
-    end
 
 end

@@ -2,20 +2,14 @@ module Visualizer
 
     using Plots
 
-    export plot_Mat_Jul_patient
-    function plot_Mat_Jul_patient(MatlabPatient, JuliaPatient)
-        p = plot(MatlabPatient.Treal, MatlabPatient.Greal, label = "MAT", title = JuliaPatient.Name)
-        plot!(p, JuliaPatient.Treal, JuliaPatient.Greal, label = "JUL")
+    export plot_patient_BG
+    function plot_patient_BG(Patient1, Patient2)
+        p = plot(Patient1.Treal, Patient1.Greal, label = "Method 1", title = Patient1.Name)
+        plot!(p, Patient2.Treal, Patient2.Greal, label = "Method 2")
         display(p)
     end
 
-    export plot_Treals
-    function plot_Treals(MatlabPatient, JuliaPatient)
-        p = plot(MatlabPatient.Treal, label = "MAT T", title = JuliaPatient.Name)
-        plot!(p, JuliaPatient.Treal, label = "JUL T")
-        display(p)
-    end
-
+   
     export plot_histogram
     function plot_histogram(array)
         display(histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300)))

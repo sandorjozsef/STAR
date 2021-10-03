@@ -1,9 +1,7 @@
 include("JavaCall\\setup_java_libraries.jl")
 include("simulateOnePatientMat.jl")
-include("Statistics\\Julia_Statistics.jl")
 include("Statistics\\Serializer.jl")
 using Dates
-using .Julia_Statistics
 using .Serializer
 
     function runSimulationOnPatients(srcDir, dstDir, egp)
@@ -33,7 +31,6 @@ using .Serializer
 
         end
         
-  
     end
 
 

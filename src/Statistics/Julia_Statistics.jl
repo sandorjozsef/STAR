@@ -8,8 +8,10 @@ module Julia_Statistics
     using Statistics
     using .StatisticsExporter
 
-    srcpath1 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
-    srcpath2 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\DP5_1e_6"
+    julpath1 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
+    julpath2 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\DP5_1e_6"
+    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults"
+    matpath2 = ""
     dstpath = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
     RawBG = Vector{Vector{Float64}}()
@@ -35,8 +37,8 @@ module Julia_Statistics
 
     end
 
-    export calculate_signDiffBG_Mat2Jul
-    function calculate_signDiffBG_Mat2Jul()
+    export calculate_signDiffBG
+    function calculate_signDiffBG(srcpath1, srcpath2, type1, type2)
 
         signDiffBG_all = []
         maxi = 0.0
@@ -45,19 +47,18 @@ module Julia_Statistics
         minName = ""
         cnt = 0
 
-        for filename in readdir(srcpath)
+        for filename in readdir(srcpath1)
 
-            JuliaPatient = Serializer.deserialize(joinpath(srcpath, filename))
-            
             patientName = splitext(filename)[1]
-            matlabPath = "$(pwd())\\src\\Statistics\\MatLabResults\\SIM_$patientName.mat"  
-            MatlabPatient = Serializer.deserializeMat(matlabPath) 
-            
+
+            Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
+            Patient2 = Serializer.deserialize(srcpath2, patientName, type2)
+           
             signDiffBG = []
-            len = min(length(MatlabPatient.Greal), length(JuliaPatient.Greal))
+            len = min(length(Patient1.Greal), length(Patient2.Greal))
             for i in 1:len
-                if MatlabPatient.Treal[i] == JuliaPatient.Treal[i]
-                    push!(signDiffBG, MatlabPatient.Greal[i]-JuliaPatient.Greal[i])
+                if Patient1.Treal[i] == Patient2.Treal[i]
+                    push!(signDiffBG, Patient1.Greal[i]-Patient2.Greal[i])
                 else
                     cnt = cnt+1
                 end
@@ -65,16 +66,16 @@ module Julia_Statistics
 
             if minimum(signDiffBG) < mini
                 mini = minimum(signDiffBG)
-                minName = JuliaPatient.Name
+                minName = Patient1.Name
             end
 
             if maximum(signDiffBG) > maxi
                 maxi = maximum(signDiffBG)
-                maxName = JuliaPatient.Name
+                maxName = Patient1.Name
             end
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
-            Visualizer.plot_Mat_Jul_patient(MatlabPatient, JuliaPatient)
+            Visualizer.plot_patient_BG(Patient1, Patient2)
            
         end
 
@@ -89,52 +90,6 @@ module Julia_Statistics
        
     end
 
-    function calculate_signDiffBG_Jul2Jul()
-        signDiffBG_all = []
-        maxi = 0.0
-        mini = 0.0
-        maxName = ""
-        minName = ""
-        cnt = 0
-
-        for filename in readdir(srcpath1)
-
-            JuliaPatient1 = Serializer.deserialize(joinpath(srcpath1, filename))
-            JuliaPatient2 = Serializer.deserialize(joinpath(srcpath2, filename))
-            
-            signDiffBG = []
-            len = min(length(JuliaPatient1.Greal), length(JuliaPatient2.Greal))
-            for i in 1:len
-                if JuliaPatient1.Treal[i] == JuliaPatient2.Treal[i]
-                    push!(signDiffBG, JuliaPatient1.Greal[i]-JuliaPatient2.Greal[i])
-                else
-                    cnt = cnt+1
-                end
-            end
-
-            if minimum(signDiffBG) < mini
-                mini = minimum(signDiffBG)
-                minName = JuliaPatient1.Name
-            end
-
-            if maximum(signDiffBG) > maxi
-                maxi = maximum(signDiffBG)
-                maxName = JuliaPatient1.Name
-            end
-
-            signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
-            Visualizer.plot_Mat_Jul_patient(JuliaPatient1, JuliaPatient2)
-           
-        end
-
-        Visualizer.plot_histogram(signDiffBG_all)
-        
-        println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
-        println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
-        println("mean diff: ", Statistics.mean(signDiffBG_all))
-        println("std diff: ", Statistics.std(signDiffBG_all))
-        println(cnt," + ", length(signDiffBG_all))
-    end
 
     function printData(path)
 
@@ -157,11 +112,9 @@ module Julia_Statistics
 
     end
 
-    calculate_signDiffBG_Jul2Jul()
-    #calculate_signDiffBG_Mat2Jul() 
+    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL") 
     #createJuliaStatistics()
     #printData(srcpath)
     
     
-
 end
