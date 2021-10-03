@@ -2,12 +2,13 @@ include("JavaCall\\javaCallHelper.jl")
 include("JavaCall\\JavaClasses.jl")
 
 function STAR_controller_simulator(patient, simulation)
-   
+    
     TargetLower = 4.4
     TargetUpper = 8.0
     longest_allowed = 3
 
-    if (size(patient.Treal, 1) == 1)
+    if length(patient.Treal) == 1
+
         patient.StochasticModel = loadStochasticModelData( pwd() * "/src/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
@@ -18,10 +19,10 @@ function STAR_controller_simulator(patient, simulation)
         now_time = J_DateTime(());
         setStartTime(patient.guiData, now_time);
 
-        bg = J_BGData_class(());
-        setDate(bg, now_time);
-        setBg(bg, patient.Greal[1]);
-        addBg(patient.guiData, bg);
+        b = J_BGData_class(());
+        setDate(b, now_time);
+        setBg(b, patient.Greal[1]);
+        addBg(patient.guiData, b);
 
         tr = J_TargetRangeData_class((J_DateTime, jdouble, jdouble), now_time, TargetLower, TargetUpper);
         addTargetRange(patient.guiData, tr);
@@ -60,7 +61,7 @@ function STAR_controller_simulator(patient, simulation)
         
 
         # All parenteral nutrition will be 12.5% dextrose
-        for i in 1:size(patient.PN, 1)
+        for i in 1:length(patient.PN[1])
             n = J_NutritionData_class(());
             setDate(n, plusMinutes(now_time, patient.PN[i,1]) );
             nd = J_NutritionDetail((JString, jdouble, jdouble, jdouble, jdouble), JString("TPN pre-mix: 12.5% dextrose"), 125.0, 1.0, -1.0, -1.0);
@@ -108,6 +109,7 @@ function STAR_controller_simulator(patient, simulation)
     stopped_limit = 3;
     t_now = patient.Treal[end];
     current_P_orig_index = findlast(x -> x <= t_now, patient.P_orig[:,1]);
+    if isnothing(current_P_orig_index)  current_P_orig_index = 1 end
     current_P_orig = patient.P_orig[current_P_orig_index, 2];
 
     # Time to feed switched off
@@ -122,7 +124,6 @@ function STAR_controller_simulator(patient, simulation)
     if next_P_orig_index != 0
         stopped_limit = min(3, (patient.P_orig[next_P_orig_index, 1] - t_now) / 60.0 );
     end
-
 
 
     if current_P_orig == 0
@@ -142,7 +143,7 @@ function STAR_controller_simulator(patient, simulation)
             next_P_orig_index = 1;
         end
         
-        stopped_limit = min(2, (patient.P_orig[next_P_orig_index, 1] - t_now) / 2);
+        stopped_limit = min(2, (patient.P_orig[next_P_orig_index, 1] - t_now) / 2.0);
 
         n = J_NutritionData_class(());
         setDate(n, time);
@@ -176,7 +177,7 @@ function STAR_controller_simulator(patient, simulation)
     BGList = getBGList(patient.guiData);
 
     legacyBg = convert(J_BGData_class, getByIndex(BGList, getListSize(BGList) - 1));
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",convertToJuliaDateTime(getDate(legacyBg)) ,", BG = ", getBg(legacyBg), " ...");
+    println("calculating treatments for (nr = ", patient.nrBg, "): ",convertToJuliaDateTime(getDate(legacyBg)) ,", BG = ", round(getBg(legacyBg), digits=6), " ...");
 
     
     # Run the STAR controller
@@ -193,13 +194,16 @@ function STAR_controller_simulator(patient, simulation)
         max_available = 1;
     end
 
+    max_available = 1
+
     #print(max_available, "  ") 
 
     selection = Int32(min(max_available, longest_allowed, max(1, round(stopped_limit))));
    
     # Store chosen treatment in GUIData
     # Taken from RecommendationActivity.selectTreatment(...)
-    if size(patient.Treal, 1) == 1
+    isFirstTreatment = 1
+    if length(patient.Treal) == 1
         isFirstTreatment = 1;
     else
         isFirstTreatment = 0;
@@ -207,6 +211,7 @@ function STAR_controller_simulator(patient, simulation)
 
     if ! isnull(getInsulinBolus(controller_output[selection]))
         addInsulinBolusIv(patient.guiData, getInsulinBolus(controller_output[selection]));
+        #print("addInsulinBolusIv")
     end
 
 
@@ -217,37 +222,43 @@ function STAR_controller_simulator(patient, simulation)
             bolus = convert(J_InsulinBolusData_class, getByIndex(fb, i));
             addInsulinBolusIv(patient.guiData, bolus);
         end
+        #print("getFutureBolus")
     end
 
     
 
     if ! isnull(getInsulinInfusion(controller_output[selection]))
-        if isFirstTreatment == 1 && getListSize(convert(J_ArrayList, getByIndex( getInsulinInfusion(patient.guiData), 0))) > 0
+        if isFirstTreatment == 1 
             clearInsulinInfusionIvList(patient.guiData);
         end
         addInsulinInfusionIv(patient.guiData, getInsulinInfusion(controller_output[selection]));
+        #print("addInsulinInfusionIv")
     end
 
     
 
     if ! isnull(getEnteral(controller_output[selection]))
-        if isFirstTreatment == 1 && getListSize(convert(J_ArrayList, getByIndex( getNutritionInfusion(patient.guiData), 0))) > 0
+        if isFirstTreatment == 1 
             clearNutritionInfusionEnteral(patient.guiData);
         end
         addNutritionInfusionEnteral(patient.guiData, getEnteral(controller_output[selection]));
+        #print("addNutritionInfusionEnteral")
     end
     
 
     if ! isnull(getParenteral(controller_output[selection]))
         addNutritionInfusionParenteral(patient.guiData, getParenteral(controller_output[selection]));
+        #print("addNutritionInfusionParenteral")
     end
 
     if ! isnull(getMaintenance(controller_output[selection]))
         addNutritionInfusionMaintenance(patient.guiData, getMaintenance(controller_output[selection]));
+        #print("addNutritionInfusionMaintenance")
     end
 
     if ! isnull(getDextroseShot(controller_output[selection]))
         addNutritionBolusDexShot(patient.guiData, getDextroseShot(controller_output[selection]));
+        #print("addNutritionBolusDexShot")
     end
 
     

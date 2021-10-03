@@ -1,0 +1,78 @@
+. . . Whole Cohort Statistics,. . .
+Num Episodes  ,112
+Total Hours  ,11217
+Num BG measurements  ,11217
+Average time of hours analysed (Days)  ,4.172991071428572
+Median time of hours analysed [IQR] (Days)  ,2.7916666666666665
+Mean Measures/day (Cohort)  ,
+Median [IQR] Measures/day (Per-Patient)  ,
+-----------------------,-----------------------
+. . . Hourly Resampled BG stats  ,. . .
+BG median [IQR] (mmol/L)  ,5.247658908198369
+BG mean (geometric) (mmol/L)  ,5.6685005996697715
+BG StDev (geometric) (mmol/L)  ,1.3899686745988507
+% BG < 2.2 mmol/L  ,0.01783007934385308
+% BG < 4.0 mmol/L  ,1.4620665061959526
+% BG < 4.4 mmol/L  ,3.6016760274583217
+% BG within 4.4 - 6.1 mmol/L  ,74.98439868057413
+% BG within 4.4 - 7 mmol/L  ,85.64678612819827
+% BG within 4.4 - 8 mmol/L  ,90.98689489168227
+% BG within 4.4 - 9 mmol/L  ,93.2156548096639
+% BG within 6.0 - 9 mmol/L  ,20.21930997592939
+% BG within 8.0 - 10 mmol/L  ,3.325309797628599
+% BG within > 10 mmol/L  ,2.0504591245431043
+-----------------------,-----------------------
+. . . Raw BG stats,. . .
+BG median [IQR] (mmol/L)  ,5.247658908198369
+BG mean (geometric) (mmol/L)  ,5.6685005996697715
+BG StDev (geometric) (mmol/L)  ,1.3899686745988507
+Num episodes < 4.0 mmol/L  ,41
+Num episodes < 2.22 mmol/L  ,2
+% BG < 2.2 mmol/L  ,0.01783007934385308
+% BG < 4.0 mmol/L  ,1.4620665061959526
+% BG < 4.4 mmol/L  ,3.6016760274583217
+% BG within 4.4 - 6.5 mmol/L  ,80.54738343585629
+% BG within 4.4 - 7.0 mmol/L  ,85.64678612819827
+% BG within 4.4 - 8.0 mmol/L  ,90.98689489168227
+% BG within 8.0 - 10 mmol/L  ,3.325309797628599
+% BG within > 10 mmol/L  ,2.0504591245431043
+-----------------------,-----------------------
+. . . Whole Cohort Statistics,. . .
+Num Episodes  ,112
+Total Hours  ,11217
+Num BG measurements  ,11217
+Average time of hours analysed (Days)  ,4.172991071428572
+Median time of hours analysed [IQR] (Days)  ,2.7916666666666665
+Mean Measures/day (Cohort)  ,
+Median [IQR] Measures/day (Per-Patient)  ,
+-----------------------,-----------------------
+. . . Hourly Resampled BG stats  ,. . .
+BG median [IQR] (mmol/L)  ,5.247658908198369
+BG mean (geometric) (mmol/L)  ,5.6685005996697715
+BG StDev (geometric) (mmol/L)  ,1.3899686745988507
+% BG < 2.2 mmol/L  ,0.01783007934385308
+% BG < 4.0 mmol/L  ,1.4620665061959526
+% BG < 4.4 mmol/L  ,3.6016760274583217
+% BG within 4.4 - 6.1 mmol/L  ,74.98439868057413
+% BG within 4.4 - 7 mmol/L  ,85.64678612819827
+% BG within 4.4 - 8 mmol/L  ,90.98689489168227
+% BG within 4.4 - 9 mmol/L  ,93.2156548096639
+% BG within 6.0 - 9 mmol/L  ,20.21930997592939
+% BG within 8.0 - 10 mmol/L  ,3.325309797628599
+% BG within > 10 mmol/L  ,2.0504591245431043
+-----------------------,-----------------------
+. . . Raw BG stats,. . .
+BG median [IQR] (mmol/L)  ,5.247658908198369
+BG mean (geometric) (mmol/L)  ,5.6685005996697715
+BG StDev (geometric) (mmol/L)  ,1.3899686745988507
+Num episodes < 4.0 mmol/L  ,41
+Num episodes < 2.22 mmol/L  ,2
+% BG < 2.2 mmol/L  ,0.01783007934385308
+% BG < 4.0 mmol/L  ,1.4620665061959526
+% BG < 4.4 mmol/L  ,3.6016760274583217
+% BG within 4.4 - 6.5 mmol/L  ,80.54738343585629
+% BG within 4.4 - 7.0 mmol/L  ,85.64678612819827
+% BG within 4.4 - 8.0 mmol/L  ,90.98689489168227
+% BG within 8.0 - 10 mmol/L  ,3.325309797628599
+% BG within > 10 mmol/L  ,2.0504591245431043
+-----------------------,-----------------------

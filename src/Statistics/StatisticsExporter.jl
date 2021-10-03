@@ -10,7 +10,6 @@ function writeCSV_HourlyResampledBGStats(allHourlyBG, fullpath)
     # Creating a new dataframe
     mn = DataFrame(HourlyStats = [
     ". . . Hourly Resampled BG stats  ",
-    "#Total Hours  ",
     "BG median [IQR] (mmol/L)  ",
     "BG mean (geometric) (mmol/L)  ",
     "BG StDev (geometric) (mmol/L)  ",
@@ -28,7 +27,6 @@ function writeCSV_HourlyResampledBGStats(allHourlyBG, fullpath)
     ],
           Value = [
               ". . .",
-              length(allHourlyBG) - 112, # 112 = nr of patients
               median(allHourlyBG),
               mean(allHourlyBG),
               std(allHourlyBG),
@@ -85,6 +83,39 @@ function writeCSV_RawBGStats(allRawBG, RawBG, fullpath)
                   length(filter(x -> x > 4.4 && x < 8.0, allRawBG)) / length(allRawBG) * 100.0,
                   length(filter(x -> x > 8.0 && x <= 10.0, allRawBG)) / length(allRawBG) * 100.0,
                   length(filter(x ->  x > 10.0, allRawBG)) / length(allRawBG) * 100.0,
+                  "-----------------------"
+              ])
+                  
+      # writing to the newly created file
+      CSV.write(fullpath, mn, append = true)
+end
+
+export writeCSV_WholeCohortStats
+function writeCSV_WholeCohortStats(RawBG, HourlyBG, fullpath)
+
+    allRawBG = [RawBG[i][j] for i in 1:length(RawBG) for j in 1:length(RawBG[i])]
+    allHourlyBG = [HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])]
+
+    mn = DataFrame(RawStats = [
+        ". . . Whole Cohort Statistics",
+        "Num Episodes  ",
+        "Total Hours  ",
+        "Num BG measurements  ",
+        "Average time of hours analysed (Days)  ",
+        "Median time of hours analysed [IQR] (Days)  ",
+        "Mean Measures/day (Cohort)  ",
+        "Median [IQR] Measures/day (Per-Patient)  ",
+        "-----------------------"
+        ],
+              Value = [
+                  ". . .",
+                  length(RawBG),
+                  length(allHourlyBG),
+                  length(allRawBG),
+                  mean([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]),
+                  median([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]), 
+                  "",
+                  "",
                   "-----------------------"
               ])
                   

@@ -7,6 +7,7 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.stochasticModelFileName = "SPRINT_whole_cohort.StochasticModel";
 
     patient.Diabetic = 0;
+
     
     patient.uenmin = 16.7; #[mU/min]
     patient.uenmax = 266.7; #[mU/min]
