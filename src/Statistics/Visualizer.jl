@@ -12,7 +12,7 @@ module Visualizer
    
     export plot_histogram
     function plot_histogram(array)
-        display(histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300)))
+        display( histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log) )
     end
 
     function plotCDF(allHourlyBG, path)

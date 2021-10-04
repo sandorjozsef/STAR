@@ -10,8 +10,9 @@ module Julia_Statistics
 
     julpath1 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
     julpath2 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\DP5_1e_6"
-    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults"
-    matpath2 = ""
+    julpath3 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\highTolerance"
+    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\highTolerance"
+    matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\minTreatment"
     dstpath = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
     RawBG = Vector{Vector{Float64}}()
@@ -19,11 +20,12 @@ module Julia_Statistics
     allHourlyBG = Vector{Float64}()
     allRawBG = Vector{Float64}()
 
-    function createDataStructures()
+    function createDataStructures(srcpath)
 
         for filename in readdir(srcpath)
 
-            JuliaPatient = Serializer.deserialize(joinpath(srcpath, filename))
+            patientName = splitext(filename)[1]
+            JuliaPatient = Serializer.deserialize(srcpath, patientName, "JUL")
             for i in 1:length(JuliaPatient.Greal)
                 push!(allRawBG, JuliaPatient.Greal[i])
             end
@@ -75,7 +77,7 @@ module Julia_Statistics
             end
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
-            Visualizer.plot_patient_BG(Patient1, Patient2)
+            #Visualizer.plot_patient_BG(Patient1, Patient2)
            
         end
 
@@ -103,17 +105,18 @@ module Julia_Statistics
         end
     end
 
-    function createJuliaStatistics()
+    function createJuliaStatistics(srcpath)
 
-        createDataStructures()
-        StatisticsExporter.writeCSV_WholeCohortStats(RawBG, HourlyBG, dstpath)
-        StatisticsExporter.writeCSV_HourlyResampledBGStats(allHourlyBG, dstpath)
-        StatisticsExporter.writeCSV_RawBGStats(allRawBG, RawBG, dstpath)
+        createDataStructures(srcpath)
+        StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
+        StatisticsExporter.rawBGStats(allRawBG, RawBG, dstpath)
+        StatisticsExporter.hourlyResampledBGStats(allHourlyBG, dstpath)
+        StatisticsExporter.perEpisode_statistics(dstpath)
 
     end
 
-    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL") 
-    #createJuliaStatistics()
+    #calculate_signDiffBG(julpath3, matpath1, "JUL", "MAT") 
+    createJuliaStatistics(julpath1)
     #printData(srcpath)
     
     
