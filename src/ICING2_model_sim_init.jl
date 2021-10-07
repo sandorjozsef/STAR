@@ -70,7 +70,8 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.Treal = [patient.Treal[1]];     
         #Treal and Greal will store the virtual BG measurments taken during the simulated trial
     patient.Greal = [round(patient.Greal[1]*10)/10];  # 1dp
-    
+    patient.Ireal = [IQ0[1]]
+    patient.Qreal = [IQ0[2]]
     #------start the simulation from the first recorded sI value
     #------...this *may* not necessarily be zero (especially if dealing
     #with a patient record that is split into several parts)

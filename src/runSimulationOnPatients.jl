@@ -23,8 +23,11 @@ using .Serializer
             @time patient = simulateOnePatientMat(srcPath, simFolderOut, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
-            serPatient.Greal = patient.Greal
+            serPatient.GIQ = [patient.Greal patient.Ireal patient.Qreal]
             serPatient.Treal = patient.Treal
+            serPatient.P = patient.P
+            serPatient.PN = patient.PN
+            serPatient.rawSI = patient.rawSI
             serPatient.hourlyBG = patient.hourlyBG
             serPatient.Name = patientname
             Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")

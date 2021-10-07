@@ -8,38 +8,31 @@ module Julia_Statistics
     using Statistics
     using .StatisticsExporter
 
-    julpath1 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
-    julpath2 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\DP5_1e_6"
-    julpath3 = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\highTolerance"
-    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\highTolerance"
-    matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\minTreatment"
-    dstpath = "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
     RawBG = Vector{Vector{Float64}}()
     HourlyBG = Vector{Vector{Float64}}()
     allHourlyBG = Vector{Float64}()
     allRawBG = Vector{Float64}()
 
-    function createDataStructures(srcpath)
+    function createDataStructures(srcpath, type)
 
         for filename in readdir(srcpath)
 
             patientName = splitext(filename)[1]
-            JuliaPatient = Serializer.deserialize(srcpath, patientName, "JUL")
-            for i in 1:length(JuliaPatient.Greal)
-                push!(allRawBG, JuliaPatient.Greal[i])
+            JuliaPatient = Serializer.deserialize(srcpath, patientName, type)
+            for i in 1:length(JuliaPatient.GIQ[:,1])
+                push!(allRawBG, JuliaPatient.GIQ[i,1])
             end
             for i in 1:length(JuliaPatient.hourlyBG)
                 push!(allHourlyBG, JuliaPatient.hourlyBG[i])
             end
-            push!(RawBG, JuliaPatient.Greal)
+            push!(RawBG, JuliaPatient.GIQ[:,1])
             push!(HourlyBG, JuliaPatient.hourlyBG)
 
         end
 
     end
 
-    export calculate_signDiffBG
     function calculate_signDiffBG(srcpath1, srcpath2, type1, type2)
 
         signDiffBG_all = []
@@ -57,10 +50,10 @@ module Julia_Statistics
             Patient2 = Serializer.deserialize(srcpath2, patientName, type2)
            
             signDiffBG = []
-            len = min(length(Patient1.Greal), length(Patient2.Greal))
+            len = min(length(Patient1.GIQ[:,1]), length(Patient2.GIQ[:,1]))
             for i in 1:len
                 if Patient1.Treal[i] == Patient2.Treal[i]
-                    push!(signDiffBG, Patient1.Greal[i]-Patient2.Greal[i])
+                    push!(signDiffBG, Patient1.GIQ[i,1]-Patient2.GIQ[i,1])
                 else
                     cnt = cnt+1
                 end
@@ -77,13 +70,13 @@ module Julia_Statistics
             end
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
-            #Visualizer.plot_patient_BG(Patient1, Patient2)
+            Visualizer.plot_patient_BG(Patient1, Patient2)
+            Visualizer.plot_patient_metabolics(Patient1)
            
         end
 
         Visualizer.plot_histogram(signDiffBG_all)
         
-
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
         println("mean diff: ", Statistics.mean(signDiffBG_all))
@@ -93,21 +86,10 @@ module Julia_Statistics
     end
 
 
-    function printData(path)
 
-        for filename in readdir(path)
+    function createStatistics(srcpath, type)
 
-            JuliaPatient = Serializer.deserialize(joinpath(path, filename))
-            display(JuliaPatient.Name)
-            display(JuliaPatient.Greal)
-            display(JuliaPatient.hourlyBG)
-
-        end
-    end
-
-    function createJuliaStatistics(srcpath)
-
-        createDataStructures(srcpath)
+        createDataStructures(srcpath, type)
         StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
         StatisticsExporter.rawBGStats(allRawBG, RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(allHourlyBG, dstpath)
@@ -115,9 +97,34 @@ module Julia_Statistics
 
     end
 
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
+    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Tsit5_1e_8"
+    julpath3 = "$(pwd())\\src\\Statistics\\JuliaResults\\DP5_1e_6"
+    julpath4 = "$(pwd())\\src\\Statistics\\JuliaResults\\DP5_1e_8"
+    julpath5 = "$(pwd())\\src\\Statistics\\JuliaResults\\Tsit5_1e_12"
+
+    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
+    matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
+    matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
+
+    dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
+
+    #calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    #calculate_signDiffBG(julpath1, julpath3, "JUL", "JUL")
+    #calculate_signDiffBG(julpath2, julpath4, "JUL", "JUL")
+ 
     #calculate_signDiffBG(julpath3, matpath1, "JUL", "MAT") 
-    createJuliaStatistics(julpath1)
-    #printData(srcpath)
-    
+    #calculate_signDiffBG(julpath2, matpath2, "JUL", "MAT")
+    #calculate_signDiffBG(julpath5, matpath3, "JUL", "MAT")
+    #calculate_signDiffBG(matpath1, matpath3, "MAT", "MAT")
+    #createStatistics(julpath5, "JUL")
+    #createStatistics(matpath1, "MAT")
+
+    createStatistics("D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Simresults-2021-10-07_12_27", "JUL")
+
+    calculate_signDiffBG("D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Simresults-2021-10-07_12_27",
+    "D:\\EGYETEM\\7.sem\\Szakdolgozat\\simulator_julia\\src\\Statistics\\JuliaResults\\Simresults-2021-10-07_12_27",
+      "JUL", "JUL")
+
     
 end
