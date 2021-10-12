@@ -6,6 +6,7 @@ module Visualizer
     function plot_patient_BG(Patient1, Patient2)
         p = plot(Patient1.Treal, Patient1.GIQ[:,1], label = "Method 1", title = Patient1.Name)
         plot!(p, Patient2.Treal, Patient2.GIQ[:,1], label = "Method 2")
+        hspan!(pp,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
         display(p)
     end
 
@@ -14,29 +15,35 @@ module Visualizer
         p1 = plot(Patient.Treal, Patient.GIQ[:,1], label = "G", title = Patient.Name)
         plot!(p1, Patient.Treal, Patient.GIQ[:,2] / 10.0, label = "I / 10")
         plot!(p1, Patient.Treal, Patient.GIQ[:,3] / 10.0, label = "Q / 10")
+        hspan!(p1,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
         p2 = plot(Patient.P[:,1], Patient.P[:,2], label = "P")
         plot!(p2, Patient.PN[:,1], Patient.PN[:,2], label = "PN")
+        plot!(p2, Patient.u[2:end,1], Patient.u[1:(end-1),2]/100, label = "u / 100 (mUnit/min)")
         p3 = plot(Patient.rawSI[:,1], Patient.rawSI[:,2], label = "SI", xlabel = "time (min)")
-        display(plot(p1,p2, p3, layout = (3,1), size = (800, 1000)))
+        display(plot(p1,p2, p3, layout = (3,1), size = (1000, 900)))
     end
 
     export plot_compare_patient_metabolics
     function plot_compare_patient_metabolics(Patient1, Patient2)
         p1 = plot(Patient1.Treal, Patient1.GIQ[:,1], label = "G1", title = Patient1.Name)
         plot!(p1, Patient2.Treal, Patient2.GIQ[:,1], label = "G2", ylabel = "BG (mmol/l)")
+        hspan!(p1,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
 
-        p2 = plot(Patient1.Treal, Patient1.GIQ[:,2] / 10.0, label = "I1")
-        plot!(p2, Patient2.Treal, Patient2.GIQ[:,2] / 10.0, label = "I2")
+        p2 = plot(Patient1.Treal, Patient1.GIQ[:,2] , label = "I1")
+        plot!(p2, Patient2.Treal, Patient2.GIQ[:,2] , label = "I2")
 
-        p3 = plot( Patient1.Treal, Patient1.GIQ[:,3] / 10.0, label = "Q1")
-        plot!(p3, Patient2.Treal, Patient2.GIQ[:,3] / 10.0, label = "Q2")
+        p3 = plot( Patient1.Treal, Patient1.GIQ[:,3] , label = "Q1")
+        plot!(p3, Patient2.Treal, Patient2.GIQ[:,3] , label = "Q2")
+
+        p5 = plot( Patient1.u[:,1], Patient1.u[:,2] , label = "u1")
+        plot!(p5, Patient2.u[:,1], Patient2.u[:,2] , label = "u2")
 
         p4 = plot(Patient1.P[:,1], Patient1.P[:,2], label = "P1")
-        plot!(p4, Patient1.PN[:,1], Patient1.PN[:,2], label = "PN1")
         plot!(p4, Patient2.P[:,1], Patient2.P[:,2], label = "P2")
+        plot!(p4, Patient1.PN[:,1], Patient1.PN[:,2], label = "PN1")
         plot!(p4, Patient2.PN[:,1], Patient2.PN[:,2], label = "PN2", xlabel = "time (min)")
 
-        p = plot(p1,p2, p3, p4, layout = (4,1), size = (1200, 1200))
+        p = plot(p1,p2, p3,p5, p4, layout = (5,1), size = (1000, 1500))
         display(p)
         #png(p, pwd() * "\\graphs\\$(Patient1.Name)")
     end

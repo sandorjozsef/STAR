@@ -11,6 +11,7 @@ module Serializer
         GIQ::Matrix{Float64}
         PN::Matrix{Float64}
         P::Matrix{Float64}
+        u::Matrix{Float64}
         rawSI::Matrix{Float64}
         hourlyBG::Vector{Float64}
         Name::String
@@ -29,6 +30,7 @@ module Serializer
          "P" => serPatient.P,
          "PN" => serPatient.PN,
          "rawSI" => serPatient.rawSI,
+         "u" => serPatient.u,
          "hourlyBG" => serPatient.hourlyBG,
          "Name" => serPatient.Name
          ))
@@ -47,6 +49,7 @@ module Serializer
             Patient.PN = data["PN"]
             Patient.GIQ = data["GIQ"]
             Patient.rawSI = data["rawSI"]
+            Patient.u = data["u"]
             Patient.hourlyBG = data["hourlyBG"]
             Patient.Name = data["Name"]
 
@@ -63,6 +66,7 @@ module Serializer
             Patient.P = [ vars["PatientStruct"]["P"][1] vars["PatientStruct"]["P"][2] ]
             Patient.PN = [ vars["PatientStruct"]["PN"][1] vars["PatientStruct"]["PN"][2] ]
             Patient.rawSI = [ vars["PatientStruct"]["rawSI"][1] vars["PatientStruct"]["rawSI"][2] ]
+            Patient.u = [ vars["PatientStruct"]["u"][1] vars["PatientStruct"]["u"][2] ]
             Patient.hourlyBG = [0.0]
             Patient.Name = patientName
 

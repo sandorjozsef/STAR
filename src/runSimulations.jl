@@ -11,7 +11,7 @@
 
 include("runSimulationOnPatients.jl")
 
-srcDir = pwd() * "/src/HU"
+srcDir = pwd() * "/src/Interesting_Patients"
 dstDir = pwd() * "/src/Statistics/JuliaResults"
 
 egp = 1.16

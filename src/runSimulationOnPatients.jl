@@ -29,6 +29,7 @@ using .Serializer
             serPatient.PN = patient.PN
             serPatient.rawSI = patient.rawSI
             serPatient.hourlyBG = patient.hourlyBG
+            serPatient.u = patient.u
             serPatient.Name = patientname
             Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")
 

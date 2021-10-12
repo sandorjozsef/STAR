@@ -72,7 +72,8 @@ module Julia_Statistics
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
 
             #Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
-            Visualizer.plot_patient_BG(Patient1, Patient2)
+            #Visualizer.plot_patient_BG(Patient1, Patient2)
+            Visualizer.plot_patient_metabolics(Patient1)
            
         end
 
@@ -98,30 +99,15 @@ module Julia_Statistics
 
     end
 
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Tsit5_1e_6"
-    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Tsit5_1e_8"
-    julpath3 = "$(pwd())\\src\\Statistics\\JuliaResults\\DP5_1e_6"
-    julpath4 = "$(pwd())\\src\\Statistics\\JuliaResults\\DP5_1e_8"
-
+    
+    julpath = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-12_23_30"
+    
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath2, matpath2, "JUL", "MAT")
-    #calculate_signDiffBG(julpath1, julpath3, "JUL", "JUL")
-    #calculate_signDiffBG(julpath2, julpath4, "JUL", "JUL")
- 
-    #calculate_signDiffBG(julpath3, matpath1, "JUL", "MAT") 
-    #calculate_signDiffBG(julpath2, matpath2, "JUL", "MAT")
-    #calculate_signDiffBG(julpath5, matpath3, "JUL", "MAT")
-    #calculate_signDiffBG(matpath1, matpath3, "MAT", "MAT")
-    #createStatistics(julpath5, "JUL")
-    #createStatistics(matpath1, "MAT")
+    calculate_signDiffBG(julpath, matpath2, "JUL", "MAT")
 
-
-      
-
-    
 end

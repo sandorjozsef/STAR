@@ -5,7 +5,7 @@ function STAR_controller_simulator(patient, simulation)
     
     TargetLower = 4.4
     TargetUpper = 8.0
-    longest_allowed = 3
+    longest_allowed = 1
 
     if length(patient.Treal) == 1
 
@@ -194,10 +194,6 @@ function STAR_controller_simulator(patient, simulation)
         max_available = 1;
     end
 
-    max_available = 1
-
-    #print(max_available, "  ") 
-
     selection = Int32(min(max_available, longest_allowed, max(1, round(stopped_limit))));
    
     # Store chosen treatment in GUIData
@@ -211,7 +207,6 @@ function STAR_controller_simulator(patient, simulation)
 
     if ! isnull(getInsulinBolus(controller_output[selection]))
         addInsulinBolusIv(patient.guiData, getInsulinBolus(controller_output[selection]));
-        #print("addInsulinBolusIv")
     end
 
 
@@ -222,7 +217,6 @@ function STAR_controller_simulator(patient, simulation)
             bolus = convert(J_InsulinBolusData_class, getByIndex(fb, i));
             addInsulinBolusIv(patient.guiData, bolus);
         end
-        #print("getFutureBolus")
     end
 
     
@@ -232,7 +226,6 @@ function STAR_controller_simulator(patient, simulation)
             clearInsulinInfusionIvList(patient.guiData);
         end
         addInsulinInfusionIv(patient.guiData, getInsulinInfusion(controller_output[selection]));
-        #print("addInsulinInfusionIv")
     end
 
     
@@ -242,23 +235,19 @@ function STAR_controller_simulator(patient, simulation)
             clearNutritionInfusionEnteral(patient.guiData);
         end
         addNutritionInfusionEnteral(patient.guiData, getEnteral(controller_output[selection]));
-        #print("addNutritionInfusionEnteral")
     end
     
 
     if ! isnull(getParenteral(controller_output[selection]))
         addNutritionInfusionParenteral(patient.guiData, getParenteral(controller_output[selection]));
-        #print("addNutritionInfusionParenteral")
     end
 
     if ! isnull(getMaintenance(controller_output[selection]))
         addNutritionInfusionMaintenance(patient.guiData, getMaintenance(controller_output[selection]));
-        #print("addNutritionInfusionMaintenance")
     end
 
     if ! isnull(getDextroseShot(controller_output[selection]))
         addNutritionBolusDexShot(patient.guiData, getDextroseShot(controller_output[selection]));
-        #print("addNutritionBolusDexShot")
     end
 
     
@@ -266,8 +255,8 @@ function STAR_controller_simulator(patient, simulation)
 
     patient.patient = UpdateRates(patient.guiData, patient.patient);
 
-    patient.u = getU(patient.patient);
-    patient.P = getP(patient.patient);
+    patient.u = getU(patient.patient); # #
+    patient.P = getP(patient.patient); # #
     patient.PN = getPN(patient.patient);
 
     simulation.measurement_time = selection * 60.0;
