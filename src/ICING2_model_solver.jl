@@ -85,7 +85,7 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
         
         prob = ODEProblem(ICING_model_ODE!, ODEinit, (insulinTime[i], insulinTime[i+1]));
         
-        Ints = solve(prob, DP5(), reltol=1e-8, abstol=1e-8);
+        Ints = solve(prob, DP5(), reltol=1e-6, abstol=1e-6);
        
         ODEinit = Ints[end];
 
