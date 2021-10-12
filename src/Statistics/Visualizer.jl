@@ -16,8 +16,29 @@ module Visualizer
         plot!(p1, Patient.Treal, Patient.GIQ[:,3] / 10.0, label = "Q / 10")
         p2 = plot(Patient.P[:,1], Patient.P[:,2], label = "P")
         plot!(p2, Patient.PN[:,1], Patient.PN[:,2], label = "PN")
-        p3 = plot(Patient.rawSI[:,1], Patient.rawSI[:,2], label = "SI")
-        display(plot(p1,p2, p3, layout = (3,1)))
+        p3 = plot(Patient.rawSI[:,1], Patient.rawSI[:,2], label = "SI", xlabel = "time (min)")
+        display(plot(p1,p2, p3, layout = (3,1), size = (800, 1000)))
+    end
+
+    export plot_compare_patient_metabolics
+    function plot_compare_patient_metabolics(Patient1, Patient2)
+        p1 = plot(Patient1.Treal, Patient1.GIQ[:,1], label = "G1", title = Patient1.Name)
+        plot!(p1, Patient2.Treal, Patient2.GIQ[:,1], label = "G2", ylabel = "BG (mmol/l)")
+
+        p2 = plot(Patient1.Treal, Patient1.GIQ[:,2] / 10.0, label = "I1")
+        plot!(p2, Patient2.Treal, Patient2.GIQ[:,2] / 10.0, label = "I2")
+
+        p3 = plot( Patient1.Treal, Patient1.GIQ[:,3] / 10.0, label = "Q1")
+        plot!(p3, Patient2.Treal, Patient2.GIQ[:,3] / 10.0, label = "Q2")
+
+        p4 = plot(Patient1.P[:,1], Patient1.P[:,2], label = "P1")
+        plot!(p4, Patient1.PN[:,1], Patient1.PN[:,2], label = "PN1")
+        plot!(p4, Patient2.P[:,1], Patient2.P[:,2], label = "P2")
+        plot!(p4, Patient2.PN[:,1], Patient2.PN[:,2], label = "PN2", xlabel = "time (min)")
+
+        p = plot(p1,p2, p3, p4, layout = (4,1), size = (1200, 1200))
+        display(p)
+        #png(p, pwd() * "\\graphs\\$(Patient1.Name)")
     end
 
    

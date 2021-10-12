@@ -70,9 +70,9 @@ module Julia_Statistics
             end
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
+
+            #Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
             Visualizer.plot_patient_BG(Patient1, Patient2)
-            Visualizer.plot_patient_metabolics(Patient1)
-            Visualizer.plot_patient_metabolics(Patient2)
            
         end
 
@@ -109,7 +109,7 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    calculate_signDiffBG(julpath2, matpath2, "JUL", "MAT")
     #calculate_signDiffBG(julpath1, julpath3, "JUL", "JUL")
     #calculate_signDiffBG(julpath2, julpath4, "JUL", "JUL")
  
