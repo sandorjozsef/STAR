@@ -1,5 +1,5 @@
 include("JavaCall\\setup_java_libraries.jl")
-include("simulateOnePatientMat.jl")
+include("simulateOnePatientJul.jl")
 include("Statistics\\Serializer.jl")
 using Dates
 using .Serializer
@@ -20,7 +20,7 @@ using .Serializer
             patientname = splitext(name)[1]
             srcPath = joinpath(srcDir, patientname);
             println("\nProcess patient: ", patientname);
-            @time patient = simulateOnePatientMat(srcPath, simFolderOut, patientname, egp)
+            @time patient = simulateOnePatientJul(srcPath, simFolderOut, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
             serPatient.GIQ = [patient.Greal patient.Ireal patient.Qreal]

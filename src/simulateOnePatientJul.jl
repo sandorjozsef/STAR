@@ -10,12 +10,20 @@ include("Simulation_Structs.jl")
 using .Simulation_Structs
 
 
-function simulateOnePatientMat(srcPath, dstPath, name, egp)
+function simulateOnePatientJul(srcPath, dstPath, name, egp)
    
     simulation = Simulation();
     simulation.stop_simulation = 0;
     simulation.measurement_time = 0.0;
     simulation.t_now = 0.0;
+
+    # longest allowed treatment: 1 / 2 / 3
+    simulation.longest_allowed = 3;
+
+    # 1 -> STAR recommended
+    # 2 -> simple relative constant
+    simulation.InsulinDispenser = 2 ; 
+    
     
     patient = Simulation_Structs.Patient();
     guiData = Simulation_Structs.GUIData();

@@ -89,10 +89,16 @@ mutable struct TimeSoln
     TimeSoln() = new()
 end
 
+#export InzulinDispenserType
+#@enum InzulinDispenserType smart simple
+
 mutable struct Simulation
     stop_simulation 
     measurement_time
     t_now
+    longest_allowed::Int64
+    InsulinDispenser::Int64
+    NutritionDispenser::Int64
     Simulation() = new()
 end
 

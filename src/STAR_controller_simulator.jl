@@ -5,7 +5,6 @@ function STAR_controller_simulator(patient, simulation)
     
     TargetLower = 4.4
     TargetUpper = 8.0
-    longest_allowed = 1
 
     if length(patient.Treal) == 1
 
@@ -177,7 +176,8 @@ function STAR_controller_simulator(patient, simulation)
     BGList = getBGList(patient.guiData);
 
     legacyBg = convert(J_BGData_class, getByIndex(BGList, getListSize(BGList) - 1));
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",convertToJuliaDateTime(getDate(legacyBg)) ,", BG = ", round(getBg(legacyBg), digits=6), " ...");
+    actualBG = getBg(legacyBg)
+    println("calculating treatments for (nr = ", patient.nrBg, "): ",convertToJuliaDateTime(getDate(legacyBg)) ,", BG = ", round(actualBG, digits=6), " ...");
 
     
     # Run the STAR controller
@@ -194,7 +194,7 @@ function STAR_controller_simulator(patient, simulation)
         max_available = 1;
     end
 
-    selection = Int32(min(max_available, longest_allowed, max(1, round(stopped_limit))));
+    selection = Int32(min(max_available, simulation.longest_allowed, max(1, round(stopped_limit))));
    
     # Store chosen treatment in GUIData
     # Taken from RecommendationActivity.selectTreatment(...)
@@ -255,7 +255,22 @@ function STAR_controller_simulator(patient, simulation)
 
     patient.patient = UpdateRates(patient.guiData, patient.patient);
 
-    patient.u = getU(patient.patient); # #
+    if simulation.InsulinDispenser == 1
+        patient.u = getU(patient.patient);
+    else
+        unit = 100.0 / 6.0 # mUnit/min
+        nrOfUnits = 0
+        if (actualBG > 6 && actualBG <= 8) nrOfUnits = 1 end
+        if (actualBG > 8 && actualBG <= 10) nrOfUnits = 2 end
+        if (actualBG > 10 && actualBG <= 12) nrOfUnits = 3 end
+        if (actualBG > 12 && actualBG <= 14) nrOfUnits = 4 end
+        if (actualBG > 14 && actualBG <= 16) nrOfUnits = 5 end
+        if (actualBG > 16) nrOfUnits = 6 end
+        patient.u = [patient.u; patient.u[end,1]+selection*60-1 nrOfUnits * unit]
+        patient.u = [patient.u; patient.u[end,1]+1 nrOfUnits * unit]
+    end
+
+    
     patient.P = getP(patient.patient); # #
     patient.PN = getPN(patient.patient);
 

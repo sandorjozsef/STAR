@@ -19,8 +19,8 @@ module Visualizer
         p2 = plot(Patient.P[:,1], Patient.P[:,2], label = "P")
         plot!(p2, Patient.PN[:,1], Patient.PN[:,2], label = "PN")
         plot!(p2, Patient.u[2:end,1], Patient.u[1:(end-1),2]/100, label = "u / 100 (mUnit/min)")
-        p3 = plot(Patient.rawSI[:,1], Patient.rawSI[:,2], label = "SI", xlabel = "time (min)")
-        display(plot(p1,p2, p3, layout = (3,1), size = (1000, 900)))
+        p3 = plot(Patient.rawSI[:,1], Patient.rawSI[:,2], label = "SI", xlabel = "time (min)", ylims = (0, 0.01))
+        display(plot(p1,p2, p3, layout = (3,1), size = (1000, 900), minorgrid = true))
     end
 
     export plot_compare_patient_metabolics

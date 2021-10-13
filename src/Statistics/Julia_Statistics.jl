@@ -71,9 +71,8 @@ module Julia_Statistics
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
 
-            #Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
+            Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
             #Visualizer.plot_patient_BG(Patient1, Patient2)
-            Visualizer.plot_patient_metabolics(Patient1)
            
         end
 
@@ -87,7 +86,17 @@ module Julia_Statistics
        
     end
 
+    function plot_simulation(srcpath1, type1)
 
+        for filename in readdir(srcpath1)
+
+            patientName = splitext(filename)[1]
+            Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
+            Visualizer.plot_patient_metabolics(Patient1) 
+            
+        end
+
+    end
 
     function createStatistics(srcpath, type)
 
@@ -100,7 +109,7 @@ module Julia_Statistics
     end
 
     
-    julpath = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-12_23_30"
+    julpath = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-13_9_44"
     
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
@@ -108,6 +117,7 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath, matpath2, "JUL", "MAT")
+    #calculate_signDiffBG(julpath, matpath2, "JUL", "MAT")
+    plot_simulation(julpath, "JUL")
 
 end

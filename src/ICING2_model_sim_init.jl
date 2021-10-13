@@ -57,9 +57,11 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.Greal_orig = patient.Greal;
     patient.Treal_orig = patient.Treal;     #Save the retrospective measurement timings (useful for some simulation studies)
 
-    patient.u = Array{Float64}(undef, 1, 2);
+    patient.u = Array{Float64}(undef, 2, 2);
     patient.u[1,1] = patient.rawSI[1,1];
     patient.u[1,2] = patient.Uo;
+    patient.u[2,1] = patient.u[1,1] + 1;
+    patient.u[2,2] = patient.Uo;
     patient.P = Array{Float64}(undef, 1, 2);
     patient.P[1,1] = patient.rawSI[1,1];
     patient.P[1,2] = patient.Po;
