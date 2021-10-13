@@ -76,7 +76,7 @@ module Julia_Statistics
            
         end
 
-        Visualizer.plot_histogram(signDiffBG_all)
+        #Visualizer.plot_histogram(signDiffBG_all)
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -93,7 +93,7 @@ module Julia_Statistics
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
             Visualizer.plot_patient_metabolics(Patient1) 
-            
+            #display(Patient1.u)
         end
 
     end
@@ -108,16 +108,18 @@ module Julia_Statistics
 
     end
 
-    
-    julpath = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-13_9_44"
-    
+    # (longest allowed - insulin dosing - nutrition dosing)
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-4"
+    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
+
+    # all 1 hour treatment
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    #calculate_signDiffBG(julpath, matpath2, "JUL", "MAT")
-    plot_simulation(julpath, "JUL")
+    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    #plot_simulation(julpath1, "JUL")
 
 end

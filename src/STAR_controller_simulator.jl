@@ -209,7 +209,6 @@ function STAR_controller_simulator(patient, simulation)
         addInsulinBolusIv(patient.guiData, getInsulinBolus(controller_output[selection]));
     end
 
-
     fb = getFutureBolus(controller_output[selection]);
     if ! isnull(fb)
         len = getListSize(fb);
@@ -219,16 +218,12 @@ function STAR_controller_simulator(patient, simulation)
         end
     end
 
-    
-
     if ! isnull(getInsulinInfusion(controller_output[selection]))
         if isFirstTreatment == 1 
             clearInsulinInfusionIvList(patient.guiData);
         end
         addInsulinInfusionIv(patient.guiData, getInsulinInfusion(controller_output[selection]));
     end
-
-    
 
     if ! isnull(getEnteral(controller_output[selection]))
         if isFirstTreatment == 1 
@@ -250,7 +245,6 @@ function STAR_controller_simulator(patient, simulation)
         addNutritionBolusDexShot(patient.guiData, getDextroseShot(controller_output[selection]));
     end
 
-    
     push!(patient.ControllerFlag,  getControllerFlag(controller_output[selection]));
 
     patient.patient = UpdateRates(patient.guiData, patient.patient);
@@ -270,8 +264,16 @@ function STAR_controller_simulator(patient, simulation)
         patient.u = [patient.u; patient.u[end,1]+1 nrOfUnits * unit]
     end
 
+    if simulation.NutritionDispenser == 1
+        patient.P = getP(patient.patient);
+    else
+        Nutr = 0.0
+        if simulation.NutritionDispenser == 2 Nutr=0.25 end
+        if simulation.NutritionDispenser == 3 Nutr=0.4 end
+        if simulation.NutritionDispenser == 4 Nutr=0.6 end
+        patient.P = [patient.P; patient.P[end,1]+selection*60 Nutr]
+    end
     
-    patient.P = getP(patient.patient); # #
     patient.PN = getPN(patient.patient);
 
     simulation.measurement_time = selection * 60.0;

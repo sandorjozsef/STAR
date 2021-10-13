@@ -21,9 +21,14 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     simulation.longest_allowed = 3;
 
     # 1 -> STAR recommended
-    # 2 -> simple relative constant
-    simulation.InsulinDispenser = 2 ; 
-    
+    # 2 -> BG based
+    simulation.InsulinDispenser = 1 ; 
+
+    # 1 -> STAR recommended
+    # 2 -> low nutrition 
+    # 3 -> normal nutrition 
+    # 4 -> high nutrition
+    simulation.NutritionDispenser = 4;
     
     patient = Simulation_Structs.Patient();
     guiData = Simulation_Structs.GUIData();

@@ -1,0 +1,12 @@
+# longest allowed treatment: 1 / 2 / 3 (hour)
+simulation.longest_allowed = 3;
+
+# 1 -> STAR recommended
+# 2 -> BG based
+simulation.InsulinDispenser = 1 ; 
+
+# 1 -> STAR recommended
+# 2 -> low nutrition 
+# 3 -> normal nutrition 
+# 4 -> high nutrition
+simulation.NutritionDispenser = 4;
