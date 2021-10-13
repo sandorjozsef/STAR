@@ -41,8 +41,11 @@ module Julia_Statistics
         maxName = ""
         minName = ""
         cnt = 0
-
-        for filename in readdir(srcpath1)
+        srcpath = srcpath1
+        if length(readdir(srcpath1)) > length(readdir(srcpath2)) 
+            srcpath = srcpath2
+        end
+        for filename in readdir(srcpath)
 
             patientName = splitext(filename)[1]
 
@@ -109,7 +112,7 @@ module Julia_Statistics
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-4"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\1-1-1"
     julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
 
     # all 1 hour treatment
@@ -119,7 +122,7 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    calculate_signDiffBG(matpath1, julpath1, "MAT", "JUL")
     #plot_simulation(julpath1, "JUL")
 
 end

@@ -24,7 +24,7 @@ module Visualizer
         p3 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
         p = plot(p1,p2, p3, layout = (3,1), size = (1000, 900), minorgrid = true)
         display(p)
-        png(p, pwd() * "\\graphs\\$(Patient.Name)")
+        #png(p, pwd() * "\\graphs\\$(Patient.Name)")
     end
 
     export plot_compare_patient_metabolics
@@ -48,7 +48,7 @@ module Visualizer
         p4 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
         p = plot(p1,p2, p3,p4, layout = (4,1), size = (1000, 1200), minorgrid = true)
         display(p)
-        png(p, pwd() * "\\graphs\\$(Patient1.Name)")
+        #png(p, pwd() * "\\graphs\\$(Patient1.Name)")
     end
 
    

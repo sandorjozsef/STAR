@@ -41,7 +41,9 @@ module Serializer
 
         Patient = SerializablePatient()
         if type == "JUL"
-
+            if contains(patientName, "SIM_")
+                patientName = replace(patientName, "SIM_" => "", count = 1)
+            end
             data = load(path * "\\$patientName" * ".jld2") # it returns a Dictionary
             Patient.GIQ = data["GIQ"]
             Patient.Treal = data["Treal"]
