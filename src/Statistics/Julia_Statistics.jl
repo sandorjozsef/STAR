@@ -96,7 +96,6 @@ module Julia_Statistics
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
             Visualizer.plot_patient_metabolics(Patient1) 
-            #display(Patient1.u)
         end
 
     end
@@ -112,17 +111,18 @@ module Julia_Statistics
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\1-1-1"
-    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
+    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-16_0_35"
 
-    # all 1 hour treatment
+    # all 1 hour treatment by matlab
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(matpath1, julpath1, "MAT", "JUL")
-    #plot_simulation(julpath1, "JUL")
+    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    #plot_simulation(julpath2, "JUL")
+    #createStatistics(julpath1, "JUL")
 
 end

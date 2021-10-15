@@ -6,6 +6,7 @@ include("BG_sensor.jl")
 include("STAR_controller_simulator.jl")
 include("JavaCall\\loadSTARData.jl") 
 include("Simulation_Structs.jl")
+include("SIMPLE_controller_simulator.jl")
 
 using .Simulation_Structs
 
@@ -16,29 +17,29 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     simulation.stop_simulation = 0;
     simulation.measurement_time = 0.0;
     simulation.t_now = 0.0;
+    simulation.t_start = now();
 
     # longest allowed treatment: 1 / 2 / 3
     simulation.longest_allowed = 3;
 
     # 1 -> STAR recommended
-    # 2 -> BG based
-    simulation.InsulinDispenser = 1 ; 
+    # 2 -> SIMPLE
+    simulation.mode = 1 ; 
 
-    # 1 -> STAR recommended
-    # 2 -> low nutrition 
-    # 3 -> normal nutrition 
-    # 4 -> high nutrition
-    simulation.NutritionDispenser = 4;
+   
+    # 1 -> low nutrition 
+    # 2 -> normal nutrition 
+    # 3 -> high nutrition
+    simulation.NutritionDispenser = 2;
     
     patient = Simulation_Structs.Patient();
-    guiData = Simulation_Structs.GUIData();
+    #guiData = Simulation_Structs.GUIData();
     timeSoln = Simulation_Structs.TimeSoln();
     
-    T = Simulation_Structs.TargetRangeData()
+   # T = Simulation_Structs.TargetRangeData()
 
     patient.SimulationDate = now();
 
-    
     #loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T);
     #println(guiData.TargetRange)
     #println(guiData.Weight)
@@ -57,9 +58,10 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
 
             BG_sensor(patient, timeSoln);
         end
-        
-        STAR_controller_simulator(patient, simulation);
 
+        if simulation.mode == 1  STAR_controller_simulator(patient, simulation); end
+        if simulation.mode == 2  SIMPLE_controller_simulator(patient, simulation); end
+       
     end
 
     return patient;

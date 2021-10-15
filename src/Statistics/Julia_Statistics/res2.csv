@@ -1,0 +1,55 @@
+. . . Whole Cohort Statistics   . . .
+Num Episodes   3
+Total Hours   686
+Num BG measurements   320
+Average time of hours analysed (Days)   9.527777777777779
+Median time of hours analysed [IQR] (Days)   11.875
+Mean Measures/day (Cohort)   NaN
+Median [IQR] Measures/day (Per-Patient)   NaN
+-----------------------   -----------------------
+. . . Raw BG stats   . . .
+BG median [IQR] (mmol/L)   5.570808266357268
+BG mean (geometric) (mmol/L)   5.935380082168503
+BG StDev (geometric) (mmol/L)   2.01136739157973
+Num episodes < 4.0 mmol/L   2
+Num episodes < 2.22 mmol/L   0
+% BG < 2.2 mmol/L   0.0
+% BG < 4.0 mmol/L   2.8125
+% BG < 4.4 mmol/L   6.875000000000001
+% BG within 4.4 - 6.5 mmol/L   72.8125
+% BG within 4.4 - 7.0 mmol/L   81.875
+% BG within 4.4 - 8.0 mmol/L   86.5625
+% BG within 8.0 - 10 mmol/L   3.75
+% BG within > 10 mmol/L   2.8125
+-----------------------   -----------------------
+. . . Hourly Resampled BG stats   . . .
+BG median [IQR] (mmol/L)   5.680420223207756
+BG mean (geometric) (mmol/L)   5.878965322831096
+BG StDev (geometric) (mmol/L)   1.467969450781515
+% BG < 2.2 mmol/L   0.0
+% BG < 4.0 mmol/L   1.4577259475218658
+% BG < 4.4 mmol/L   3.3527696793002915
+% BG within 4.4 - 6.1 mmol/L   64.72303206997084
+% BG within 4.4 - 7 mmol/L   88.92128279883383
+% BG within 4.4 - 8 mmol/L   93.29446064139941
+% BG within 4.4 - 9 mmol/L   94.60641399416909
+% BG within 6.0 - 9 mmol/L   34.25655976676385
+% BG within 8.0 - 10 mmol/L   2.0408163265306123
+% BG within > 10 mmol/L   1.3119533527696794
+-----------------------   -----------------------
+. . . Per-episode statistics (Median [IQR])   . . .
+*** Raw BG Stats ***   
+Hours of control   NaN
+Num BG measurements   NaN
+Initial BG (mmol/L)   NaN
+BG median (mmol/L)   NaN
+BG mean (mmol/L)   NaN
+BG StDev (mmol/L)   NaN
+%BG > 10.0 mmol/L   NaN
+%BG within 4.0-6.1 mmol/L   NaN
+%BG within 4.0-7.0 mmol/L   NaN
+%BG within 4.0-8.0 mmol/L   NaN
+%BG < 4.4 mmol/L   NaN
+%BG < 4.0 mmol/L   NaN
+%BG < 2.22 mmol/L   NaN
+-----------------------   -----------------------

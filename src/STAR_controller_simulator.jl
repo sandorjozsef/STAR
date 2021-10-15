@@ -14,7 +14,7 @@ function STAR_controller_simulator(patient, simulation)
         setAge(patient.guiData, 65.0);
         setFrameSize(patient.guiData, "medium");
         setGender(patient.guiData, "male");
-        #setWeight(patient.guiData, 120.0) 
+        setWeight(patient.guiData, 120.0) 
         now_time = J_DateTime(());
         setStartTime(patient.guiData, now_time);
 
@@ -168,8 +168,6 @@ function STAR_controller_simulator(patient, simulation)
         patient.StoppedFeed = 0;
     end
 
-    
-    
     # Update the stochastic model data
     patient.StochasticModel = loadStochasticModelData( pwd() * "/src/SPRINT_whole_cohort.StochasticModel" );
     
@@ -249,31 +247,8 @@ function STAR_controller_simulator(patient, simulation)
 
     patient.patient = UpdateRates(patient.guiData, patient.patient);
 
-    if simulation.InsulinDispenser == 1
-        patient.u = getU(patient.patient);
-    else
-        unit = 100.0 / 6.0 # mUnit/min
-        nrOfUnits = 0
-        if (actualBG > 6 && actualBG <= 8) nrOfUnits = 1 end
-        if (actualBG > 8 && actualBG <= 10) nrOfUnits = 2 end
-        if (actualBG > 10 && actualBG <= 12) nrOfUnits = 3 end
-        if (actualBG > 12 && actualBG <= 14) nrOfUnits = 4 end
-        if (actualBG > 14 && actualBG <= 16) nrOfUnits = 5 end
-        if (actualBG > 16) nrOfUnits = 6 end
-        patient.u = [patient.u; patient.u[end,1]+selection*60-1 nrOfUnits * unit]
-        patient.u = [patient.u; patient.u[end,1]+1 nrOfUnits * unit]
-    end
-
-    if simulation.NutritionDispenser == 1
-        patient.P = getP(patient.patient);
-    else
-        Nutr = 0.0
-        if simulation.NutritionDispenser == 2 Nutr=0.25 end
-        if simulation.NutritionDispenser == 3 Nutr=0.4 end
-        if simulation.NutritionDispenser == 4 Nutr=0.6 end
-        patient.P = [patient.P; patient.P[end,1]+selection*60 Nutr]
-    end
-    
+    patient.u = getU(patient.patient);
+    patient.P = getP(patient.patient);
     patient.PN = getPN(patient.patient);
 
     simulation.measurement_time = selection * 60.0;

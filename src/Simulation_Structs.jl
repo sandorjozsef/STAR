@@ -95,9 +95,10 @@ end
 mutable struct Simulation
     stop_simulation 
     measurement_time
-    t_now
+    t_now::Float64
+    t_start::DateTime
     longest_allowed::Int64
-    InsulinDispenser::Int64
+    mode::Int64
     NutritionDispenser::Int64
     Simulation() = new()
 end
