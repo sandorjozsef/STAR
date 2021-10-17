@@ -7,7 +7,12 @@ using DataFrames
 myDelim = ",   "
 
 export hourlyResampledBGStats
-function hourlyResampledBGStats(allHourlyBG, fullpath)
+function hourlyResampledBGStats(HourlyBG, fullpath)
+
+    allHourlyBG = []
+    for i in 1:length(HourlyBG)
+        push!(allHourlyBG, HourlyBG[i]...)
+    end
     
     # Creating a new dataframe
     mn = DataFrame( KeyName = [
@@ -51,7 +56,13 @@ function hourlyResampledBGStats(allHourlyBG, fullpath)
 end
 
 export rawBGStats
-function rawBGStats(allRawBG, RawBG, fullpath)
+function rawBGStats(RawBG, fullpath)
+
+    allRawBG = []
+    for i in 1:length(RawBG)
+        push!(allRawBG, RawBG[i]...)
+    end
+
      # Creating a new dataframe
      mn = DataFrame(KeyName = [
         ". . . Raw BG stats",
@@ -126,13 +137,103 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
 end
 
 export intervention_cohort_stats_hourlyAverage
-function intervention_cohort_stats_hourlyAverage()
-    #TODO
+function intervention_cohort_stats_hourlyAverage(u, P, fullpath)
+ 
+    u_all = []
+    for i in 1:length(u)
+        u_ = resample_hourly_insulin(u[i])
+        push!(u_all, u_...)
+    end
+
+    P_all = []
+    for i in 1:length(u)
+        P_ = resample_hourly_enteral_glucose(P[i])
+        push!(P_all, P_...)
+    end
+
+    mn = DataFrame(KeyName = [
+        ". . . Intervention Cohort Stats (Hourly Average)",
+        "Median insulin rate [IQR] (U/hr)",
+        "Feed Stats All",
+        "Median glucose rate [IQR] (g/hour)",
+        "Median glucose rate [IQR] (% goal)",
+        "Median Enteral glucose [IQR] (g/hour)",
+        "Median Parental glucose [IQR] (g/hour)",
+        "Feed Stats Excluding those not fed",
+        "Total hours not fed",
+        "Median glucose rate [IQR] (g/hour)",
+        "Median glucose rate [IQR] (% goal)",
+        "Median Enteral glucose [IQR] (g/hour)",
+        "Median Parental glucose [IQR] (g/hour)",
+        "-----------------------"
+        ],
+              Value = [
+                  ". . .",
+                  quantile(u_all, [0.25, 0.5, 0.75]),
+                  "",
+                  missing,
+                  missing,
+                  quantile(P_all, [0.25, 0.5, 0.75]),
+                  missing,
+                  "",
+                  length(filter(x -> x == 0, P_all)),
+                  missing,
+                  missing,
+                  quantile(filter(x -> x != 0, P_all), [0.25, 0.5, 0.75]),
+                  missing,
+                  "-----------------------"
+              ])
+                  
+      # writing to the newly created file
+      CSV.write(fullpath, mn, append = true, delim = myDelim, missingstring = "NaN")
+
+end
+
+function resample_hourly_insulin(u)
+
+    # u[:,1] -> 0 1 60 61 180 181 240 241 ... minutes
+    # u[:,2] -> 16.66 33.33 50 66.66 83.33 100 116.66 113.33 150 166.66 -- mUnit/min
+    # u[:,2] * 60 / 1000 -> Unit/hour
+    u_hourly = []
+    for i in 1:2:(length(u[:,1])-3) # start : stepsize : end
+        push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
+        if (u[i+3,1] - u[i+1,1]) == 120 # the patient got the insulin for 2 hour
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
+        end
+        if (u[i+3,1] - u[i+1,1]) == 180 #the patient got the insulin for 3 hour
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000))
+        end
+    end
+    push!(u_hourly, trunc( u[end,2] * 60 / 1000)) # the last one supposed that lasted for 1 hour
+
+    return u_hourly
+
+end
+
+function resample_hourly_enteral_glucose(P)
+    
+    P_hourly = []
+    for i in 1:(length(P[:,1])-1)
+        push!(P_hourly, P[i,2])
+        if (P[i+1,1] - P[i,1]) == 120
+            push!(P_hourly, P[i,2])
+        end
+        if (P[i+1,1] - P[i,1]) == 180
+            push!(P_hourly, P[i,2])
+            push!(P_hourly, P[i,2])
+        end
+    end
+    push!(P_hourly, P[end,2]) # the last one supposed 1 hour
+
+    return P_hourly
+    
 end
 
 export intervention_perEpisode_stats_hourlyAverage
 function intervention_perEpisode_stats_hourlyAverage()
     #TODO
+
 end
 
 export perEpisode_statistics

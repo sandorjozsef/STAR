@@ -11,9 +11,10 @@ module Julia_Statistics
 
     RawBG = Vector{Vector{Float64}}()
     Treal = Vector{Vector{Float64}}()
+    u = Vector{Matrix{Float64}}()
+    P = Vector{Matrix{Float64}}()
+    PN = Vector{Matrix{Float64}}()
     HourlyBG = Vector{Vector{Float64}}()
-    allHourlyBG = Vector{Float64}()
-    allRawBG = Vector{Float64}()
 
     function createDataStructures(srcpath, type)
 
@@ -21,16 +22,13 @@ module Julia_Statistics
 
             patientName = splitext(filename)[1]
             JuliaPatient = Serializer.deserialize(srcpath, patientName, type)
-            for i in 1:length(JuliaPatient.GIQ[:,1])
-                push!(allRawBG, JuliaPatient.GIQ[i,1])
-            end
-            for i in 1:length(JuliaPatient.hourlyBG)
-                push!(allHourlyBG, JuliaPatient.hourlyBG[i])
-            end
+            
             push!(Treal, JuliaPatient.Treal)
             push!(RawBG, JuliaPatient.GIQ[:,1])
             push!(HourlyBG, JuliaPatient.hourlyBG)
-
+            push!(u, JuliaPatient.u)
+            push!(P, JuliaPatient.P) 
+            push!(PN, JuliaPatient.PN)
         end
 
     end
@@ -106,9 +104,10 @@ module Julia_Statistics
 
         createDataStructures(srcpath, type)
         StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
-        StatisticsExporter.rawBGStats(allRawBG, RawBG, dstpath)
-        StatisticsExporter.hourlyResampledBGStats(allHourlyBG, dstpath)
+        StatisticsExporter.rawBGStats(RawBG, dstpath)
+        StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
         StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
+        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, dstpath)
 
     end
 
@@ -124,7 +123,7 @@ module Julia_Statistics
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
     #calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
-    plot_simulation(julpath1, "JUL")
+    #plot_simulation(julpath1, "JUL")
     createStatistics(julpath1, "JUL")
 
 end

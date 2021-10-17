@@ -10,8 +10,8 @@ Median [IQR] Measures/day (Per-Patient),   [10.755265610438023 12.32432432432432
 -----------------------,   -----------------------
 . . . Raw BG stats,   . . .
 BG median [IQR] (mmol/L),   [4.91851514160502 5.55217394342418 6.33245386836327]
-BG mean (geometric) (mmol/L),   5.935572971034849
-BG StDev (geometric) (mmol/L),   2.0677062906820973
+BG mean (geometric) (mmol/L),   5.935572971034842
+BG StDev (geometric) (mmol/L),   2.0677062906820964
 Num episodes < 4.0 mmol/L,   1
 Num episodes < 2.22 mmol/L,   0
 % BG < 2.2 mmol/L,   0.0
@@ -25,8 +25,8 @@ Num episodes < 2.22 mmol/L,   0
 -----------------------,   -----------------------
 . . . Hourly Resampled BG stats,   . . .
 BG median [IQR] (mmol/L),   [5.180364753732489 5.679144636324089 6.245162591692736]
-BG mean (geometric) (mmol/L),   5.8887015854371425
-BG StDev (geometric) (mmol/L),   1.5035984237753897
+BG mean (geometric) (mmol/L),   5.888701585437141
+BG StDev (geometric) (mmol/L),   1.5035984237753888
 % BG < 2.2 mmol/L,   0.0
 % BG < 4.0 mmol/L,   0.8746355685131195
 % BG < 4.4 mmol/L,   3.498542274052478
@@ -53,4 +53,18 @@ BG StDev (mmol/L),   [0.912949808642023 0.9762059561945121 2.4883125075304267]
 %BG < 4.4 mmol/L,   [7.0119566432003575 7.017543859649122 7.112375533428165]
 %BG < 4.0 mmol/L,   [0.0 0.0 1.910828025477707]
 %BG < 2.22 mmol/L,   [0.0 0.0 0.0]
+-----------------------,   -----------------------
+. . . Intervention Cohort Stats (Hourly Average),   . . .
+Median insulin rate [IQR] (U/hr),   [0.0, 2.0, 3.0]
+Feed Stats All,   
+Median glucose rate [IQR] (g/hour),   NaN
+Median glucose rate [IQR] (% goal),   NaN
+Median Enteral glucose [IQR] (g/hour),   [0.3420833333333333, 0.34585185185185185, 0.34585185185185185]
+Median Parental glucose [IQR] (g/hour),   NaN
+Feed Stats Excluding those not fed,   
+Total hours not fed,   77
+Median glucose rate [IQR] (g/hour),   NaN
+Median glucose rate [IQR] (% goal),   NaN
+Median Enteral glucose [IQR] (g/hour),   [0.3420833333333333, 0.34585185185185185, 0.34585185185185185]
+Median Parental glucose [IQR] (g/hour),   NaN
 -----------------------,   -----------------------
