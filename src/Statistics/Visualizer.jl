@@ -63,7 +63,8 @@ module Visualizer
         cdf = plot(sortedBG, p, label = "egp 1.16", title = "BG CDF - Resampled Hourly")
         xlabel!("BG (mmol/l)")
         ylabel!("Cummulative Freq")
-        png(path * "/CDF.png")
+        display(p)
+        #png(p, path * "/CDF.png")
     
     end
     

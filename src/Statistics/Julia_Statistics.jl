@@ -10,6 +10,7 @@ module Julia_Statistics
 
 
     RawBG = Vector{Vector{Float64}}()
+    Treal = Vector{Vector{Float64}}()
     HourlyBG = Vector{Vector{Float64}}()
     allHourlyBG = Vector{Float64}()
     allRawBG = Vector{Float64}()
@@ -26,6 +27,7 @@ module Julia_Statistics
             for i in 1:length(JuliaPatient.hourlyBG)
                 push!(allHourlyBG, JuliaPatient.hourlyBG[i])
             end
+            push!(Treal, JuliaPatient.Treal)
             push!(RawBG, JuliaPatient.GIQ[:,1])
             push!(HourlyBG, JuliaPatient.hourlyBG)
 
@@ -106,7 +108,7 @@ module Julia_Statistics
         StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
         StatisticsExporter.rawBGStats(allRawBG, RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(allHourlyBG, dstpath)
-        StatisticsExporter.perEpisode_statistics(dstpath)
+        StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
 
     end
 
@@ -121,8 +123,8 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
-    #plot_simulation(julpath2, "JUL")
-    #createStatistics(julpath1, "JUL")
+    #calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
+    plot_simulation(julpath1, "JUL")
+    createStatistics(julpath1, "JUL")
 
 end

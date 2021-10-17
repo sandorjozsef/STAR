@@ -4,11 +4,13 @@ using Statistics
 using CSV
 using DataFrames
 
+myDelim = ",   "
+
 export hourlyResampledBGStats
 function hourlyResampledBGStats(allHourlyBG, fullpath)
     
     # Creating a new dataframe
-    mn = DataFrame(HourlyStats = [
+    mn = DataFrame( KeyName = [
     ". . . Hourly Resampled BG stats",
     "BG median [IQR] (mmol/L)",
     "BG mean (geometric) (mmol/L)",
@@ -27,7 +29,7 @@ function hourlyResampledBGStats(allHourlyBG, fullpath)
     ],
           Value = [
               ". . .",
-              median(allHourlyBG),
+              quantile(allHourlyBG, [0.25 0.5 0.75]),
               mean(allHourlyBG),
               std(allHourlyBG),
               length(filter(x -> x < 2.2, allHourlyBG)) / length(allHourlyBG) * 100.0,
@@ -44,14 +46,14 @@ function hourlyResampledBGStats(allHourlyBG, fullpath)
           ])
               
   # writing to the newly created file
-  CSV.write(fullpath, mn, append = true, delim = "   ", missingstring = "NaN")
+  CSV.write(fullpath, mn, append = true, delim = myDelim, missingstring = "NaN")
   
 end
 
 export rawBGStats
 function rawBGStats(allRawBG, RawBG, fullpath)
      # Creating a new dataframe
-     mn = DataFrame(RawStats = [
+     mn = DataFrame(KeyName = [
         ". . . Raw BG stats",
         "BG median [IQR] (mmol/L)",
         "BG mean (geometric) (mmol/L)",
@@ -70,7 +72,7 @@ function rawBGStats(allRawBG, RawBG, fullpath)
         ],
               Value = [
                   ". . .",
-                  median(allRawBG),
+                  quantile(allRawBG, [0.25 0.5 0.75]),
                   mean(allRawBG),
                   std(allRawBG),
                   length(filter(a -> length([a[i] for i in 1:length(a) if a[i] < 4.0]) != 0, RawBG)),
@@ -87,7 +89,7 @@ function rawBGStats(allRawBG, RawBG, fullpath)
               ])
                   
       # writing to the newly created file
-      CSV.write(fullpath, mn, append = true, delim = "   ", missingstring = "NaN")
+      CSV.write(fullpath, mn, append = true, delim = myDelim, missingstring = "NaN")
 end
 
 export wholeCohortStats
@@ -96,7 +98,7 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
     allRawBG = [RawBG[i][j] for i in 1:length(RawBG) for j in 1:length(RawBG[i])]
     allHourlyBG = [HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])]
 
-    mn = DataFrame(RawStats = [
+    mn = DataFrame(KeyName = [
         ". . . Whole Cohort Statistics",
         "Num Episodes",
         "Total Hours",
@@ -113,14 +115,14 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
                   length(allHourlyBG),
                   length(allRawBG),
                   mean([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]),
-                  median([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]), 
-                  missing,
-                  missing,
+                  quantile([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)], [0.25 0.5 0.75]), 
+                  length(allRawBG) / (length(allHourlyBG) / 24),
+                  quantile([length(RawBG[i])/(length(HourlyBG[i])/24.0) for i in 1:length(RawBG)], [0.25 0.5 0.75]),
                   "-----------------------"
               ])
                   
       # writing to the newly created file
-      CSV.write(fullpath, mn, append = true, delim = "   ", missingstring = "NaN")
+      CSV.write(fullpath, mn, append = false, delim = myDelim, missingstring = "NaN")
 end
 
 export intervention_cohort_stats_hourlyAverage
@@ -128,10 +130,15 @@ function intervention_cohort_stats_hourlyAverage()
     #TODO
 end
 
-export perEpisode_statistics
-function perEpisode_statistics(fullpath)
+export intervention_perEpisode_stats_hourlyAverage
+function intervention_perEpisode_stats_hourlyAverage()
+    #TODO
+end
 
-    mn = DataFrame(RawStats = [
+export perEpisode_statistics
+function perEpisode_statistics(RawBG, Treal, fullpath)
+
+    mn = DataFrame(KeyName = [
         ". . . Per-episode statistics (Median [IQR])",
         "*** Raw BG Stats ***",
         "Hours of control",
@@ -152,24 +159,24 @@ function perEpisode_statistics(fullpath)
               Value = [
                   ". . .",
                   "",
-                  missing,
-                  missing,
-                  missing,
-                  missing, 
-                  missing,
-                  missing,
-                  missing,
-                  missing,
-                  missing,
-                  missing, 
-                  missing,
-                  missing,
-                  missing,
+                  quantile(Treal[:][end] / 60, [0.25 0.5 0.75]),
+                  quantile([ length(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ RawBG[i][1] for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ median(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]), 
+                  quantile([ mean(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ std(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x > 10.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x > 4.0 && x < 6.1, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x > 4.0 && x < 7.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x > 4.0 && x < 8.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x < 4.4 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x < 4.0 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  quantile([ length(filter(x ->  x < 2.22 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
                   "-----------------------"
               ])
                   
       # writing to the newly created file
-      CSV.write(fullpath, mn, append = true, delim = "   ", missingstring = "NaN")
+      CSV.write(fullpath, mn, append = true, delim = myDelim, missingstring = "NaN")
 end
 
 
