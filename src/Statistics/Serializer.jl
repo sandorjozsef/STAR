@@ -37,10 +37,11 @@ module Serializer
 
     end
 
-    function deserialize(path, patientName, type)
+    function deserialize(path, patientName)
 
         Patient = SerializablePatient()
-        if type == "JUL"
+        type = splitext(readdir(path)[1])[2]
+        if type == ".jld2"
             if contains(patientName, "SIM_")
                 patientName = replace(patientName, "SIM_" => "", count = 1)
             end
@@ -55,7 +56,7 @@ module Serializer
             Patient.hourlyBG = data["hourlyBG"]
             Patient.Name = data["Name"]
 
-        elseif type == "MAT"
+        elseif type == ".mat"
 
             if contains(patientName, "SIM_")
                 patientName = replace(patientName, "SIM_" => "", count = 1)

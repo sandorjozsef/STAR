@@ -16,12 +16,12 @@ module Julia_Statistics
     PN = Vector{Matrix{Float64}}()
     HourlyBG = Vector{Vector{Float64}}()
 
-    function createDataStructures(srcpath, type)
+    function createDataStructures(srcpath)
 
         for filename in readdir(srcpath)
 
             patientName = splitext(filename)[1]
-            JuliaPatient = Serializer.deserialize(srcpath, patientName, type)
+            JuliaPatient = Serializer.deserialize(srcpath, patientName)
             
             push!(Treal, JuliaPatient.Treal)
             push!(RawBG, JuliaPatient.GIQ[:,1])
@@ -33,7 +33,7 @@ module Julia_Statistics
 
     end
 
-    function calculate_signDiffBG(srcpath1, srcpath2, type1, type2)
+    function calculate_signDiffBG(srcpath1, srcpath2)
 
         signDiffBG_all = []
         maxi = 0.0
@@ -49,8 +49,8 @@ module Julia_Statistics
 
             patientName = splitext(filename)[1]
 
-            Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
-            Patient2 = Serializer.deserialize(srcpath2, patientName, type2)
+            Patient1 = Serializer.deserialize(srcpath1, patientName)
+            Patient2 = Serializer.deserialize(srcpath2, patientName)
            
             signDiffBG = []
             len = min(length(Patient1.GIQ[:,1]), length(Patient2.GIQ[:,1]))
@@ -89,20 +89,20 @@ module Julia_Statistics
        
     end
 
-    function plot_simulation(srcpath1, type1)
+    function plot_simulation(srcpath1)
 
         for filename in readdir(srcpath1)
 
             patientName = splitext(filename)[1]
-            Patient1 = Serializer.deserialize(srcpath1, patientName, type1)
+            Patient1 = Serializer.deserialize(srcpath1, patientName)
             Visualizer.plot_patient_metabolics(Patient1) 
         end
 
     end
 
-    function createStatistics(srcpath, type)
+    function createStatistics(srcpath)
 
-        createDataStructures(srcpath, type)
+        createDataStructures(srcpath)
         StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
         StatisticsExporter.rawBGStats(RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
@@ -113,7 +113,7 @@ module Julia_Statistics
 
     # (longest allowed - insulin dosing - nutrition dosing)
     julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
-    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-16_0_35"
+    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-2-1"
 
     # all 1 hour treatment by matlab
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
@@ -122,8 +122,8 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    #calculate_signDiffBG(julpath1, julpath2, "JUL", "JUL")
-    #plot_simulation(julpath1, "JUL")
-    createStatistics(julpath1, "JUL")
+    calculate_signDiffBG(julpath1, julpath2)
+    plot_simulation(julpath1)
+    createStatistics(julpath1)
 
 end

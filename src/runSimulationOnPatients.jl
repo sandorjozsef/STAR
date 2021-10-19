@@ -11,7 +11,6 @@ using .Serializer
         
         if ispath(simFolderOut) == false
             mkdir(simFolderOut)
-            #mkdir(joinpath(simFolderOut, "patientsBG"))
         end
 
         setup_java_libraries()
