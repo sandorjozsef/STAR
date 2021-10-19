@@ -68,6 +68,8 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.PN = Array{Float64}(undef, 1, 2);
     patient.PN[1,1] = patient.rawSI[1,1];
     patient.PN[1,2] = 0.0;
+    patient.PN[2,1] = patient.PN[1,1] + 5;
+    patient.PN[2,2] = 0.0;
 
     patient.Treal = [patient.Treal[1]];     
         #Treal and Greal will store the virtual BG measurments taken during the simulated trial

@@ -1,13 +1,12 @@
 include("javaCallHelper.jl")
 include("JavaClasses.jl")
 
-
 using MAT
-
 
 function loadPatientData(patient, fullpath)
 
-    #=
+    #= if the data loading happening from java binary files
+
     J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
    
     patient.Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
@@ -23,6 +22,7 @@ function loadPatientData(patient, fullpath)
 
 =#
 
+        #  if the data loading happening from mat files
     vars = matread(fullpath)
             patient.Greal = vec(vars["PatientStruct"]["Greal"])
             patient.Treal = vec(vars["PatientStruct"]["Treal"])
@@ -39,6 +39,10 @@ function loadPatientData(patient, fullpath)
 end
 
 function loadGUIData(guiData, fullpath, T)
+
+    # if the data loading happening from java binary files
+    # T = Simulation_Structs.TargetRangeData()
+    #loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T); the way to call this function
 
     J_GUIData = J_GUIData_class(())
     J_GUIData = jcall(J_GUIData, "loadFromFilename", J_GUIData_class, (JString,), fullpath)
@@ -71,20 +75,20 @@ end
 
 function printPatientData(patient)
     println("Patient's data from STAR: ")
-    #println("CNS:\n", patient.CNS)
+    println("CNS:\n", patient.CNS)
     println("Diabetic Status:\n ", patient.DiabeticStatus)
     println("EGP:\n", patient.EGP)
-    #println("Treal:\n ", patient.Treal)
-    #println("Greal:\n ", patient.Greal)
-    #println("u:\n ", patient.u)
-    #println("P:\n ", patient.P)
-    #println("PN:\n ", patient.PN)
+    println("Treal:\n ", patient.Treal)
+    println("Greal:\n ", patient.Greal)
+    println("u:\n ", patient.u)
+    println("P:\n ", patient.P)
+    println("PN:\n ", patient.PN)
     println("Uo:\n ", patient.Uo)
     println("Po:\n ", patient.Po)
     println("Pmax:\n ", patient.Pmax)
-    #println("rawSI:\n ", patient.rawSI)
+    println("rawSI:\n ", patient.rawSI)
     println("weight:\n ", patient.weight)
-    #println("ControllerFlag:\n", patient.ControllerFlag)
+    println("ControllerFlag:\n", patient.ControllerFlag)
     println()
 end
 
@@ -115,10 +119,5 @@ function loadStochasticModelData(fullpath)
     return J_StochasticModel((JString,), fullpath)
 end
 
-function printStochasticData(stochastic)
-    println("Stochastic Model Data: ")
-    println(jfield(stochastic, "SI_5th_1hr", Array{jdouble, 1}))
 
-    println()
-end
 

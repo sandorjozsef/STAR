@@ -92,7 +92,6 @@ module Julia_Statistics
     function plot_simulation(srcpath1)
 
         for filename in readdir(srcpath1)
-
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName)
             Visualizer.plot_patient_metabolics(Patient1) 
@@ -107,12 +106,13 @@ module Julia_Statistics
         StatisticsExporter.rawBGStats(RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
         StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
-        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, dstpath)
+        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, PN, dstpath)
+        StatisticsExporter.intervention_perEpisode_stats_hourlyAverage(u, P, PN, dstpath)
 
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-1-1"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\1-1-1"
     julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-2-1"
 
     # all 1 hour treatment by matlab
@@ -122,8 +122,8 @@ module Julia_Statistics
 
     dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    calculate_signDiffBG(julpath1, julpath2)
-    plot_simulation(julpath1)
+    #calculate_signDiffBG(julpath1, julpath2)
+    #plot_simulation(julpath1)
     createStatistics(julpath1)
 
 end

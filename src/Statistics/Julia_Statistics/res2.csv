@@ -2,69 +2,83 @@ KeyName,   Value
 . . . Whole Cohort Statistics,   . . .
 Num Episodes,   3
 Total Hours,   686
-Num BG measurements,   325
+Num BG measurements,   686
 Average time of hours analysed (Days),   9.527777777777779
 Median time of hours analysed [IQR] (Days),   [8.25 11.875 11.979166666666668]
-Mean Measures/day (Cohort),   11.370262390670554
-Median [IQR] Measures/day (Per-Patient),   [10.755265610438023 12.324324324324325 12.772688477951636]
+Mean Measures/day (Cohort),   24.0
+Median [IQR] Measures/day (Per-Patient),   [24.0 24.0 24.0]
 -----------------------,   -----------------------
 . . . Raw BG stats,   . . .
-BG median [IQR] (mmol/L),   [4.91851514160502 5.55217394342418 6.33245386836327]
-BG mean (geometric) (mmol/L),   5.935572971034842
-BG StDev (geometric) (mmol/L),   2.0677062906820964
+BG median [IQR] (mmol/L),   [5.0082649628874325 5.251843209592986 5.583900389803704]
+BG mean (geometric) (mmol/L),   5.509968034292341
+BG StDev (geometric) (mmol/L),   1.4590621906245933
 Num episodes < 4.0 mmol/L,   1
 Num episodes < 2.22 mmol/L,   0
 % BG < 2.2 mmol/L,   0.0
-% BG < 4.0 mmol/L,   1.8461538461538463
-% BG < 4.4 mmol/L,   7.076923076923077
-% BG within 4.4 - 6.5 mmol/L,   71.6923076923077
-% BG within 4.4 - 7.0 mmol/L,   78.76923076923077
-% BG within 4.4 - 8.0 mmol/L,   86.76923076923076
-% BG within 8.0 - 10 mmol/L,   3.076923076923077
-% BG within > 10 mmol/L,   3.076923076923077
+% BG < 4.0 mmol/L,   0.7288629737609329
+% BG < 4.4 mmol/L,   3.3527696793002915
+% BG within 4.4 - 6.5 mmol/L,   88.92128279883383
+% BG within 4.4 - 7.0 mmol/L,   92.27405247813411
+% BG within 4.4 - 8.0 mmol/L,   93.73177842565597
+% BG within 8.0 - 10 mmol/L,   1.3119533527696794
+% BG within > 10 mmol/L,   1.6034985422740524
 -----------------------,   -----------------------
 . . . Hourly Resampled BG stats,   . . .
-BG median [IQR] (mmol/L),   [5.180364753732489 5.679144636324089 6.245162591692736]
-BG mean (geometric) (mmol/L),   5.888701585437141
-BG StDev (geometric) (mmol/L),   1.5035984237753888
+BG median [IQR] (mmol/L),   [5.0082649628874325 5.251843209592986 5.583900389803704]
+BG mean (geometric) (mmol/L),   5.509968034292341
+BG StDev (geometric) (mmol/L),   1.4590621906245933
 % BG < 2.2 mmol/L,   0.0
-% BG < 4.0 mmol/L,   0.8746355685131195
-% BG < 4.4 mmol/L,   3.498542274052478
-% BG within 4.4 - 6.1 mmol/L,   66.90962099125365
-% BG within 4.4 - 7 mmol/L,   86.88046647230321
-% BG within 4.4 - 8 mmol/L,   93.4402332361516
-% BG within 4.4 - 9 mmol/L,   94.46064139941691
-% BG within 6.0 - 9 mmol/L,   31.924198250728864
-% BG within 8.0 - 10 mmol/L,   1.6034985422740524
-% BG within > 10 mmol/L,   1.4577259475218658
+% BG < 4.0 mmol/L,   0.7288629737609329
+% BG < 4.4 mmol/L,   3.3527696793002915
+% BG within 4.4 - 6.1 mmol/L,   85.13119533527697
+% BG within 4.4 - 7 mmol/L,   92.27405247813411
+% BG within 4.4 - 8 mmol/L,   93.73177842565597
+% BG within 4.4 - 9 mmol/L,   94.75218658892129
+% BG within 6.0 - 9 mmol/L,   12.099125364431487
+% BG within 8.0 - 10 mmol/L,   1.3119533527696794
+% BG within > 10 mmol/L,   1.6034985422740524
 -----------------------,   -----------------------
 . . . Per-episode statistics (Median [IQR]),   . . .
 *** Raw BG Stats ***,   
-Hours of control,   [72.5 139.0 219.5]
-Num BG measurements,   [84.0 111.0 134.0]
+Hours of control,   [72.25 144.5 216.75]
+Num BG measurements,   [198.0 285.0 287.5]
 Initial BG (mmol/L),   [6.55 9.0 16.0]
-BG median (mmol/L),   [5.442344482367854 5.655613319621994 6.163021718974587]
-BG mean (mmol/L),   [5.551419744784158 5.695816427972931 6.777057086011514]
-BG StDev (mmol/L),   [0.912949808642023 0.9762059561945121 2.4883125075304267]
-%BG > 10.0 mmol/L,   [0.0 0.0 8.771929824561402]
-%BG within 4.0-6.1 mmol/L,   [57.51541014698909 71.17117117117117 74.12061743271934]
-%BG within 4.0-7.0 mmol/L,   [72.01922002458375 87.89808917197452 90.34544098238365]
-%BG within 4.0-8.0 mmol/L,   [82.53994859760866 94.90445859872611 97.00177884891261]
-%BG < 4.4 mmol/L,   [7.0119566432003575 7.017543859649122 7.112375533428165]
-%BG < 4.0 mmol/L,   [0.0 0.0 1.910828025477707]
+BG median (mmol/L),   [5.202595955027686 5.2503276466784445 5.557199897998368]
+BG mean (mmol/L),   [5.2590761269464705 5.262093090446773 6.0359311548983]
+BG StDev (mmol/L),   [0.5370143661611806 0.6787276861578342 1.8904194672518215]
+%BG > 10.0 mmol/L,   [0.0 0.0 4.954954954954955]
+%BG within 4.0-6.1 mmol/L,   [73.58937885253674 87.71929824561403 93.16999395039322]
+%BG within 4.0-7.0 mmol/L,   [87.15979137031769 96.84210526315789 98.2486388384755]
+%BG within 4.0-8.0 mmol/L,   [91.11427216690375 97.54385964912281 98.59951603145795]
+%BG < 4.4 mmol/L,   [2.663870767319043 3.6036036036036037 4.257942152678995]
+%BG < 4.0 mmol/L,   [0.0 0.0 0.8771929824561403]
 %BG < 2.22 mmol/L,   [0.0 0.0 0.0]
 -----------------------,   -----------------------
 . . . Intervention Cohort Stats (Hourly Average),   . . .
-Median insulin rate [IQR] (U/hr),   [0.0, 2.0, 3.0]
+Median insulin rate [IQR] (U/hr),   [0.0, 2.0, 4.0]
 Feed Stats All,   
-Median glucose rate [IQR] (g/hour),   NaN
+Median glucose rate [IQR] (g/hour),   [3.6944999999999997, 3.7352, 3.7352]
 Median glucose rate [IQR] (% goal),   NaN
 Median Enteral glucose [IQR] (g/hour),   [0.3420833333333333, 0.34585185185185185, 0.34585185185185185]
-Median Parental glucose [IQR] (g/hour),   NaN
+Median Parental glucose [IQR] (g/hour),   [0.0, 0.0, 0.0]
 Feed Stats Excluding those not fed,   
 Total hours not fed,   77
-Median glucose rate [IQR] (g/hour),   NaN
+Median glucose rate [IQR] (g/hour),   [3.6944999999999997, 3.7352, 3.7352]
 Median glucose rate [IQR] (% goal),   NaN
-Median Enteral glucose [IQR] (g/hour),   [0.3420833333333333, 0.34585185185185185, 0.34585185185185185]
-Median Parental glucose [IQR] (g/hour),   NaN
+Median Enteral glucose [IQR] (g/hour),   [3.6944999999999997, 3.7352, 3.7352]
+Median Parental glucose [IQR] (g/hour),   [5.0, 5.0, 5.0]
+-----------------------,   -----------------------
+. . . Intervention Per-episode Stats (Hourly Average),   . . .
+Median insulin rate [IQR] (U/hr),   [1.949576527525711, 2.3508771929824563, 3.770033191085823]
+Feed Stats All,   
+Median glucose rate [IQR] (g/hour),   [3.180657697952482, 3.5890992555540877, 4.880296925074342]
+Median glucose rate [IQR] (% goal),   NaN
+Median Enteral glucose [IQR] (g/hour),   [3.17188576812792, 3.5890992555540806, 4.880296925074341]
+Median Parental glucose [IQR] (g/hour),   [0.0, 0.0, 0.008771929824561403]
+Feed Stats Excluding those not fed,   
+Total hours not fed,   77
+Median glucose rate [IQR] (g/hour),   [3.6743514296682744, 3.6909176741513656, 4.931206134372981]
+Median glucose rate [IQR] (% goal),   NaN
+Median Enteral glucose [IQR] (g/hour),   [3.6627773555942023, 3.69091767415136, 4.931206134372981]
+Median Parental glucose [IQR] (g/hour),   [5.0, 5.0, 5.0]
 -----------------------,   -----------------------

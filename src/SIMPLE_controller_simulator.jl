@@ -28,7 +28,8 @@ function SIMPLE_controller_simulator(patient, simulation)
     if simulation.NutritionDispenser == 3 Nutr=0.6 end
     patient.P = [patient.P; patient.P[end,1]+selection*60 Nutr]
     
-    patient.PN = [patient.PN; patient.PN[end,1]+selection*60 0.0] #parenteral = 0
+    patient.PN = [patient.PN; patient.PN[end,1]+selection*60-5 0.0] #parenteral = 0
+    patient.PN = [patient.PN; patient.PN[end,1]+5 0.0]
 
     simulation.measurement_time = selection * 60.0;
     if patient.Treal[end] >= patient.rawSI[end, 1]

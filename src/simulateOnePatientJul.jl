@@ -26,25 +26,16 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     # 2 -> SIMPLE
     simulation.mode = 1 ; 
 
-   
     # 1 -> low nutrition 
     # 2 -> normal nutrition 
     # 3 -> high nutrition
     simulation.NutritionDispenser = 2;
     
     patient = Simulation_Structs.Patient();
-    #guiData = Simulation_Structs.GUIData();
-    timeSoln = Simulation_Structs.TimeSoln();
-    
-   # T = Simulation_Structs.TargetRangeData()
-
     patient.SimulationDate = now();
-
-    #loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T);
-    #println(guiData.TargetRange)
-    #println(guiData.Weight)
-    #println(guiData.Age)
     loadPatientData(patient, srcPath * ".mat" );
+
+    timeSoln = Simulation_Structs.TimeSoln();
     
     ICING2_model_sim_init(patient, timeSoln, egp);
     

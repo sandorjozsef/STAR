@@ -89,8 +89,6 @@ mutable struct TimeSoln
     TimeSoln() = new()
 end
 
-#export InzulinDispenserType
-#@enum InzulinDispenserType smart simple
 
 mutable struct Simulation
     stop_simulation 
@@ -104,6 +102,5 @@ mutable struct Simulation
 end
 
 export Patient, Simulation, GUIData, TimeSoln
-
 
 end

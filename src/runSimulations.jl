@@ -8,6 +8,7 @@
 #Pkg.add("JLD2")
 #Pkg.add("MAT")
 #Pkg.add("FileIO")  
+#Pkg.add("Pipe")
 
 include("runSimulationOnPatients.jl")
 

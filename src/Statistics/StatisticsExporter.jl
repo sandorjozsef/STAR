@@ -3,6 +3,7 @@ module StatisticsExporter
 using Statistics
 using CSV
 using DataFrames
+using Pipe
 
 myDelim = ",   "
 
@@ -137,7 +138,7 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
 end
 
 export intervention_cohort_stats_hourlyAverage
-function intervention_cohort_stats_hourlyAverage(u, P, fullpath)
+function intervention_cohort_stats_hourlyAverage(u, P, PN, fullpath)
  
     u_all = []
     for i in 1:length(u)
@@ -149,6 +150,12 @@ function intervention_cohort_stats_hourlyAverage(u, P, fullpath)
     for i in 1:length(u)
         P_ = resample_hourly_enteral_glucose(P[i])
         push!(P_all, P_...)
+    end
+
+    PN_all = []
+    for i in 1:length(PN)
+        PN_ = resample_hourly_parenteral_glucose(PN[i])
+        push!(PN_all, PN_...)
     end
 
     mn = DataFrame(KeyName = [
@@ -171,16 +178,25 @@ function intervention_cohort_stats_hourlyAverage(u, P, fullpath)
                   ". . .",
                   quantile(u_all, [0.25, 0.5, 0.75]),
                   "",
-                  missing,
+                  quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]), # convert mmol/min to g/hour
                   missing,
                   quantile(P_all, [0.25, 0.5, 0.75]),
-                  missing,
+                  quantile(PN_all, [0.25, 0.5, 0.75]),
                   "",
                   length(filter(x -> x == 0, P_all)),
+                  (@pipe (P_all + PN_all) |> 
+                   filter(x -> x != 0, _) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
                   missing,
-                  missing,
-                  quantile(filter(x -> x != 0, P_all), [0.25, 0.5, 0.75]),
-                  missing,
+                  (@pipe P_all |> 
+                   filter(x -> x!=0,_) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  (@pipe PN_all |> 
+                   filter(x -> x!=0,_) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
                   "-----------------------"
               ])
                   
@@ -230,9 +246,98 @@ function resample_hourly_enteral_glucose(P)
     
 end
 
+function resample_hourly_parenteral_glucose(PN)
+    #PN[:,1] -> 0 5 60 65 180 185 ...
+    
+    PN_hourly = []
+    for i in 1:2:(length(PN[:,1])-2)
+        push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+        if (PN[i+2,1] - PN[i,1]) == 120
+            push!(P_hourly, PN[i,2])
+        end
+        if (PN[i+2,1] - PN[i,1]) == 180
+            push!(PN_hourly, PN[i,2])
+            push!(PN_hourly, PN[i,2])
+        end
+    end
+    push!(PN_hourly, PN[end-1,2]) # the last one supposed 1 hour
+
+    return PN_hourly
+    
+end
+
 export intervention_perEpisode_stats_hourlyAverage
-function intervention_perEpisode_stats_hourlyAverage()
-    #TODO
+function intervention_perEpisode_stats_hourlyAverage(u, P, PN, fullpath)
+
+    Feed_all = map(x -> resample_hourly_parenteral_glucose(x), PN) + map(x -> resample_hourly_enteral_glucose(x), P)
+
+    mn = DataFrame(KeyName = [
+        ". . . Intervention Per-episode Stats (Hourly Average)",
+        "Median insulin rate [IQR] (U/hr)",
+        "Feed Stats All",
+        "Median glucose rate [IQR] (g/hour)",
+        "Median glucose rate [IQR] (% goal)",
+        "Median Enteral glucose [IQR] (g/hour)",
+        "Median Parental glucose [IQR] (g/hour)",
+        "Feed Stats Excluding those not fed",
+        "Total hours not fed",
+        "Median glucose rate [IQR] (g/hour)",
+        "Median glucose rate [IQR] (% goal)",
+        "Median Enteral glucose [IQR] (g/hour)",
+        "Median Parental glucose [IQR] (g/hour)",
+        "-----------------------"
+        ],
+              Value = [
+                  ". . .",
+                  (@pipe u |>
+                   map(x -> resample_hourly_insulin(x), _) |>
+                   map(x -> mean(x), _) |>
+                   quantile(_, [0.25, 0.5, 0.75])),
+                  "",
+                  (@pipe Feed_all |>
+                   map(x -> mean(x), _) |>
+                   map(x -> x * 180 * 60 / 1000, _) |>
+                   quantile(_, [0.25, 0.5, 0.75])), # convert mmol/min to g/hour
+                  missing,
+                  (@pipe P |>
+                   map(x -> resample_hourly_enteral_glucose(x), _) |>
+                   map(x -> mean(x), _) |>
+                   map(x -> x * 180 * 60 / 1000, _) |>
+                   quantile(_, [0.25, 0.5, 0.75])),
+                  (@pipe PN |>
+                   map(x -> resample_hourly_parenteral_glucose(x), _) |>
+                   map(x -> mean(x), _) |>
+                   map(x -> x * 180 * 60 / 1000, _) |>
+                   quantile(_, [0.25, 0.5, 0.75])),
+                  "",
+                  (@pipe Feed_all |>
+                   map(x -> filter(y -> y == 0, x), _) |>
+                   map(x -> length(x), _) |> sum ),
+                  (@pipe Feed_all |>
+                   map(x -> filter(y -> y != 0, x), _) |>
+                   map(x -> mean(x), _) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  missing,
+                  (@pipe P |> 
+                   map(x -> resample_hourly_enteral_glucose(x), _) |> 
+                   map(x -> filter(y -> y != 0, x), _) |> 
+                   map(x -> mean(x), _) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75])),
+                  (@pipe PN |> 
+                   map(x -> resample_hourly_parenteral_glucose(x), _) |> 
+                   map(x -> filter(y -> y != 0, x), _) |> 
+                   filter(x -> x != [], _) |> 
+                   map(x -> mean(x), _) |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75])),
+                  "-----------------------"
+              ])
+                  
+      # writing to the newly created file
+      CSV.write(fullpath, mn, append = true, delim = myDelim, missingstring = "NaN")
+
 
 end
 

@@ -19,11 +19,7 @@ module Serializer
     end
 
     function serialize(serPatient, fullpath)
-        #=T = typeof(serPatient)
-        for (name, typ) in zip(fieldnames(T), T.types)
-        println("type of the fieldname $name is $typ")
-        end=#
-
+        # serialize to jld2 file format
         save(fullpath, Dict(
          "GIQ" => serPatient.GIQ,
          "Treal" => serPatient.Treal,
