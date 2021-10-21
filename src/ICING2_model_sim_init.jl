@@ -65,7 +65,7 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.P = Array{Float64}(undef, 1, 2);
     patient.P[1,1] = patient.rawSI[1,1];
     patient.P[1,2] = patient.Po;
-    patient.PN = Array{Float64}(undef, 1, 2);
+    patient.PN = Array{Float64}(undef, 2, 2);
     patient.PN[1,1] = patient.rawSI[1,1];
     patient.PN[1,2] = 0.0;
     patient.PN[2,1] = patient.PN[1,1] + 5;

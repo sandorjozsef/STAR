@@ -1,7 +1,9 @@
 include("javaCallHelper.jl")
 include("JavaClasses.jl")
+include("$(pwd())//src//Statistics//Serializer.jl")
 
 using MAT
+using .Serializer
 
 function loadPatientData(patient, fullpath)
 

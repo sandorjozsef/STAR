@@ -7,9 +7,10 @@ include("STAR_controller_simulator.jl")
 include("JavaCall\\loadSTARData.jl") 
 include("Simulation_Structs.jl")
 include("SIMPLE_controller_simulator.jl")
+include("Statistics//Serializer.jl")
 
 using .Simulation_Structs
-
+using .Serializer
 
 function simulateOnePatientJul(srcPath, dstPath, name, egp)
    
@@ -34,6 +35,7 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();
     loadPatientData(patient, srcPath * ".mat" );
+    #serPatient = Serializer.deserialize(srcPath)
 
     timeSoln = Simulation_Structs.TimeSoln();
     

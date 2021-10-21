@@ -15,6 +15,7 @@ module Serializer
         rawSI::Matrix{Float64}
         hourlyBG::Vector{Float64}
         Name::String
+        GoalFeed::Float64
         SerializablePatient() = new()
     end
 
@@ -28,7 +29,8 @@ module Serializer
          "rawSI" => serPatient.rawSI,
          "u" => serPatient.u,
          "hourlyBG" => serPatient.hourlyBG,
-         "Name" => serPatient.Name
+         "Name" => serPatient.Name,
+         "GoalFeed" => serPatient.GoalFeed
          ))
 
     end
@@ -51,6 +53,7 @@ module Serializer
             Patient.u = data["u"]
             Patient.hourlyBG = data["hourlyBG"]
             Patient.Name = data["Name"]
+            Patient.GoalFeed = data["GoalFeed"]
 
         elseif type == ".mat"
 
@@ -68,6 +71,7 @@ module Serializer
             Patient.u = [ vars["PatientStruct"]["u"][1] vars["PatientStruct"]["u"][2] ]
             Patient.hourlyBG = [0.0]
             Patient.Name = patientName
+            Patient.GoalFeed = vars["PatientStruct"]["GoalFeed"]
 
         else
             throw(ArgumentError("Not existing serializable type."))

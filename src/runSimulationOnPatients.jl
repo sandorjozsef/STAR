@@ -30,6 +30,7 @@ using .Serializer
             serPatient.hourlyBG = patient.hourlyBG
             serPatient.u = patient.u
             serPatient.Name = patientname
+            serPatient.GoalFeed = patient.GoalFeed
             Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")
 
         end

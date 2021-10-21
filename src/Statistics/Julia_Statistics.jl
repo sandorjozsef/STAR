@@ -15,6 +15,7 @@ module Julia_Statistics
     P = Vector{Matrix{Float64}}()
     PN = Vector{Matrix{Float64}}()
     HourlyBG = Vector{Vector{Float64}}()
+    GoalFeeds = Vector{Float64}()
 
     function createDataStructures(srcpath)
 
@@ -29,6 +30,7 @@ module Julia_Statistics
             push!(u, JuliaPatient.u)
             push!(P, JuliaPatient.P) 
             push!(PN, JuliaPatient.PN)
+            push!(GoalFeeds, JuliaPatient.GoalFeed)
         end
 
     end
@@ -99,20 +101,21 @@ module Julia_Statistics
 
     end
 
-    function createStatistics(srcpath)
+    function createStatistics(srcpath, dstpath)
 
         createDataStructures(srcpath)
         StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
         StatisticsExporter.rawBGStats(RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
         StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
-        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, PN, dstpath)
-        StatisticsExporter.intervention_perEpisode_stats_hourlyAverage(u, P, PN, dstpath)
+        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
+        StatisticsExporter.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
+
 
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\1-1-1"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3hour_STAR"
     julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-2-1"
 
     # all 1 hour treatment by matlab
@@ -120,10 +123,13 @@ module Julia_Statistics
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
-    dstpath = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
+    matpath4 = "$(pwd())\\src\\Statistics\\MatLabResults\\3hour_ode45_1e_6"
+
+    dstpath1 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res1.csv"
+    dstpath2 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
     #calculate_signDiffBG(julpath1, julpath2)
     #plot_simulation(julpath1)
-    createStatistics(julpath1)
-
+    createStatistics(julpath1, dstpath2)
+    createStatistics(matpath4, dstpath1)
 end

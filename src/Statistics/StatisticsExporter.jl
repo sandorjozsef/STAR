@@ -6,6 +6,7 @@ using DataFrames
 using Pipe
 
 myDelim = ",   "
+eps = 0.0001
 
 export hourlyResampledBGStats
 function hourlyResampledBGStats(HourlyBG, fullpath)
@@ -138,26 +139,24 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
 end
 
 export intervention_cohort_stats_hourlyAverage
-function intervention_cohort_stats_hourlyAverage(u, P, PN, fullpath)
+function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
  
     u_all = []
+    P_all = []
+    PN_all = []
+    GoalFeed_hourly = []
     for i in 1:length(u)
         u_ = resample_hourly_insulin(u[i])
         push!(u_all, u_...)
-    end
-
-    P_all = []
-    for i in 1:length(u)
         P_ = resample_hourly_enteral_glucose(P[i])
         push!(P_all, P_...)
-    end
-
-    PN_all = []
-    for i in 1:length(PN)
         PN_ = resample_hourly_parenteral_glucose(PN[i])
         push!(PN_all, PN_...)
+        push!(GoalFeed_hourly,
+            (GoalFeeds[i] for j in 1:length(PN_))...
+        )
     end
-
+    
     mn = DataFrame(KeyName = [
         ". . . Intervention Cohort Stats (Hourly Average)",
         "Median insulin rate [IQR] (U/hr)",
@@ -179,16 +178,20 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, fullpath)
                   quantile(u_all, [0.25, 0.5, 0.75]),
                   "",
                   quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]), # convert mmol/min to g/hour
-                  missing,
-                  quantile(P_all, [0.25, 0.5, 0.75]),
-                  quantile(PN_all, [0.25, 0.5, 0.75]),
+                  (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
+                   filter(x -> (!isinf(x) && !isnan(x)), _) |>
+                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  quantile(skipmissing(P_all), [0.25, 0.5, 0.75]),
+                  quantile(skipmissing(PN_all), [0.25, 0.5, 0.75]),
                   "",
-                  length(filter(x -> x == 0, P_all)),
+                  length(filter(x -> x < eps, P_all+PN_all)),
                   (@pipe (P_all + PN_all) |> 
-                   filter(x -> x != 0, _) |> 
+                   filter(x -> x > eps, _) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 
                    quantile(_, [0.25, 0.5, 0.75]) ),
-                  missing,
+                  (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
+                   filter(x -> (x > eps && !isinf(x) && !isnan(x)), _) |>
+                   quantile(_, [0.25, 0.5, 0.75]) ),
                   (@pipe P_all |> 
                    filter(x -> x!=0,_) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 
@@ -253,7 +256,7 @@ function resample_hourly_parenteral_glucose(PN)
     for i in 1:2:(length(PN[:,1])-2)
         push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
         if (PN[i+2,1] - PN[i,1]) == 120
-            push!(P_hourly, PN[i,2])
+            push!(PN_hourly, PN[i,2])
         end
         if (PN[i+2,1] - PN[i,1]) == 180
             push!(PN_hourly, PN[i,2])
@@ -267,10 +270,10 @@ function resample_hourly_parenteral_glucose(PN)
 end
 
 export intervention_perEpisode_stats_hourlyAverage
-function intervention_perEpisode_stats_hourlyAverage(u, P, PN, fullpath)
+function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
 
     Feed_all = map(x -> resample_hourly_parenteral_glucose(x), PN) + map(x -> resample_hourly_enteral_glucose(x), P)
-
+    
     mn = DataFrame(KeyName = [
         ". . . Intervention Per-episode Stats (Hourly Average)",
         "Median insulin rate [IQR] (U/hr)",
@@ -298,7 +301,11 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, fullpath)
                    map(x -> mean(x), _) |>
                    map(x -> x * 180 * 60 / 1000, _) |>
                    quantile(_, [0.25, 0.5, 0.75])), # convert mmol/min to g/hour
-                  missing,
+                  (@pipe (Feed_all ./ GoalFeeds) |>
+                   map(y -> filter(x -> (!isinf(x) && !isnan(x)), y), _) |>
+                   filter(x -> x != [], _) |>
+                   map(x -> mean(x) * 100, _) |>
+                   quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe P |>
                    map(x -> resample_hourly_enteral_glucose(x), _) |>
                    map(x -> mean(x), _) |>
@@ -311,23 +318,30 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, fullpath)
                    quantile(_, [0.25, 0.5, 0.75])),
                   "",
                   (@pipe Feed_all |>
-                   map(x -> filter(y -> y == 0, x), _) |>
+                   map(x -> filter(y -> y < eps, x), _) |>
+                   filter(x -> x != [], _) |>
                    map(x -> length(x), _) |> sum ),
                   (@pipe Feed_all |>
-                   map(x -> filter(y -> y != 0, x), _) |>
+                   map(x -> filter(y -> y > eps, x), _) |>
+                   filter(x -> x != [], _) |>
                    map(x -> mean(x), _) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 
                    quantile(_, [0.25, 0.5, 0.75]) ),
-                  missing,
+                  (@pipe (Feed_all ./ GoalFeeds) |>
+                   map(y -> filter(x -> (x > eps && !isinf(x) && !isnan(x)), y), _) |>
+                   filter(x -> x != [], _) |>
+                   map(x -> mean(x) * 100, _) |>
+                   quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe P |> 
                    map(x -> resample_hourly_enteral_glucose(x), _) |> 
-                   map(x -> filter(y -> y != 0, x), _) |> 
+                   map(x -> filter(y -> y > eps, x), _) |> 
+                   filter(x -> x != [], _) |>
                    map(x -> mean(x), _) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 
                    quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe PN |> 
                    map(x -> resample_hourly_parenteral_glucose(x), _) |> 
-                   map(x -> filter(y -> y != 0, x), _) |> 
+                   map(x -> filter(y -> y > eps, x), _) |> 
                    filter(x -> x != [], _) |> 
                    map(x -> mean(x), _) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 

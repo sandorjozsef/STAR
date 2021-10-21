@@ -75,7 +75,7 @@ mutable struct Patient
     Treal_orig::Array{Float64,1}
     Greal_orig::Array{Float64,1}
     P_prior
-    GoalFeed
+    GoalFeed::Float64
     StoppedFeed
     nrBg
     RestartRate
