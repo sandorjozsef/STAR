@@ -111,7 +111,13 @@ module Julia_Statistics
         StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
         StatisticsExporter.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
 
-
+        empty!(RawBG)
+        empty!(Treal)
+        empty!(u)
+        empty!(P)
+        empty!(PN)
+        empty!(HourlyBG)
+        empty!(GoalFeeds)
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
@@ -130,6 +136,7 @@ module Julia_Statistics
 
     #calculate_signDiffBG(julpath1, julpath2)
     #plot_simulation(julpath1)
+    
     createStatistics(julpath1, dstpath2)
     createStatistics(matpath4, dstpath1)
 end

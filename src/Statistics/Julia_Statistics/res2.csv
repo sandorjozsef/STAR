@@ -62,8 +62,8 @@ Median glucose rate [IQR] (% goal),   [59.17916835608415, 97.96022727272727, 99.
 Median Enteral glucose [IQR] (g/hour),   [0.0, 0.162962962962963, 0.34585185185185185]
 Median Parental glucose [IQR] (g/hour),   [0.0, 0.0, 0.0]
 Feed Stats Excluding those not fed,   
-Total hours not fed,   4393
-Median glucose rate [IQR] (g/hour),   [2.3809, 3.6944999999999997, 5.4186]
+Total hours not fed,   4236
+Median glucose rate [IQR] (g/hour),   [2.2987999999999995, 3.6944999999999997, 5.4186]
 Median glucose rate [IQR] (% goal),   [70.41027292738224, 98.90377588306943, 99.95941558441557]
 Median Enteral glucose [IQR] (g/hour),   [2.2167, 3.654, 5.4186]
 Median Parental glucose [IQR] (g/hour),   [5.0, 5.0, 5.0]
@@ -76,9 +76,9 @@ Median glucose rate [IQR] (% goal),   [60.38469536547521, 78.3613877117829, 92.9
 Median Enteral glucose [IQR] (g/hour),   [1.3620460526315793e-7, 2.876829960253861, 5.113688221041304]
 Median Parental glucose [IQR] (g/hour),   [0.0, 0.0, 0.0]
 Feed Stats Excluding those not fed,   
-Total hours not fed,   4393
-Median glucose rate [IQR] (g/hour),   [3.04009557795699, 4.471824999999999, 5.765945555555554]
+Total hours not fed,   4236
+Median glucose rate [IQR] (g/hour),   [2.9533342948717953, 4.471824999999999, 5.765945555555554]
 Median glucose rate [IQR] (% goal),   [72.45631849654805, 87.33460383859686, 95.57317268430347]
-Median Enteral glucose [IQR] (g/hour),   [2.9745827550167245, 4.278143749999999, 5.887911411411412]
+Median Enteral glucose [IQR] (g/hour),   [2.919460728744939, 4.278143749999999, 5.887911411411412]
 Median Parental glucose [IQR] (g/hour),   [5.0, 5.0, 5.0]
 -----------------------,   -----------------------
