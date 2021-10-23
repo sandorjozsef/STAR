@@ -223,7 +223,18 @@ end
 
 function setDiabeticStatus(patient::J_PatientStruct_class, ds::jint)
     jcall(patient, "setDiabeticStatus", Nothing, (jint,), ds);
-    #println("diabetic status: ", jfield(patient, "DiabeticStatus", jint));
+end
+
+function loadPatientStruct(patient, fullpath)
+    J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
+    patient.Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
+    patient.Greal = jfield(J_PatientStruct, "Greal", Array{jdouble, 1})
+    patient.u = jfield(J_PatientStruct, "u", Array{jdouble, 2})
+    patient.P = jfield(J_PatientStruct, "P", Array{jdouble, 2})
+    patient.PN = jfield(J_PatientStruct, "PN", Array{jdouble, 2})
+    patient.Uo = jfield(J_PatientStruct, "Uo", jdouble)
+    patient.Po = jfield(J_PatientStruct, "Po", jdouble)
+    patient.rawSI = jfield(J_PatientStruct, "rawSI", Array{jdouble, 2})
 end
 
 #------- ICING2 -------#
@@ -282,6 +293,16 @@ function getControllerFlag(sc::J_SweetInterface_Controller_outputs)
     return jfield(sc, "controllerFlag", jint);
 end
 
+# ----- J_TimeSoln_class ----- #
 
+function loadTimeSoln(timeSoln, fullpath)
+
+    J_TimeSoln = J_TimeSoln_class(())
+    J_TimeSoln = jcall(J_TimeSoln, "loadFromFile", J_TimeSoln_class, (JString,), fullpath)
+    timeSoln.GIQ = jfield(J_TimeSoln, "GIQ", Array{jdouble, 2})
+    timeSoln.T = jfield(J_TimeSoln, "T", Array{jdouble, 1})
+    timeSoln.P = jfield(J_TimeSoln, "P", Array{jdouble, 2})
+
+end
 
 

@@ -1,13 +1,17 @@
 module Serializer
 
+    include("$(pwd())//src//JavaCall//javaCallHelper.jl")
+    include("$(pwd())//src//Simulation_Structs.jl")
     using JLD2
     using FileIO
     using MAT
+    using .Simulation_Structs
 
     export SerializablePatient, serialize, deserialize
 
     mutable struct SerializablePatient
         Treal::Vector{Float64}
+        Greal::Vector{Float64}
         GIQ::Matrix{Float64}
         PN::Matrix{Float64}
         P::Matrix{Float64}
@@ -16,6 +20,8 @@ module Serializer
         hourlyBG::Vector{Float64}
         Name::String
         GoalFeed::Float64
+        Po::Float64
+        Uo::Float64
         SerializablePatient() = new()
     end
 
@@ -24,13 +30,16 @@ module Serializer
         save(fullpath, Dict(
          "GIQ" => serPatient.GIQ,
          "Treal" => serPatient.Treal,
+         "Greal" => serPatient.Greal,
          "P" => serPatient.P,
          "PN" => serPatient.PN,
          "rawSI" => serPatient.rawSI,
          "u" => serPatient.u,
          "hourlyBG" => serPatient.hourlyBG,
          "Name" => serPatient.Name,
-         "GoalFeed" => serPatient.GoalFeed
+         "GoalFeed" => serPatient.GoalFeed,
+         "Po" => serPatient.Po,
+         "Uo" => serPatient.Uo
          ))
 
     end
@@ -39,39 +48,70 @@ module Serializer
 
         Patient = SerializablePatient()
         type = splitext(readdir(path)[1])[2]
+        fileName = splitext(readdir(path)[1])[1]
         if type == ".jld2"
-            if contains(patientName, "SIM_")
-                patientName = replace(patientName, "SIM_" => "", count = 1)
-            end
+
             data = load(path * "\\$patientName" * ".jld2") # it returns a Dictionary
-            Patient.GIQ = data["GIQ"]
+            
             Patient.Treal = data["Treal"]
+            Patient.Greal = data["Greal"]
+            dense_GIQ = data["GIQ"]
+            Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
             Patient.P = data["P"]
             Patient.PN = data["PN"]
-            Patient.GIQ = data["GIQ"]
             Patient.rawSI = data["rawSI"]
             Patient.u = data["u"]
             Patient.hourlyBG = data["hourlyBG"]
             Patient.Name = data["Name"]
             Patient.GoalFeed = data["GoalFeed"]
+            Patient.Po = data["Po"]
+            Patient.Uo = data["Uo"]
 
         elseif type == ".mat"
-
-            if contains(patientName, "SIM_")
-                patientName = replace(patientName, "SIM_" => "", count = 1)
+            vars = undef
+            if ispath(path * "\\$patientName" * ".mat")
+                vars = matread(path * "\\$patientName" * ".mat")
+            else 
+                vars = matread(path * "\\SIM_$patientName" * ".mat")
             end
-            vars = matread(path * "\\SIM_$patientName" * ".mat")
-            dense_GIQ = vars["TimeSoln"]["GIQ"]
-            Greal = vec(vars["PatientStruct"]["Greal"])
-            Patient.GIQ = createGIQ(Greal, dense_GIQ)
+
+            Patient.Greal = vec(vars["PatientStruct"]["Greal"])
             Patient.Treal = vec(vars["PatientStruct"]["Treal"])
-            Patient.P = [ vars["PatientStruct"]["P"][1] vars["PatientStruct"]["P"][2] ]
-            Patient.PN = [ vars["PatientStruct"]["PN"][1] vars["PatientStruct"]["PN"][2] ]
-            Patient.rawSI = [ vars["PatientStruct"]["rawSI"][1] vars["PatientStruct"]["rawSI"][2] ]
-            Patient.u = [ vars["PatientStruct"]["u"][1] vars["PatientStruct"]["u"][2] ]
             Patient.hourlyBG = [0.0]
+            Patient.Uo = vars["PatientStruct"]["Uo"]
+            Patient.Po = vars["PatientStruct"]["Po"]
+            
+            if contains(fileName, "SIM_") # simulated values
+                patientName = replace(fileName, "SIM_" => "", count = 1)
+                dense_GIQ = vars["TimeSoln"]["GIQ"]
+                Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+                Patient.GoalFeed = vars["PatientStruct"]["GoalFeed"]
+                Patient.P = [ vars["PatientStruct"]["P"][1] vars["PatientStruct"]["P"][2] ]
+                Patient.PN = [ vars["PatientStruct"]["PN"][1] vars["PatientStruct"]["PN"][2] ]
+                Patient.u = [ vars["PatientStruct"]["u"][1] vars["PatientStruct"]["u"][2] ]
+                Patient.rawSI = [ vars["PatientStruct"]["rawSI"][1] vars["PatientStruct"]["rawSI"][2] ]
+            else
+                Patient.GIQ = [0 0 0]
+                Patient.GoalFeed = Patient.Po
+                Patient.P = vars["PatientStruct"]["P"]
+                Patient.PN = vars["PatientStruct"]["PN"]
+                Patient.u =  vars["PatientStruct"]["u"]
+                Patient.rawSI = vars["PatientStruct"]["rawSI"]
+            end
             Patient.Name = patientName
-            Patient.GoalFeed = vars["PatientStruct"]["GoalFeed"]
+
+        elseif type == ""
+
+            #PatientStruct
+            loadPatientStruct(Patient, path *"\\"* patientName *"\\"* patientName *".PatientStruct")
+            Patient.GoalFeed = Patient.Po
+            Patient.hourlyBG = [0.0]
+            #TimeSoln
+            timeSoln = Simulation_Structs.TimeSoln()
+            loadTimeSoln(timeSoln, path *"\\"* patientName *"\\"* patientName *".TimeSoln")
+            dense_GIQ = timeSoln.GIQ
+            Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+            
 
         else
             throw(ArgumentError("Not existing serializable type."))

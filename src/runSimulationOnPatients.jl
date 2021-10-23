@@ -17,13 +17,13 @@ using .Serializer
 
         for name in readdir(srcDir)
             patientname = splitext(name)[1]
-            srcPath = joinpath(srcDir, patientname);
             println("\nProcess patient: ", patientname);
-            @time patient = simulateOnePatientJul(srcPath, simFolderOut, patientname, egp)
+            @time (patient, timeSoln) = simulateOnePatientJul(srcDir, simFolderOut, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
-            serPatient.GIQ = [patient.Greal patient.Ireal patient.Qreal]
+            serPatient.GIQ = timeSoln.GIQ
             serPatient.Treal = patient.Treal
+            serPatient.Greal = patient.Greal
             serPatient.P = patient.P
             serPatient.PN = patient.PN
             serPatient.rawSI = patient.rawSI
@@ -31,6 +31,8 @@ using .Serializer
             serPatient.u = patient.u
             serPatient.Name = patientname
             serPatient.GoalFeed = patient.GoalFeed
+            serPatient.Uo = patient.Uo
+            serPatient.Po = patient.Po
             Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")
 
         end

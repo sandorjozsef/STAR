@@ -34,8 +34,18 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();
-    loadPatientData(patient, srcPath * ".mat" );
-    #serPatient = Serializer.deserialize(srcPath)
+    
+    serPatient = Serializer.deserialize(srcPath, name)
+    patient.Treal = serPatient.Treal
+    patient.Greal = serPatient.Greal
+    patient.u = serPatient.u
+    patient.P = serPatient.P
+    patient.PN  = serPatient.PN
+    patient.Uo = serPatient.Uo 
+    patient.Po = serPatient.Po 
+    patient.rawSI = serPatient.rawSI
+    patient.GoalFeed = serPatient.GoalFeed
+  
 
     timeSoln = Simulation_Structs.TimeSoln();
     
@@ -57,6 +67,6 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
        
     end
 
-    return patient;
+    return (patient,  timeSoln);
 
 end

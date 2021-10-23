@@ -24,27 +24,15 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
         EGP = 1.16;
 
         i = findlast(x -> x <= t, patient.rawSI[:,1]);
-        if isnothing(i)
-            i = 1
-        end
         SI = patient.rawSI[i, 2];
         
         i = findlast(x -> x <= t, patient.P[:,1]);
-        if isnothing(i)
-            i = 1
-        end
         P = patient.P[i,2];
 
         i = findlast(x -> x <= t, patient.PN[:,1]);
-        if isnothing(i)
-            i = 1
-        end
         PN = patient.PN[i,2];
        
         i = findlast(x -> x <= t, patient.u[:,1]);
-        if isnothing(i)
-            i = 1
-        end
         u_ex = patient.u[i,2];
         
         u_en = min(max(patient.uenmin, (patient.k1[1]*G+patient.k2[1])), patient.uenmax);
@@ -61,7 +49,6 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     insulinTime = patient.u[indexInterval, 1];
     pushfirst!(insulinTime, t_start);
     push!(insulinTime, t_end);
-    unique!(insulinTime)
     
     TS_startIndx = findlast(x -> x == t_start, timeSoln.T);
     if(isnothing(TS_startIndx)) TS_startIndx = 1 end
@@ -74,33 +61,15 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
     timeSoln.GIQ = timeSoln.GIQ[1:TS_startIndx, :];
     timeSoln.P = timeSoln.P[1:TS_startIndx, :];
 
-    pop!(timeSoln.T)
-    pop!(timeSoln.GIQ[:,1])
-    pop!(timeSoln.GIQ[:,2])
-    pop!(timeSoln.GIQ[:,3])
-    pop!(timeSoln.P[:,1])
-    pop!(timeSoln.P[:,2])
-
     for i in 1:size(insulinTime, 1)-1
         
         prob = ODEProblem(ICING_model_ODE!, ODEinit, (insulinTime[i], insulinTime[i+1]));
-        
         Ints = solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8);
-       
         ODEinit = Ints[end];
 
-        if length(TFinal)!=0 pop!(TFinal) end
-        TFinal = cat(TFinal, Ints.t, dims=1); 
+        TFinal = cat(TFinal, Ints.t[2:end], dims=1); 
 
-        if length(IntsFinal[1]) != 0
-        pop!(IntsFinal[1])
-        pop!(IntsFinal[2])
-        pop!(IntsFinal[3])
-        pop!(IntsFinal[4])
-        pop!(IntsFinal[5])
-        end
-
-        for i in 1:length(Ints.t) 
+        for i in 2:length(Ints.t) 
             IntsFinal[1] = cat(IntsFinal[1], Ints.u[i][1], dims=1);
             IntsFinal[2] = cat(IntsFinal[2], Ints.u[i][2], dims=1);
             IntsFinal[3] = cat(IntsFinal[3], Ints.u[i][3], dims=1);
@@ -110,7 +79,7 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
         
     end
 
-    timeSoln.T = cat(timeSoln.T, TFinal, dims = 1)
+    timeSoln.T = cat(timeSoln.T, TFinal[1:end], dims = 1)
     for i in 1:length(IntsFinal[1])
         
         timeSoln.GIQ = [timeSoln.GIQ ; IntsFinal[1][i] IntsFinal[2][i] IntsFinal[3][i]];

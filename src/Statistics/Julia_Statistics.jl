@@ -76,12 +76,12 @@ module Julia_Statistics
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
 
-            Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
+            #Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
             #Visualizer.plot_patient_BG(Patient1, Patient2)
            
         end
 
-        #Visualizer.plot_histogram(signDiffBG_all)
+        Visualizer.plot_histogram(signDiffBG_all)
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -121,22 +121,22 @@ module Julia_Statistics
     end
 
     # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\3hour_STAR"
-    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\3-2-1"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_0_5"
+    
 
     # all 1 hour treatment by matlab
     matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
-    matpath4 = "$(pwd())\\src\\Statistics\\MatLabResults\\3hour_ode45_1e_6"
-
+    
     dstpath1 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res1.csv"
     dstpath2 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
 
-    #calculate_signDiffBG(julpath1, julpath2)
-    #plot_simulation(julpath1)
+    calculate_signDiffBG(matpath1, julpath1)
+    plot_simulation(matpath1)
+    plot_simulation(julpath1)
     
     createStatistics(julpath1, dstpath2)
-    createStatistics(matpath4, dstpath1)
+    createStatistics(matpath1, dstpath1)
 end

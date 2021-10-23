@@ -26,8 +26,6 @@ end
 mutable struct Patient
     Treal::Array{Float64,1}
     Greal::Array{Float64,1}
-    Ireal::Array{Float64, 1}
-    Qreal::Array{Float64, 1}
     hourlyBG::Array{Float64,1}
     u::Array{Float64,2}
     P::Array{Float64,2}

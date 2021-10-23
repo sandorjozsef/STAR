@@ -5,46 +5,11 @@ include("$(pwd())//src//Statistics//Serializer.jl")
 using MAT
 using .Serializer
 
-function loadPatientData(patient, fullpath)
 
-    #= if the data loading happening from java binary files
 
-    J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
+function loadGUIData(guiData, fullpath)
+
    
-    patient.Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
-    patient.Greal = jfield(J_PatientStruct, "Greal", Array{jdouble, 1})
-    patient.u = jfield(J_PatientStruct, "u", Array{jdouble, 2})
-    patient.P = jfield(J_PatientStruct, "P", Array{jdouble, 2})
-    patient.PN = jfield(J_PatientStruct, "PN", Array{jdouble, 2})
-    patient.Uo = jfield(J_PatientStruct, "Uo", jdouble)
-    patient.Po = jfield(J_PatientStruct, "Po", jdouble)
-    patient.DiabeticStatus = jfield(J_PatientStruct, "DiabeticStatus", jint)
-    patient.rawSI = jfield(J_PatientStruct, "rawSI", Array{jdouble, 2})
-    patient.weight = jfield(J_PatientStruct, "weight", jdouble)
-
-=#
-
-        #  if the data loading happening from mat files
-    vars = matread(fullpath)
-            patient.Greal = vec(vars["PatientStruct"]["Greal"])
-            patient.Treal = vec(vars["PatientStruct"]["Treal"])
-            patient.u = vars["PatientStruct"]["u"]
-    patient.P = vars["PatientStruct"]["P"]
-    patient.PN = vars["PatientStruct"]["PN"]
-    patient.Uo = vars["PatientStruct"]["Uo"]
-    patient.Po = vars["PatientStruct"]["Po"]
-    patient.DiabeticStatus = vars["PatientStruct"]["DiabeticStatus"]
-    patient.rawSI = vars["PatientStruct"]["rawSI"]
-    patient.weight = vars["PatientStruct"]["weight"]
-    
-
-end
-
-function loadGUIData(guiData, fullpath, T)
-
-    # if the data loading happening from java binary files
-    # T = Simulation_Structs.TargetRangeData()
-    #loadGUIData(guiData, srcPath * "/" * name * ".GUIData", T); the way to call this function
 
     J_GUIData = J_GUIData_class(())
     J_GUIData = jcall(J_GUIData, "loadFromFilename", J_GUIData_class, (JString,), fullpath)
