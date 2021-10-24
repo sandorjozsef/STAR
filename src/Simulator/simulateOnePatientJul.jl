@@ -4,7 +4,7 @@ include("BG_sensor.jl")
 include("STAR_controller_simulator.jl")
 include("Simulation_Structs.jl")
 include("SIMPLE_controller_simulator.jl")
-include("Statistics//Serializer.jl")
+include("$(pwd())\\src\\Statistics\\Serializer.jl")
 
 using .Simulation_Structs
 using .Serializer
@@ -31,7 +31,7 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
 
     # 1 -> exact STAR
     # 2 -> original historic
-    simulation.measuring_type = 1 ;
+    simulation.measuring_type = 2 ;
     
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();

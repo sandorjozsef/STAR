@@ -1,4 +1,4 @@
-module Julia_Statistics
+module JuliaStatistics
 
     include("Serializer.jl")
     include("Visualizer.jl")
@@ -11,11 +11,12 @@ module Julia_Statistics
 
     RawBG = Vector{Vector{Float64}}()
     Treal = Vector{Vector{Float64}}()
+    GoalFeeds = Vector{Float64}()
+    HourlyBG = Vector{Vector{Float64}}()
     u = Vector{Matrix{Float64}}()
     P = Vector{Matrix{Float64}}()
     PN = Vector{Matrix{Float64}}()
-    HourlyBG = Vector{Vector{Float64}}()
-    GoalFeeds = Vector{Float64}()
+    
 
     function createDataStructures(srcpath)
 
@@ -105,7 +106,7 @@ module Julia_Statistics
     function createStatistics(srcpath, dstpath)
 
         createDataStructures(srcpath)
-        StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, dstpath)
+        StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, Treal, dstpath)
         StatisticsExporter.rawBGStats(RawBG, dstpath)
         StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
         StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
@@ -121,26 +122,4 @@ module Julia_Statistics
         empty!(GoalFeeds)
     end
 
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_15_25"
-    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_15_18"
-    
-    # all 1 hour treatment by matlab
-    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\3hour_ode45_1e_6"
-    matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
-    matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
-
-    
-    dstpath1 = "$(pwd())\\stats\\res1.csv"
-    dstpath2 = "$(pwd())\\stats\\res2.csv"
-
-    calculate_signDiffBG(matpath1, julpath1)
-    calculate_signDiffBG(julpath1, matpath1)
-    calculate_signDiffBG(matpath2, matpath1)
-    calculate_signDiffBG(julpath2, julpath1)
-
-    plot_simulation(matpath1)
-    plot_simulation(julpath1)
-    
-    createStatistics(julpath1, dstpath2)
-    createStatistics(matpath1, dstpath1)
 end

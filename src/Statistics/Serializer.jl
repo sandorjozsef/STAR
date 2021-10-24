@@ -1,7 +1,7 @@
 module Serializer
 
     include("$(pwd())//src//JavaCall//JavaCallHelper.jl")
-    include("$(pwd())//src//Simulation_Structs.jl")
+    include("$(pwd())//src//Simulator//Simulation_Structs.jl")
     using JLD2
     using FileIO
     using MAT

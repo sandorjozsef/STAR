@@ -1,7 +1,7 @@
 KeyName,   Value
 . . . Whole Cohort Statistics,   . . .
 Num Episodes,   3
-Total Hours,   687
+Total Hours,   684.0
 Num BG measurements,   327
 Average time of hours analysed (Days),   9.541666666666666
 Median time of hours analysed [IQR] (Days),   [8.270833333333334 11.875 11.979166666666668]
@@ -59,7 +59,7 @@ Median insulin rate [IQR] (U/hr),   [0.0, 2.0, 4.0]
 Feed Stats All,   
 Median glucose rate [IQR] (g/hour),   [3.6944999999999997, 3.7352, 3.7352]
 Median glucose rate [IQR] (% goal),   [84.50162513542793, 97.95961185418307, 99.95941558441557]
-Median Enteral glucose [IQR] (g/hour),   [0.3420833333333333, 0.34585185185185185, 0.34585185185185185]
+Median Enteral glucose [IQR] (g/hour),   [3.6944999999999997, 3.7352, 3.7352]
 Median Parental glucose [IQR] (g/hour),   [0.0, 0.0, 0.0]
 Feed Stats Excluding those not fed,   
 Total hours not fed,   79

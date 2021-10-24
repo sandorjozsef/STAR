@@ -12,7 +12,7 @@
 
 include("runSimulationOnPatients.jl")
 
-srcDir = pwd() * "/src/Input/Interesting_Patients_java"
+srcDir = pwd() * "/src/Input/HU_mat"
 
 dstDir = pwd() * "/src/Statistics/JuliaResults"
 

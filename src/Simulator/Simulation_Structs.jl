@@ -1,7 +1,10 @@
 module Simulation_Structs 
 
-include("JavaCall\\JavaClasses.jl")
+include("$(pwd())\\src\\JavaCall\\JavaClasses.jl")
 using Dates
+
+export Patient, Simulation, GUIData, TimeSoln
+
 
 mutable struct TargetRangeData
     date::DateTime
@@ -9,6 +12,7 @@ mutable struct TargetRangeData
     targetLower::Float64
     TargetRangeData() = new()
 end
+
 
 mutable struct GUIData
     Age::Float64
@@ -100,6 +104,5 @@ mutable struct Simulation
     Simulation() = new()
 end
 
-export Patient, Simulation, GUIData, TimeSoln
 
 end

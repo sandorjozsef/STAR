@@ -7,7 +7,7 @@ function SIMPLE_controller_simulator(patient, simulation)
     end
 
     actualBG = patient.Greal[end]
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",simulation.t_start + Dates.Minute(simulation.t_now) ,", BG = ", round(actualBG, digits=6), " ...");
+    println("calculating treatments for (nr = ", patient.nrBg, "): ",simulation.t_start + Dates.Minute(round(simulation.t_now)) ,", BG = ", round(actualBG, digits=6), " ...");
 
     selection = simulation.longest_allowed
    

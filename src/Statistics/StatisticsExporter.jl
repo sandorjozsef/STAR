@@ -106,11 +106,11 @@ function rawBGStats(RawBG, fullpath)
 end
 
 export wholeCohortStats
-function wholeCohortStats(RawBG, HourlyBG, fullpath)
+function wholeCohortStats(RawBG, HourlyBG, Treal, fullpath)
 
     allRawBG = [RawBG[i][j] for i in 1:length(RawBG) for j in 1:length(RawBG[i])]
     allHourlyBG = [HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])]
-
+    
     mn = DataFrame(KeyName = [
         ". . . Whole Cohort Statistics",
         "Num Episodes",
@@ -125,7 +125,7 @@ function wholeCohortStats(RawBG, HourlyBG, fullpath)
               Value = [
                   ". . .",
                   length(RawBG),
-                  length(allHourlyBG),
+                  sum( Treal[i][end] / 60.0 for i in 1:length(Treal)),
                   length(allRawBG),
                   mean([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]),
                   quantile([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)], [0.25 0.5 0.75]), 
@@ -187,8 +187,12 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
                   (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
                    filter(x -> (!isinf(x) && !isnan(x)), _) |>
                    quantile(_, [0.25, 0.5, 0.75]) ),
-                  quantile(P_all, [0.25, 0.5, 0.75]),
-                  quantile(PN_all, [0.25, 0.5, 0.75]),
+                   (@pipe P_all |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  (@pipe PN_all |> 
+                   map(x -> x * 180 * 60 / 1000, _) |> 
+                   quantile(_, [0.25, 0.5, 0.75]) ),
                   "",
                   length(filter(x -> x < eps, P_all+PN_all)),
                   (@pipe (P_all + PN_all) |> 
@@ -220,7 +224,7 @@ function resample_hourly_insulin(u)
     # u[:,2] -> 16.66 33.33 50 66.66 83.33 100 116.66 113.33 150 166.66 -- mUnit/min
     # u[:,2] * 60 / 1000 -> Unit/hour
    
-    u_hourly = [ trunc( u[1,2] * 60 / 1000)]
+    u_hourly = [ trunc( u[1,2] * 60 / 1000) ]
     cnt = 0.0
     for i in 2:length(u[:,1])
         if (u[i,1] - u[i-1,1] + cnt) < 60

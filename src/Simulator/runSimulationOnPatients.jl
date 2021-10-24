@@ -1,6 +1,6 @@
-include("JavaCall\\setup_java_libraries.jl")
+include("$(pwd())\\src\\JavaCall\\setup_java_libraries.jl")
 include("simulateOnePatientJul.jl")
-include("Statistics\\Serializer.jl")
+include("$(pwd())\\src\\Statistics\\Serializer.jl")
 using Dates
 using .Serializer
 
