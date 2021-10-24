@@ -2,11 +2,11 @@ module Visualizer
 
     using Plots
 
-    export plot_patient_BG
-    function plot_patient_BG(Patient1, Patient2)
+    export plot_compare_methods_BG
+    function plot_compare_methods_BG(Patient1, Patient2)
         p = plot(Patient1.Treal, Patient1.GIQ[:,1], label = "Method 1", title = Patient1.Name)
         plot!(p, Patient2.Treal, Patient2.GIQ[:,1], label = "Method 2")
-        hspan!(pp,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
         display(p)
     end
 
@@ -68,12 +68,13 @@ module Visualizer
     
     end
     
-    function plotPatientBG(patient, fullpath)
+    function plotPatientBG(patient)
         p = plot(patient.Treal, patient.Greal, label = "BG")
         plot!(p, patient.Treal_orig, patient.Greal_orig, label ="BG orig")
         xlabel!("time (min)")
         ylabel!("Blood Glucose (mmol/l)")
-        png(fullpath)
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
+        display(p)
     end
 
     function convert_to_stepfunction(f::Matrix{Float64})

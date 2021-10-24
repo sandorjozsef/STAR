@@ -87,7 +87,7 @@ module Julia_Statistics
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
         println("mean diff: ", Statistics.mean(signDiffBG_all))
         println("std diff: ", Statistics.std(signDiffBG_all))
-        println(cnt," + ", length(signDiffBG_all))
+        println(cnt,"(missed) + ", length(signDiffBG_all))
        
     end
 
@@ -96,7 +96,8 @@ module Julia_Statistics
         for filename in readdir(srcpath1)
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName)
-            Visualizer.plot_patient_metabolics(Patient1) 
+            #Visualizer.plot_patient_metabolics(Patient1) 
+            Visualizer.plotPatientBG(Patient1)
         end
 
     end
@@ -120,20 +121,23 @@ module Julia_Statistics
         empty!(GoalFeeds)
     end
 
-    # (longest allowed - insulin dosing - nutrition dosing)
-    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_0_5"
+    julpath1 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_15_25"
+    julpath2 = "$(pwd())\\src\\Statistics\\JuliaResults\\Simresults-2021-10-24_15_18"
     
-
     # all 1 hour treatment by matlab
-    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_6"
+    matpath1 = "$(pwd())\\src\\Statistics\\MatLabResults\\3hour_ode45_1e_6"
     matpath2 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_8"
     matpath3 = "$(pwd())\\src\\Statistics\\MatLabResults\\ode45_1e_12"
 
     
-    dstpath1 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res1.csv"
-    dstpath2 = "$(pwd())\\src\\Statistics\\Julia_Statistics\\res2.csv"
+    dstpath1 = "$(pwd())\\stats\\res1.csv"
+    dstpath2 = "$(pwd())\\stats\\res2.csv"
 
     calculate_signDiffBG(matpath1, julpath1)
+    calculate_signDiffBG(julpath1, matpath1)
+    calculate_signDiffBG(matpath2, matpath1)
+    calculate_signDiffBG(julpath2, julpath1)
+
     plot_simulation(matpath1)
     plot_simulation(julpath1)
     

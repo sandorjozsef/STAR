@@ -33,6 +33,8 @@ using .Serializer
             serPatient.GoalFeed = patient.GoalFeed
             serPatient.Uo = patient.Uo
             serPatient.Po = patient.Po
+            serPatient.Treal_orig = patient.Treal_orig
+            serPatient.Greal_orig = patient.Greal_orig
             Serializer.serialize(serPatient, "$simFolderOut\\$patientname.jld2")
 
         end

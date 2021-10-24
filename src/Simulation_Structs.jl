@@ -96,6 +96,7 @@ mutable struct Simulation
     longest_allowed::Int64
     mode::Int64
     NutritionDispenser::Int64
+    measuring_type::Int64
     Simulation() = new()
 end
 

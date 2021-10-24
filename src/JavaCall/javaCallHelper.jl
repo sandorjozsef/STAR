@@ -1,5 +1,8 @@
+module JavaCallHelper
+
 include("JavaClasses.jl")
 using Dates
+using JavaCall
 
 function convertToJuliaDateTime(J_dateTime::J_DateTime)
     year = jcall(J_dateTime, "getYear", jint, ());
@@ -123,6 +126,39 @@ end
 function clearNutritionInfusionEnteral(guiData::J_GUIData_class)
     jcall(guiData, "clearNutritionInfusionEnteral", Nothing, ());
 end
+
+#=
+function loadGUIData(guiData, fullpath)
+
+    J_GUIData = J_GUIData_class(())
+    J_GUIData = jcall(J_GUIData, "loadFromFilename", J_GUIData_class, (JString,), fullpath)
+    
+    guiData.Age = convert(Float64, jfield(J_GUIData, "Age", J_Double))
+    guiData.Gender = convert(String, jfield(J_GUIData, "Gender", JString))
+    guiData.Weight = convert(Float64, jfield(J_GUIData, "Weight", J_Double))
+    guiData.FrameSize = convert(String, jfield(J_GUIData, "FrameSize", JString))
+    guiData.DefaultInsulinConc = convert(Float64, jfield(J_GUIData, "DefaultInsulinConc", J_Double))
+    guiData.DiabeticStatus = convert(Int32, jfield(J_GUIData, "DiabeticStatus", J_Integer))
+
+    startTime =  jfield(J_GUIData, "StartTime", J_DateTime)
+    guiData.StartTime = convertToJuliaDateTime(startTime)
+
+    guiData.TargetRange = []
+    J_targetRangeArray = jfield(J_GUIData, "TargetRange", J_ArrayList)
+    size = jcall(J_targetRangeArray, "size", jint, ())
+    for i in 1:size
+        J_targetRange =convert(J_TargetRangeData_class, jcall(J_targetRangeArray, "get", JObject, (jint,), i-1))
+        d = convertToJuliaDateTime( jfield(J_targetRange, "date", J_DateTime) )
+        tLower = jfield(J_targetRange, "targetLower", jdouble)
+        tUpper = jfield(J_targetRange, "targetUpper", jdouble)
+        T.date = d
+        T.targetLower = tLower
+        T.targetUpper = tUpper
+        push!(guiData.TargetRange, T)
+    end
+    
+end
+=#
 
 #------- BGData_class -------#
 
@@ -297,12 +333,21 @@ end
 
 function loadTimeSoln(timeSoln, fullpath)
 
-    J_TimeSoln = J_TimeSoln_class(())
-    J_TimeSoln = jcall(J_TimeSoln, "loadFromFile", J_TimeSoln_class, (JString,), fullpath)
+    J_TimeSoln = jcall(J_TimeSoln_class, "loadFromFile", J_TimeSoln_class, (JString,), fullpath)
     timeSoln.GIQ = jfield(J_TimeSoln, "GIQ", Array{jdouble, 2})
     timeSoln.T = jfield(J_TimeSoln, "T", Array{jdouble, 1})
     timeSoln.P = jfield(J_TimeSoln, "P", Array{jdouble, 2})
 
 end
+
+# ----- J_StochasticModel ----- #
+
+function loadStochasticModelData(fullpath)
+    return J_StochasticModel((JString,), fullpath)
+end
+
+
+
+end # end module
 
 

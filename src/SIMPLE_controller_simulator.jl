@@ -31,7 +31,19 @@ function SIMPLE_controller_simulator(patient, simulation)
     patient.PN = [patient.PN; patient.PN[end,1]+selection*60-5 0.0] #parenteral = 0
     patient.PN = [patient.PN; patient.PN[end,1]+5 0.0]
 
-    simulation.measurement_time = selection * 60.0;
+    if simulation.measuring_type == 1
+        simulation.measurement_time = selection * 60.0;
+    end
+
+    if simulation.measuring_type == 2
+        i = findlast(t -> t <= patient.Treal[end], patient.Treal_orig)
+        if i < length(patient.Treal_orig)
+            simulation.measurement_time = patient.Treal_orig[i+1] - patient.Treal_orig[i]
+        else
+            simulation.measurement_time = selection * 60.0;
+        end
+    end
+    
     if patient.Treal[end] >= patient.rawSI[end, 1]
         simulation.stop_simulation = 1;
     end

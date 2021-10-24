@@ -149,14 +149,20 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
         u_ = resample_hourly_insulin(u[i])
         push!(u_all, u_...)
         P_ = resample_hourly_enteral_glucose(P[i])
-        push!(P_all, P_...)
         PN_ = resample_hourly_parenteral_glucose(PN[i])
+        while length(PN_) != length(P_)
+            if length(PN_) > length(P_) pop!(PN_)
+            else pop!(P_) end
+        end
+        push!(P_all, P_...)
         push!(PN_all, PN_...)
         push!(GoalFeed_hourly,
             (GoalFeeds[i] for j in 1:length(PN_))...
         )
+        
     end
     
+
     mn = DataFrame(KeyName = [
         ". . . Intervention Cohort Stats (Hourly Average)",
         "Median insulin rate [IQR] (U/hr)",
@@ -181,8 +187,8 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
                   (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
                    filter(x -> (!isinf(x) && !isnan(x)), _) |>
                    quantile(_, [0.25, 0.5, 0.75]) ),
-                  quantile(skipmissing(P_all), [0.25, 0.5, 0.75]),
-                  quantile(skipmissing(PN_all), [0.25, 0.5, 0.75]),
+                  quantile(P_all, [0.25, 0.5, 0.75]),
+                  quantile(PN_all, [0.25, 0.5, 0.75]),
                   "",
                   length(filter(x -> x < eps, P_all+PN_all)),
                   (@pipe (P_all + PN_all) |> 
@@ -209,22 +215,34 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
 end
 
 function resample_hourly_insulin(u)
-
+    #trunc( u[i,2] * 60 / 1000)
     # u[:,1] -> 0 1 60 61 180 181 240 241 ... minutes
     # u[:,2] -> 16.66 33.33 50 66.66 83.33 100 116.66 113.33 150 166.66 -- mUnit/min
     # u[:,2] * 60 / 1000 -> Unit/hour
-    u_hourly = []
-    for i in 1:2:(length(u[:,1])-3) # start : stepsize : end
-        push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
-        if (u[i+3,1] - u[i+1,1]) == 120 # the patient got the insulin for 2 hour
-            push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
+   
+    u_hourly = [ trunc( u[1,2] * 60 / 1000)]
+    cnt = 0.0
+    for i in 2:length(u[:,1])
+        if (u[i,1] - u[i-1,1] + cnt) < 60
+            u_hourly[end] = u_hourly[end] + trunc( u[i,2] * 60 / 1000) # convert to Unit/hour
+            cnt = cnt + (u[i,1] - u[i-1,1])
         end
-        if (u[i+3,1] - u[i+1,1]) == 180 #the patient got the insulin for 3 hour
-            push!(u_hourly, trunc( u[i,2] * 60 / 1000)) # convert to Unit/hour
-            push!(u_hourly, trunc( u[i,2] * 60 / 1000))
+        if (u[i,1] - u[i-1,1] + cnt ) >= 60 && (u[i,1] - u[i-1,1] + cnt) < 120
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000) ) 
+            cnt = cnt - 60 + (u[i,1] - u[i-1,1])
+        end
+        if (u[i,1] - u[i-1,1] + cnt) >= 120 && (u[i,1] - u[i-1,1] + cnt) < 180
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000) ) 
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000) ) 
+            cnt = cnt - 120 + (u[i,1] - u[i-1,1])
+        end
+        if (u[i,1] - u[i-1,1] + cnt) >= 180 
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000) ) 
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000)) 
+            push!(u_hourly, trunc( u[i,2] * 60 / 1000) ) 
+            cnt = cnt - 180 + (u[i,1] - u[i-1,1])
         end
     end
-    push!(u_hourly, trunc( u[end,2] * 60 / 1000)) # the last one supposed that lasted for 1 hour
 
     return u_hourly
 
@@ -232,47 +250,79 @@ end
 
 function resample_hourly_enteral_glucose(P)
     
-    P_hourly = []
-    for i in 1:(length(P[:,1])-1)
-        push!(P_hourly, P[i,2])
-        if (P[i+1,1] - P[i,1]) == 120
-            push!(P_hourly, P[i,2])
+    P_hourly = [P[1,2]]
+    cnt = 0.0
+    for i in 2:length(P[:,1])
+        if (P[i,1] - P[i-1,1] + cnt) < 60
+            P_hourly[end] = P_hourly[end] + P[i,2]
+            cnt = cnt + (P[i,1] - P[i-1,1])
         end
-        if (P[i+1,1] - P[i,1]) == 180
-            push!(P_hourly, P[i,2])
-            push!(P_hourly, P[i,2])
+            if (P[i,1] - P[i-1,1] + cnt ) >= 60 && (P[i,1] - P[i-1,1] + cnt) < 120
+            push!(P_hourly, P[i,2] ) 
+            cnt = cnt - 60 + (P[i,1] - P[i-1,1])
+            end
+            if (P[i,1] - P[i-1,1] + cnt) >= 120 && (P[i,1] - P[i-1,1] + cnt) < 180
+                push!(P_hourly, P[i,2] ) 
+                push!(P_hourly, P[i,2] ) 
+                cnt = cnt - 120 + (P[i,1] - P[i-1,1])
+            end
+            if (P[i,1] - P[i-1,1] + cnt) >= 180 
+                push!(P_hourly, P[i,2] ) 
+                push!(P_hourly, P[i,2]) 
+                push!(P_hourly, P[i,2] ) 
+                cnt = cnt - 180 + (P[i,1] - P[i-1,1])
+            end
         end
-    end
-    push!(P_hourly, P[end,2]) # the last one supposed 1 hour
-
+       
     return P_hourly
-    
 end
 
 function resample_hourly_parenteral_glucose(PN)
     #PN[:,1] -> 0 5 60 65 180 185 ...
     
-    PN_hourly = []
-    for i in 1:2:(length(PN[:,1])-2)
-        push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
-        if (PN[i+2,1] - PN[i,1]) == 120
-            push!(PN_hourly, PN[i,2])
+    PN_hourly = [PN[1,2]]
+    cnt = 0.0
+    for i in 2:length(PN[:,1])
+        if (PN[i,1] - PN[i-1,1] + cnt) < 60
+            PN_hourly[end] = PN_hourly[end] + PN[i,2] / 12.0
+            cnt = cnt + (PN[i,1] - PN[i-1,1])
         end
-        if (PN[i+2,1] - PN[i,1]) == 180
-            push!(PN_hourly, PN[i,2])
-            push!(PN_hourly, PN[i,2])
+       
+        if (PN[i,1] - PN[i-1,1] + cnt ) >= 60 && (PN[i,1] - PN[i-1,1] + cnt) < 120
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            cnt = cnt - 60 + (PN[i,1] - PN[i-1,1])
         end
+        if (PN[i,1] - PN[i-1,1] + cnt) >= 120 && (PN[i,1] - PN[i-1,1] + cnt) < 180
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            cnt = cnt - 120 + (PN[i,1] - PN[i-1,1])
+        end
+        if (PN[i,1] - PN[i-1,1] + cnt) >= 180 
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            push!(PN_hourly, PN[i,2] / 12.0) # bolus mmol/min for 5 min -> mmol/min for 60 min
+            cnt = cnt - 180 + (PN[i,1] - PN[i-1,1])
+        end
+        
     end
-    push!(PN_hourly, PN[end-1,2]) # the last one supposed 1 hour
 
     return PN_hourly
-    
 end
 
 export intervention_perEpisode_stats_hourlyAverage
 function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds, fullpath)
 
-    Feed_all = map(x -> resample_hourly_parenteral_glucose(x), PN) + map(x -> resample_hourly_enteral_glucose(x), P)
+    Feed_all = Vector{Vector{Float64}}()
+    for i in 1:length(P)
+        PN_ = resample_hourly_parenteral_glucose(PN[i])
+        P_ = resample_hourly_enteral_glucose(P[i])
+        # it can happen not exact numbers of hours
+        while length(PN_) != length(P_)
+            if length(PN_) > length(P_) pop!(PN_)
+            else pop!(P_) end
+        end
+        push!(Feed_all, PN_ + P_)
+    end
     
     mn = DataFrame(KeyName = [
         ". . . Intervention Per-episode Stats (Hourly Average)",

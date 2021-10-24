@@ -1,10 +1,7 @@
-using Plots
-
 include("ICING2_model_sim_init.jl")
 include("ICING2_model_solver.jl")
 include("BG_sensor.jl")
 include("STAR_controller_simulator.jl")
-include("JavaCall\\loadSTARData.jl") 
 include("Simulation_Structs.jl")
 include("SIMPLE_controller_simulator.jl")
 include("Statistics//Serializer.jl")
@@ -31,13 +28,17 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     # 2 -> normal nutrition 
     # 3 -> high nutrition
     simulation.NutritionDispenser = 2;
+
+    # 1 -> exact STAR
+    # 2 -> original historic
+    simulation.measuring_type = 1 ;
     
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();
     
     serPatient = Serializer.deserialize(srcPath, name)
-    patient.Treal = serPatient.Treal
-    patient.Greal = serPatient.Greal
+    patient.Treal_orig = serPatient.Treal
+    patient.Greal_orig = serPatient.Greal
     patient.u = serPatient.u
     patient.P = serPatient.P
     patient.PN  = serPatient.PN

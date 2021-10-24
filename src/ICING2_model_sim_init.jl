@@ -15,7 +15,7 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.k2 = [-49.9, 16.7, -27.4];    #[ND, T1DM, T2DM] 
 
     # Uen function for non-diabetic patients
-    patient.Ueninit = min(max(patient.uenmin, (patient.k1[1]*patient.Greal[1]+patient.k2[1])), patient.uenmax);     # endogenous insulin production rate [mU/min] initial value - 1U/hr if below min and 16U/hr is above max
+    patient.Ueninit = min(max(patient.uenmin, (patient.k1[1]*patient.Greal_orig[1]+patient.k2[1])), patient.uenmax);     # endogenous insulin production rate [mU/min] initial value - 1U/hr if below min and 16U/hr is above max
    
     patient.xl = 0.67; # First-pass liver extraction of insulin [Non Dim]
     patient.nI = 0.006; # diffusion rate between I and Q [1/min]
@@ -45,8 +45,8 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
 
     #-------------------------------------------------------------------------------
         #Initialise TimeSoln
-    timeSoln.T = [patient.Treal[1]];
-    timeSoln.GIQ = [patient.Greal[1] IQ0[1] IQ0[2]] ;
+    timeSoln.T = [patient.Treal_orig[1]];
+    timeSoln.GIQ = [patient.Greal_orig[1] IQ0[1] IQ0[2]] ;
     timeSoln.P = [patient.Po/patient.d1 patient.Po/patient.d2];
     #-------------------------------------------------------------------------------
 
@@ -54,8 +54,6 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     #u variables, and remove the BG measurements
     patient.P_orig = patient.P;     #Save the retrospective feeding in case we want to simulate an insulin-only protocol
     patient.PN_orig = patient.PN;
-    patient.Greal_orig = patient.Greal;
-    patient.Treal_orig = patient.Treal;     #Save the retrospective measurement timings (useful for some simulation studies)
 
     patient.u = Array{Float64}(undef, 2, 2);
     patient.u[1,1] = patient.rawSI[1,1];
@@ -71,9 +69,9 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.PN[2,1] = patient.PN[1,1] + 5;
     patient.PN[2,2] = 0.0;
 
-    patient.Treal = [patient.Treal[1]];     
+    patient.Treal = [patient.Treal_orig[1]];     
         #Treal and Greal will store the virtual BG measurments taken during the simulated trial
-    patient.Greal = [round(patient.Greal[1]*10)/10];  # 1dp
+    patient.Greal = [round(patient.Greal_orig[1]*10)/10];  # 1dp
     
     #------start the simulation from the first recorded sI value
     #------...this *may* not necessarily be zero (especially if dealing

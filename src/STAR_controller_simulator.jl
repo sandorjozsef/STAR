@@ -1,5 +1,7 @@
-include("JavaCall\\javaCallHelper.jl")
+include("JavaCall\\JavaCallHelper.jl")
 include("JavaCall\\JavaClasses.jl")
+
+using .JavaCallHelper
 
 function STAR_controller_simulator(patient, simulation)
     
@@ -251,7 +253,19 @@ function STAR_controller_simulator(patient, simulation)
     patient.P = getP(patient.patient);
     patient.PN = getPN(patient.patient);
 
-    simulation.measurement_time = selection * 60.0;
+    if simulation.measuring_type == 1
+        simulation.measurement_time = selection * 60.0;
+    end
+
+    if simulation.measuring_type == 2
+        i = findlast(t -> t <= patient.Treal[end], patient.Treal_orig)
+        if i < length(patient.Treal_orig)
+            simulation.measurement_time = patient.Treal_orig[i+1] - patient.Treal_orig[i]
+        else
+            simulation.measurement_time = selection * 60.0;
+        end
+    end
+
     if patient.Treal[end] >= patient.rawSI[end, 1]
         simulation.stop_simulation = 1;
     end

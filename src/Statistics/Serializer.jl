@@ -1,11 +1,12 @@
 module Serializer
 
-    include("$(pwd())//src//JavaCall//javaCallHelper.jl")
+    include("$(pwd())//src//JavaCall//JavaCallHelper.jl")
     include("$(pwd())//src//Simulation_Structs.jl")
     using JLD2
     using FileIO
     using MAT
     using .Simulation_Structs
+    using .JavaCallHelper
 
     export SerializablePatient, serialize, deserialize
 
@@ -22,6 +23,8 @@ module Serializer
         GoalFeed::Float64
         Po::Float64
         Uo::Float64
+        Treal_orig::Vector{Float64}
+        Greal_orig::Vector{Float64}
         SerializablePatient() = new()
     end
 
@@ -39,7 +42,9 @@ module Serializer
          "Name" => serPatient.Name,
          "GoalFeed" => serPatient.GoalFeed,
          "Po" => serPatient.Po,
-         "Uo" => serPatient.Uo
+         "Uo" => serPatient.Uo,
+         "Greal_orig" => serPatient.Greal_orig,
+         "Treal_orig" => serPatient.Treal_orig,
          ))
 
     end
@@ -48,9 +53,10 @@ module Serializer
 
         Patient = SerializablePatient()
         type = splitext(readdir(path)[1])[2]
-        fileName = splitext(readdir(path)[1])[1]
+
         if type == ".jld2"
 
+            patientName = replace(patientName, "SIM_" => "", count = 1)
             data = load(path * "\\$patientName" * ".jld2") # it returns a Dictionary
             
             Patient.Treal = data["Treal"]
@@ -66,13 +72,17 @@ module Serializer
             Patient.GoalFeed = data["GoalFeed"]
             Patient.Po = data["Po"]
             Patient.Uo = data["Uo"]
+            Patient.Treal_orig = data["Treal_orig"]
+            Patient.Greal_orig = data["Greal_orig"]
 
         elseif type == ".mat"
+
             vars = undef
             if ispath(path * "\\$patientName" * ".mat")
                 vars = matread(path * "\\$patientName" * ".mat")
             else 
                 vars = matread(path * "\\SIM_$patientName" * ".mat")
+                patientName = "SIM_$patientName"
             end
 
             Patient.Greal = vec(vars["PatientStruct"]["Greal"])
@@ -80,9 +90,11 @@ module Serializer
             Patient.hourlyBG = [0.0]
             Patient.Uo = vars["PatientStruct"]["Uo"]
             Patient.Po = vars["PatientStruct"]["Po"]
+            Patient.Greal_orig = [0.0]
+            Patient.Treal_orig = [0.0]
             
-            if contains(fileName, "SIM_") # simulated values
-                patientName = replace(fileName, "SIM_" => "", count = 1)
+            if contains(patientName, "SIM_") # simulated values
+                patientName = replace(patientName, "SIM_" => "", count = 1)
                 dense_GIQ = vars["TimeSoln"]["GIQ"]
                 Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
                 Patient.GoalFeed = vars["PatientStruct"]["GoalFeed"]
@@ -103,16 +115,21 @@ module Serializer
         elseif type == ""
 
             #PatientStruct
-            loadPatientStruct(Patient, path *"\\"* patientName *"\\"* patientName *".PatientStruct")
+            JavaCallHelper.loadPatientStruct(Patient, path *"\\"* patientName *"\\"* patientName *".PatientStruct")
             Patient.GoalFeed = Patient.Po
             Patient.hourlyBG = [0.0]
             #TimeSoln
             timeSoln = Simulation_Structs.TimeSoln()
-            loadTimeSoln(timeSoln, path *"\\"* patientName *"\\"* patientName *".TimeSoln")
-            dense_GIQ = timeSoln.GIQ
-            Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+            if ispath(path *"\\"* patientName *"\\"* patientName *".TimeSoln")
+                JavaCallHelper.loadTimeSoln(timeSoln, path *"\\"* patientName *"\\"* patientName *".TimeSoln")
+                dense_GIQ = timeSoln.GIQ
+                Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+            else
+                Patient.GIQ = [0 0 0]
+            end
+            Patient.Greal_orig = [0.0]
+            Patient.Treal_orig = [0.0]
             
-
         else
             throw(ArgumentError("Not existing serializable type."))
         end
