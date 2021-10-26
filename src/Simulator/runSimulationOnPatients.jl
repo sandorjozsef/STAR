@@ -21,7 +21,8 @@ using .Serializer
             @time (patient, timeSoln) = simulateOnePatientJul(srcDir, simFolderOut, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
-            serPatient.GIQ = timeSoln.GIQ
+            serPatient.TimeSolnGIQ = timeSoln.GIQ
+            serPatient.TimeSolnT = timeSoln.T
             serPatient.Treal = patient.Treal
             serPatient.Greal = patient.Greal
             serPatient.P = patient.P

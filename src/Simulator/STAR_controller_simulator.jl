@@ -253,11 +253,11 @@ function STAR_controller_simulator(patient, simulation)
     patient.P = JavaCallHelper.getP(patient.patient);
     patient.PN = JavaCallHelper.getPN(patient.patient);
 
-    if simulation.measuring_type == 1
+    if simulation.protocol_timing == 1
         simulation.measurement_time = selection * 60.0;
     end
 
-    if simulation.measuring_type == 2
+    if simulation.protocol_timing == 2
         i = findlast(t -> t <= patient.Treal[end], patient.Treal_orig)
         if i < length(patient.Treal_orig)
             simulation.measurement_time = patient.Treal_orig[i+1] - patient.Treal_orig[i]

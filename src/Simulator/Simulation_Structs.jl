@@ -50,7 +50,6 @@ mutable struct Patient
     CNS::Float64
     EGP
     Pmax::Float64
-    ProtocolTiming
     SolverMethod
     Ueninit::Float64
     Vg::Float64
@@ -72,6 +71,7 @@ mutable struct Patient
     uenmin::Float64
     varEGP
     xl::Float64
+    u_orig
     P_orig
     PN_orig
     Treal_orig::Array{Float64,1}
@@ -99,8 +99,9 @@ mutable struct Simulation
     t_start::DateTime
     longest_allowed::Int64
     mode::Int64
-    NutritionDispenser::Int64
-    measuring_type::Int64
+    nutrition_dosing::Int64
+    protocol_timing::Int64
+    protocol_treatment::Int64
     Simulation() = new()
 end
 

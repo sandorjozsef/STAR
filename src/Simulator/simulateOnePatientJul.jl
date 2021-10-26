@@ -22,16 +22,20 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
 
     # 1 -> STAR recommended
     # 2 -> SIMPLE
-    simulation.mode = 1 ; 
+    simulation.mode = 2 ; 
 
     # 1 -> low nutrition 
     # 2 -> normal nutrition 
     # 3 -> high nutrition
-    simulation.NutritionDispenser = 2;
+    simulation.nutrition_dosing = 2;
 
-    # 1 -> exact STAR
-    # 2 -> original historic
-    simulation.measuring_type = 2 ;
+    # 1 -> exact longest allowed
+    # 2 -> historic
+    simulation.protocol_timing = 2 ;
+
+    # 1 -> simulated
+    # 2 -> historic
+    simulation.protocol_treatment = 2;
     
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();
@@ -39,9 +43,9 @@ function simulateOnePatientJul(srcPath, dstPath, name, egp)
     serPatient = Serializer.deserialize(srcPath, name)
     patient.Treal_orig = serPatient.Treal
     patient.Greal_orig = serPatient.Greal
-    patient.u = serPatient.u
-    patient.P = serPatient.P
-    patient.PN  = serPatient.PN
+    patient.u_orig = serPatient.u
+    patient.P_orig = serPatient.P
+    patient.PN_orig  = serPatient.PN
     patient.Uo = serPatient.Uo 
     patient.Po = serPatient.Po 
     patient.rawSI = serPatient.rawSI

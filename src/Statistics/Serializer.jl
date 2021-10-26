@@ -13,7 +13,8 @@ module Serializer
     mutable struct SerializablePatient
         Treal::Vector{Float64}
         Greal::Vector{Float64}
-        GIQ::Matrix{Float64}
+        TimeSolnGIQ::Matrix{Float64}
+        TimeSolnT::Vector{Float64}
         PN::Matrix{Float64}
         P::Matrix{Float64}
         u::Matrix{Float64}
@@ -31,7 +32,8 @@ module Serializer
     function serialize(serPatient, fullpath)
         # serialize to jld2 file format
         save(fullpath, Dict(
-         "GIQ" => serPatient.GIQ,
+         "TimeSolnGIQ" => serPatient.TimeSolnGIQ,
+         "TimeSolnT" => serPatient.TimeSolnT,
          "Treal" => serPatient.Treal,
          "Greal" => serPatient.Greal,
          "P" => serPatient.P,
@@ -61,8 +63,9 @@ module Serializer
             
             Patient.Treal = data["Treal"]
             Patient.Greal = data["Greal"]
-            dense_GIQ = data["GIQ"]
-            Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+            dense_GIQ = data["TimeSolnGIQ"]
+            dense_T = data["TimeSolnT"]
+            Patient.TimeSolnGIQ = createGIQ(Patient.Treal, dense_T, dense_GIQ)
             Patient.P = data["P"]
             Patient.PN = data["PN"]
             Patient.rawSI = data["rawSI"]
@@ -96,14 +99,15 @@ module Serializer
             if contains(patientName, "SIM_") # simulated values
                 patientName = replace(patientName, "SIM_" => "", count = 1)
                 dense_GIQ = vars["TimeSoln"]["GIQ"]
-                Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+                dense_T = vec(vars["TimeSoln"]["T"])
+                Patient.TimeSolnGIQ = createGIQ(Patient.Treal, dense_T, dense_GIQ)
                 Patient.GoalFeed = vars["PatientStruct"]["GoalFeed"]
                 Patient.P = [ vars["PatientStruct"]["P"][1] vars["PatientStruct"]["P"][2] ]
                 Patient.PN = [ vars["PatientStruct"]["PN"][1] vars["PatientStruct"]["PN"][2] ]
                 Patient.u = [ vars["PatientStruct"]["u"][1] vars["PatientStruct"]["u"][2] ]
                 Patient.rawSI = [ vars["PatientStruct"]["rawSI"][1] vars["PatientStruct"]["rawSI"][2] ]
             else
-                Patient.GIQ = [0 0 0]
+                Patient.TimeSolnGIQ = [Patient.Greal zeros(length(Patient.Greal)) zeros(length(Patient.Greal))]
                 Patient.GoalFeed = Patient.Po
                 Patient.P = vars["PatientStruct"]["P"]
                 Patient.PN = vars["PatientStruct"]["PN"]
@@ -123,12 +127,14 @@ module Serializer
             if ispath(path *"\\"* patientName *"\\"* patientName *".TimeSoln")
                 JavaCallHelper.loadTimeSoln(timeSoln, path *"\\"* patientName *"\\"* patientName *".TimeSoln")
                 dense_GIQ = timeSoln.GIQ
-                Patient.GIQ = createGIQ(Patient.Greal, dense_GIQ)
+                dense_T = timeSoln.T
+                Patient.TimeSolnGIQ = createGIQ(Patient.Treal, dense_T, dense_GIQ)
             else
-                Patient.GIQ = [0 0 0]
+                Patient.TimeSolnGIQ = [0 0 0]
             end
             Patient.Greal_orig = [0.0]
             Patient.Treal_orig = [0.0]
+            Patient.Name = patientName
             
         else
             throw(ArgumentError("Not existing serializable type."))
@@ -137,15 +143,19 @@ module Serializer
         return Patient
     end
 
-    function createGIQ(Greal::Vector{Float64}, dense_GIQ::Matrix{Float64})
-        j = 2
-        rare_GIQ = [dense_GIQ[1,1] dense_GIQ[1,2] dense_GIQ[1,3]]
-        for i in 2:length(dense_GIQ[:,1])
-            if Greal[j] == dense_GIQ[i,1]
-                rare_GIQ = [rare_GIQ ; dense_GIQ[i,1] dense_GIQ[i,2] dense_GIQ[i,3]]
+    function createGIQ(Treal::Vector{Float64},dense_T::Vector{Float64},  dense_GIQ::Matrix{Float64})
+        j = 1
+        rare_GIQ = Matrix{Float64}(undef, length(Treal), 3)
+        for i in 1:length(dense_T)
+            if Treal[j] == dense_T[i]
+                rare_GIQ[j,1] = dense_GIQ[i,1]
+                rare_GIQ[j,2] = dense_GIQ[i,2]
+                rare_GIQ[j,3] = dense_GIQ[i,3]
                 j = j+1
             end
+            
         end
+        
         return rare_GIQ
     end
 

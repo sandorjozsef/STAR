@@ -8,7 +8,6 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
 
     patient.Diabetic = 0;
 
-    
     patient.uenmin = 16.7; #[mU/min]
     patient.uenmax = 266.7; #[mU/min]
     patient.k1 = [14.9, 0.0, 4.9];    #[ND, T1DM, T2DM] 
@@ -31,7 +30,6 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     patient.Pmax = 6.11;  # maximum glucose flux out of the gut [mmol/min]
     patient.gamma = patient.nI/(patient.nI+patient.nC);
 
-    patient.ProtocolTiming = true;   # Whether to use protocol timing (true) or actual clinical timing for BG measurements (false)
 
     #Save a description of which BG model/solver was used
     patient.SolverMethod = "ICING2_model - ODE solver";
@@ -49,11 +47,6 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     timeSoln.GIQ = [patient.Greal_orig[1] IQ0[1] IQ0[2]] ;
     timeSoln.P = [patient.Po/patient.d1 patient.Po/patient.d2];
     #-------------------------------------------------------------------------------
-
-    #Step 2: Set up initial conditions for the controller - clear out the
-    #u variables, and remove the BG measurements
-    patient.P_orig = patient.P;     #Save the retrospective feeding in case we want to simulate an insulin-only protocol
-    patient.PN_orig = patient.PN;
 
     patient.u = Array{Float64}(undef, 2, 2);
     patient.u[1,1] = patient.rawSI[1,1];
@@ -77,7 +70,6 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     #------...this *may* not necessarily be zero (especially if dealing
     #with a patient record that is split into several parts)
 
-    start_time = patient.Treal[1];
     patient.ControllerFlag = [];
     patient.hourlyBG = [timeSoln.GIQ[1,1]];
 

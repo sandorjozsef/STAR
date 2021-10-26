@@ -9,13 +9,13 @@ module JuliaStatistics
     using .StatisticsExporter
 
 
-    RawBG = Vector{Vector{Float64}}()
-    Treal = Vector{Vector{Float64}}()
-    GoalFeeds = Vector{Float64}()
-    HourlyBG = Vector{Vector{Float64}}()
-    u = Vector{Matrix{Float64}}()
-    P = Vector{Matrix{Float64}}()
-    PN = Vector{Matrix{Float64}}()
+    RawBG = [] #Vector{Vector{Float64}}
+    Treal= [] #Vector{Vector{Float64}}
+    GoalFeeds = [] # Vector{Float64}
+    HourlyBG = [] #Vector{Vector{Float64}}
+    u = [] #Vector{Matrix{Float64}}
+    P = [] #Vector{Matrix{Float64}}
+    PN = [] #Vector{Matrix{Float64}}
     
 
     function createDataStructures(srcpath)
@@ -26,7 +26,7 @@ module JuliaStatistics
             JuliaPatient = Serializer.deserialize(srcpath, patientName)
             
             push!(Treal, JuliaPatient.Treal)
-            push!(RawBG, JuliaPatient.GIQ[:,1])
+            push!(RawBG, JuliaPatient.TimeSolnGIQ[:,1])
             push!(HourlyBG, JuliaPatient.hourlyBG)
             push!(u, JuliaPatient.u)
             push!(P, JuliaPatient.P) 
@@ -56,10 +56,10 @@ module JuliaStatistics
             Patient2 = Serializer.deserialize(srcpath2, patientName)
            
             signDiffBG = []
-            len = min(length(Patient1.GIQ[:,1]), length(Patient2.GIQ[:,1]))
+            len = min(length(Patient1.TimeSolnGIQ[:,1]), length(Patient2.TimeSolnGIQ[:,1]))
             for i in 1:len
                 if Patient1.Treal[i] == Patient2.Treal[i]
-                    push!(signDiffBG, Patient1.GIQ[i,1]-Patient2.GIQ[i,1])
+                    push!(signDiffBG, Patient1.TimeSolnGIQ[i,1]-Patient2.TimeSolnGIQ[i,1])
                 else
                     cnt = cnt+1
                 end
@@ -97,7 +97,7 @@ module JuliaStatistics
         for filename in readdir(srcpath1)
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName)
-            #Visualizer.plot_patient_metabolics(Patient1) 
+            Visualizer.plot_patient_metabolics(Patient1) 
             Visualizer.plotPatientBG(Patient1)
         end
 
@@ -120,6 +120,8 @@ module JuliaStatistics
         empty!(PN)
         empty!(HourlyBG)
         empty!(GoalFeeds)
+
+        println("Created statistics in: $dstpath")
     end
 
 end
