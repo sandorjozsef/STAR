@@ -51,7 +51,6 @@ module Visualizer
         #png(p, pwd() * "\\graphs\\$(Patient1.Name)")
     end
 
-   
     export plot_histogram
     function plot_histogram(array)
         display( histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log) )
