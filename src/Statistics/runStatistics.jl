@@ -24,7 +24,8 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 #JuliaStatistics.plot_simulation(julpath2)
 #JuliaStatistics.plot_simulation(javapath1)
 #JuliaStatistics.plot_simulation(matpath4)
+
     
-#JuliaStatistics.createStatistics(matpath4, dstpath1)
-#JuliaStatistics.createStatistics(julpath1, dstpath2)
-#JuliaStatistics.createStatistics(javapath1, dstpath3)
+JuliaStatistics.createStatistics(matpath4, dstpath1)
+JuliaStatistics.createStatistics(julpath1, dstpath2)
+JuliaStatistics.createStatistics(javapath1, dstpath3)

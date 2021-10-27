@@ -42,7 +42,7 @@ function SIMPLE_controller_simulator(patient, simulation)
 
         patient.P = [patient.P; patient.P_orig[i,1] patient.P_orig[i,2]]
 
-        patient.PN = [patient.PN; patient.PN_orig[i+1,1] patient.PN_orig[i+1,2]]
+        patient.PN = [patient.PN; patient.PN_orig[i,1] patient.PN_orig[i,2]]
         patient.PN = [patient.PN; patient.PN_orig[i+1,1] patient.PN_orig[i+1,2]]
     end
 

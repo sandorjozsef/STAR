@@ -3,11 +3,12 @@ module JuliaStatistics
     include("Serializer.jl")
     include("Visualizer.jl")
     include("StatisticsExporter.jl")
+    include("StatisticsCalculator.jl")
     using .Serializer
     using .Visualizer
     using Statistics
     using .StatisticsExporter
-
+    using .StatisticsCalculator
 
     RawBG = [] #Vector{Vector{Float64}}
     Treal= [] #Vector{Vector{Float64}}
@@ -106,12 +107,27 @@ module JuliaStatistics
     function createStatistics(srcpath, dstpath)
 
         createDataStructures(srcpath)
-        StatisticsExporter.wholeCohortStats(RawBG, HourlyBG, Treal, dstpath)
-        StatisticsExporter.rawBGStats(RawBG, dstpath)
-        StatisticsExporter.hourlyResampledBGStats(HourlyBG, dstpath)
-        StatisticsExporter.perEpisode_statistics(RawBG, Treal, dstpath)
-        StatisticsExporter.intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
-        StatisticsExporter.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds, dstpath)
+        if isfile(dstpath)
+            rm(dstpath)
+        end
+        
+        w = StatisticsCalculator.wholeCohortStats(RawBG, HourlyBG, Treal)
+        StatisticsExporter.writeCSV_Stats(w, dstpath)
+
+        r = StatisticsCalculator.rawBGStats(RawBG)
+        StatisticsExporter.writeCSV_Stats(r, dstpath)
+
+        h = StatisticsCalculator.hourlyResampledBGStats(HourlyBG)
+        StatisticsExporter.writeCSV_Stats(h, dstpath)
+
+        p = StatisticsCalculator.perEpisode_statistics(RawBG, Treal)
+        StatisticsExporter.writeCSV_Stats(p, dstpath)
+
+        ic = StatisticsCalculator.intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
+        StatisticsExporter.writeCSV_Stats(ic, dstpath)
+
+        ip = StatisticsCalculator.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
+        StatisticsExporter.writeCSV_Stats(ip, dstpath)
 
         empty!(RawBG)
         empty!(Treal)
