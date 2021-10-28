@@ -16,12 +16,12 @@ dstpath1 = "$(pwd())\\sim_stats\\res1.csv"
 dstpath2 = "$(pwd())\\sim_stats\\res2.csv"
 dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 
-#JuliaStatistics.calculate_signDiffBG(julpath1, julpath2)
+JuliaStatistics.calculate_signDiffBG(julpath1, julpath2)
 #JuliaStatistics.calculate_signDiffBG(julpath1, matpath1)
 #JuliaStatistics.calculate_signDiffBG(matpath2, matpath1)
 #JuliaStatistics.calculate_signDiffBG(julpath2, julpath1)
 
-#JuliaStatistics.plot_simulation(julpath2)
+JuliaStatistics.plot_simulation(julpath2)
 #JuliaStatistics.plot_simulation(javapath1)
 #JuliaStatistics.plot_simulation(matpath4)
 

@@ -9,7 +9,7 @@ include("$(pwd())\\src\\Statistics\\Serializer.jl")
 using .Simulation_Structs
 using .Serializer
 
-function simulateOnePatientJul(srcPath, dstPath, name, egp)
+function simulateOnePatientJul(srcPath, name, egp)
    
     simulation = Simulation();
     simulation.stop_simulation = 0;

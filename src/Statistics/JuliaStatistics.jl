@@ -4,11 +4,13 @@ module JuliaStatistics
     include("Visualizer.jl")
     include("StatisticsExporter.jl")
     include("StatisticsCalculator.jl")
+    include("VisualizerExporter.jl")
     using .Serializer
     using .Visualizer
     using Statistics
     using .StatisticsExporter
     using .StatisticsCalculator
+    using .VisualiserExporter
 
     RawBG = [] #Vector{Vector{Float64}}
     Treal= [] #Vector{Vector{Float64}}
@@ -83,7 +85,9 @@ module JuliaStatistics
            
         end
 
-        Visualizer.plot_histogram(signDiffBG_all)
+        h = Visualizer.plot_histogram(signDiffBG_all)
+        display(h)
+        VisualiserExporter.savePNG_plot(h, "$(pwd())\\graphs\\asd.png")
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -98,8 +102,11 @@ module JuliaStatistics
         for filename in readdir(srcpath1)
             patientName = splitext(filename)[1]
             Patient1 = Serializer.deserialize(srcpath1, patientName)
-            Visualizer.plot_patient_metabolics(Patient1) 
-            Visualizer.plotPatientBG(Patient1)
+            p1 = Visualizer.plot_patient_metabolics(Patient1) 
+            display(p1)
+            VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
+            p2 = Visualizer.plotPatientBG(Patient1)
+            display(p2)
         end
 
     end

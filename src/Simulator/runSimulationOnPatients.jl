@@ -18,7 +18,7 @@ using .Serializer
         for name in readdir(srcDir)
             patientname = splitext(name)[1]
             println("\nProcess patient: ", patientname);
-            @time (patient, timeSoln) = simulateOnePatientJul(srcDir, simFolderOut, patientname, egp)
+            @time (patient, timeSoln) = simulateOnePatientJul(srcDir, patientname, egp)
 
             serPatient = Serializer.SerializablePatient()
             serPatient.TimeSolnGIQ = timeSoln.GIQ

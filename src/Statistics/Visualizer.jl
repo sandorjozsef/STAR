@@ -6,8 +6,8 @@ module Visualizer
     function plot_compare_methods_BG(Patient1, Patient2)
         p = plot(Patient1.Treal, Patient1.TimeSolnGIQ[:,1], label = "Method 1", title = Patient1.Name)
         plot!(p, Patient2.Treal, Patient2.TimeSolnGIQ[:,1], label = "Method 2")
-        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
-        display(p)
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)", minorgrid = true);
+        return p
     end
 
     export plot_patient_metabolics
@@ -23,8 +23,7 @@ module Visualizer
         SI = convert_to_stepfunction(Patient.rawSI)
         p3 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
         p = plot(p1,p2, p3, layout = (3,1), size = (1000, 900), minorgrid = true)
-        display(p)
-        #png(p, pwd() * "\\graphs\\$(Patient.Name)")
+        return p
     end
 
     export plot_compare_patient_metabolics
@@ -47,24 +46,21 @@ module Visualizer
         SI = convert_to_stepfunction(Patient1.rawSI)
         p4 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
         p = plot(p1,p2, p3,p4, layout = (4,1), size = (1000, 1200), minorgrid = true)
-        display(p)
-        #png(p, pwd() * "\\graphs\\$(Patient1.Name)")
+        return p
     end
 
     export plot_histogram
     function plot_histogram(array)
-        display( histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log) )
+        return histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log)
     end
 
-    function plotCDF(allHourlyBG, path)
+    function plotCDF(allHourlyBG)
         sortedBG = sort(allHourlyBG)
         p = range(0, stop=1, length=length(allHourlyBG))
         cdf = plot(sortedBG, p, label = "egp 1.16", title = "BG CDF - Resampled Hourly")
         xlabel!("BG (mmol/l)")
         ylabel!("Cummulative Freq")
-        display(p)
-        #png(p, path * "/CDF.png")
-    
+        return p
     end
     
     function plotPatientBG(patient)
@@ -72,8 +68,8 @@ module Visualizer
         plot!(p, patient.Treal_orig, patient.Greal_orig, label ="BG orig")
         xlabel!("time (min)")
         ylabel!("Blood Glucose (mmol/l)")
-        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
-        display(p)
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)", minorgrid = true);
+        return p
     end
 
     function convert_to_stepfunction(f::Matrix{Float64})
