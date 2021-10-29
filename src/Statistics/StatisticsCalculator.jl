@@ -1,5 +1,7 @@
 module StatisticsCalculator
 
+include("Resampler.jl")
+using .Resampler
 using Statistics
 using DataFrames
 using Pipe
@@ -186,10 +188,10 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
     PN_all = []
     GoalFeed_hourly = []
     for i in 1:length(u)
-        u_ = resample_hourly(u[i], x -> trunc(x * 60 / 1000)) # convert to Unit/hour
+        u_ = Resampler.resample_hourly(u[i], x -> trunc(x * 60 / 1000)) # convert to Unit/hour
         push!(u_all, u_...)
-        P_ = resample_hourly(P[i], x -> x)
-        PN_ = resample_hourly(PN[i], x -> x / 12) # bolus mmol/min for 5 min -> mmol/min for 60 min
+        P_ = Resampler.resample_hourly(P[i], x -> x)
+        PN_ = Resampler.resample_hourly(PN[i], x -> x / 12) # bolus mmol/min for 5 min -> mmol/min for 60 min
         while length(PN_) != length(P_)
             if length(PN_) > length(P_) pop!(PN_)
             else pop!(P_) end
@@ -259,8 +261,8 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
 
     Feed_all = Vector{Vector{Float64}}()
     for i in 1:length(P)
-        PN_ = resample_hourly(PN[i], x -> x / 12)
-        P_ = resample_hourly(P[i], x -> x)
+        PN_ = Resampler.resample_hourly(PN[i], x -> x / 12)
+        P_ = Resampler.resample_hourly(P[i], x -> x)
         # it can happen not exact numbers of hours
         while length(PN_) != length(P_)
             if length(PN_) > length(P_) pop!(PN_)
@@ -288,7 +290,7 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
               Value = [
                   ". . .",
                   (@pipe u |>
-                   map(x -> resample_hourly(x, y -> trunc(y * 60 / 1000)), _) |>
+                   map(x -> Resampler.resample_hourly(x, y -> trunc(y * 60 / 1000)), _) |>
                    map(x -> mean(x), _) |>
                    quantile(_, [0.25, 0.5, 0.75])),
                   "",
@@ -302,12 +304,12 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
                    map(x -> mean(x) * 100, _) |>
                    quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe P |>
-                   map(x -> resample_hourly(x, y -> y ), _) |>
+                   map(x -> Resampler.resample_hourly(x, y -> y ), _) |>
                    map(x -> mean(x), _) |>
                    map(x -> x * 180 * 60 / 1000, _) |>
                    quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe PN |>
-                   map(x -> resample_hourly(x, y -> y / 12), _) |>
+                   map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |>
                    map(x -> mean(x), _) |>
                    map(x -> x * 180 * 60 / 1000, _) |>
                    quantile(_, [0.25, 0.5, 0.75])),
@@ -328,14 +330,14 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
                    map(x -> mean(x) * 100, _) |>
                    quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe P |> 
-                   map(x -> resample_hourly(x, y -> y), _) |> 
+                   map(x -> Resampler.resample_hourly(x, y -> y), _) |> 
                    map(x -> filter(y -> y > eps, x), _) |> 
                    filter(x -> x != [], _) |>
                    map(x -> mean(x), _) |> 
                    map(x -> x * 180 * 60 / 1000, _) |> 
                    quantile(_, [0.25, 0.5, 0.75])),
                   (@pipe PN |> 
-                   map(x -> resample_hourly(x, y -> y / 12), _) |> 
+                   map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |> 
                    map(x -> filter(y -> y > eps, x), _) |> 
                    filter(x -> x != [], _) |> 
                    map(x -> mean(x), _) |> 
@@ -346,33 +348,5 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
     return mn
 end
 
-function resample_hourly(mtx, func)
-    
-    mtx_hourly = [ func( mtx[1,2]) ]
-    cnt = 0.0
-    for i in 2:length(mtx[:,1])
-        if (mtx[i,1] - mtx[i-1,1] + cnt) < 60
-            mtx_hourly[end] = mtx_hourly[end] + func( mtx[i,2] )
-            cnt = cnt + (mtx[i,1] - mtx[i-1,1])
-        end
-        if (mtx[i,1] -mtx[i-1,1] + cnt ) >= 60 && (mtx[i,1] - mtx[i-1,1] + cnt) < 120
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            cnt = cnt - 60 + (mtx[i,1] - mtx[i-1,1])
-        end
-        if (mtx[i,1] - mtx[i-1,1] + cnt) >= 120 && (mtx[i,1] - mtx[i-1,1] + cnt) < 180
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            cnt = cnt - 120 + (mtx[i,1] - mtx[i-1,1])
-        end
-        if (mtx[i,1] - mtx[i-1,1] + cnt) >= 180 
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            push!(mtx_hourly, func( mtx[i,2] ) ) 
-            cnt = cnt - 180 + (mtx[i,1] - mtx[i-1,1])
-        end
-    end
-
-    return mtx_hourly
-end
 
 end

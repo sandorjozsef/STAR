@@ -71,6 +71,5 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     #with a patient record that is split into several parts)
 
     patient.ControllerFlag = [];
-    patient.hourlyBG = [timeSoln.GIQ[1,1]];
 
 end

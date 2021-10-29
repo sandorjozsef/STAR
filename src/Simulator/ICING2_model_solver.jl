@@ -1,17 +1,5 @@
 using OrdinaryDiffEq
 
-function resampleHourlyBG(patient, timeSoln, t_start)
-    if timeSoln.T[end]-60 > t_start
-        i = findfirst(x -> x-60 > t_start, timeSoln.T)
-        push!(patient.hourlyBG, timeSoln.GIQ[i,1])
-    end
-    if timeSoln.T[end]-120 > t_start
-        i = findfirst(x -> x-120 > t_start, timeSoln.T)
-        push!(patient.hourlyBG, timeSoln.GIQ[i,1])
-    end
-    push!(patient.hourlyBG, timeSoln.GIQ[end,1])
-end
-
 function ICING2_model_solver(patient, timeSoln, t_start, t_end)
 
     if t_start == t_end
@@ -86,8 +74,6 @@ function ICING2_model_solver(patient, timeSoln, t_start, t_end)
         timeSoln.P = [timeSoln.P ; IntsFinal[4][i] IntsFinal[5][i] ];
 
     end
-    
-    resampleHourlyBG(patient, timeSoln, t_start)
     
 end
 

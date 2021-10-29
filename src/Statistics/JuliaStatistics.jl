@@ -104,7 +104,7 @@ module JuliaStatistics
             Patient1 = Serializer.deserialize(srcpath1, patientName)
             p1 = Visualizer.plot_patient_metabolics(Patient1) 
             display(p1)
-            VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
+            #VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
             p2 = Visualizer.plotPatientBG(Patient1)
             display(p2)
         end
@@ -135,6 +135,9 @@ module JuliaStatistics
 
         ip = StatisticsCalculator.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
         StatisticsExporter.writeCSV_Stats(ip, dstpath)
+
+        cdf = Visualizer.plotCDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
+        #display(cdf)
 
         empty!(RawBG)
         empty!(Treal)
