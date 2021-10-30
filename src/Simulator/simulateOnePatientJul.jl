@@ -22,7 +22,7 @@ function simulateOnePatientJul(srcPath, name, egp)
 
     # 1 -> STAR recommended
     # 2 -> SIMPLE
-    simulation.mode = 1 ; 
+    simulation.mode = 2 ; 
 
     # 1 -> low nutrition 
     # 2 -> normal nutrition 

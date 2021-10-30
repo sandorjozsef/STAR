@@ -2,6 +2,13 @@ function SIMPLE_controller_simulator(patient, simulation)
   
     if length(patient.Treal) == 1
         patient.nrBg = 1;
+
+        if simulation.protocol_treatment == 2
+            patient.PN = patient.PN_orig
+            patient.P = patient.P_orig
+            patient.u = patient.u_orig
+        end
+
     else
         patient.nrBg += 1;
     end
@@ -33,17 +40,6 @@ function SIMPLE_controller_simulator(patient, simulation)
         patient.PN = [patient.PN; patient.PN[end,1]+selection*60-5 0.0] #parenteral = 0
         patient.PN = [patient.PN; patient.PN[end,1]+5 0.0]
 
-    end
-
-    if simulation.protocol_treatment == 2
-        i = findlast(t -> t <= patient.Treal[end], patient.Treal_orig)
-        patient.u = [patient.u; patient.u_orig[i,1] patient.u_orig[i,2]]
-        patient.u = [patient.u; patient.u_orig[i+1,1] patient.u_orig[i+1,2]]
-
-        patient.P = [patient.P; patient.P_orig[i,1] patient.P_orig[i,2]]
-
-        patient.PN = [patient.PN; patient.PN_orig[i,1] patient.PN_orig[i,2]]
-        patient.PN = [patient.PN; patient.PN_orig[i+1,1] patient.PN_orig[i+1,2]]
     end
 
     if simulation.protocol_timing == 1
