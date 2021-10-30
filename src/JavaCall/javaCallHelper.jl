@@ -263,7 +263,8 @@ end
 
 function loadPatientStruct(patient, fullpath)
     J_PatientStruct = jcall(J_PatientStruct_class, "loadFromFile", J_PatientStruct_class, (JString,), fullpath)
-    patient.Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
+    Treal = jfield(J_PatientStruct, "Treal", Array{jdouble, 1})
+    patient.Treal = map(x -> trunc(x), Treal)
     patient.Greal = jfield(J_PatientStruct, "Greal", Array{jdouble, 1})
     patient.u = jfield(J_PatientStruct, "u", Array{jdouble, 2})
     patient.P = jfield(J_PatientStruct, "P", Array{jdouble, 2})

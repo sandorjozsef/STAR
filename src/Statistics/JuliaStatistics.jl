@@ -57,12 +57,11 @@ module JuliaStatistics
 
             Patient1 = Serializer.deserialize(srcpath1, patientName)
             Patient2 = Serializer.deserialize(srcpath2, patientName)
-           
             signDiffBG = []
-            len = min(length(Patient1.TimeSolnGIQ[:,1]), length(Patient2.TimeSolnGIQ[:,1]))
+            len = min(length(Patient1.Greal[:,1]), length(Patient2.Greal[:,1]))
             for i in 1:len
                 if Patient1.Treal[i] == Patient2.Treal[i]
-                    push!(signDiffBG, Patient1.TimeSolnGIQ[i,1]-Patient2.TimeSolnGIQ[i,1])
+                    push!(signDiffBG, Patient1.Greal[i,1]-Patient2.Greal[i,1])
                 else
                     cnt = cnt+1
                 end

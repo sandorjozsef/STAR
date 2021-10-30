@@ -22,7 +22,7 @@ function simulateOnePatientJul(srcPath, name, egp)
 
     # 1 -> STAR recommended
     # 2 -> SIMPLE
-    simulation.mode = 2 ; 
+    simulation.mode = 1 ; 
 
     # 1 -> low nutrition 
     # 2 -> normal nutrition 
@@ -31,7 +31,7 @@ function simulateOnePatientJul(srcPath, name, egp)
 
     # 1 -> exact longest allowed
     # 2 -> historic
-    simulation.protocol_timing = 2 ;
+    simulation.protocol_timing = 1 ;
 
     # 1 -> simulated
     # 2 -> historic
