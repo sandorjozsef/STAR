@@ -1,9 +1,9 @@
-function ICING2_model_sim_init(patient, timeSoln, egp)
+function ICING2_model_sim_init(patient, timeSoln)
     
     patient.pG = 0.006;   #non-insulin mediated glucose removal parameter [1/min]
     patient.CNS = 0.3;    #Central nervous system glucose uptake
     patient.varEGP = false;
-    patient.EGP = [0.0 , egp];
+    patient.EGP = [0.0 , 1.16];
     patient.stochasticModelFileName = "SPRINT_whole_cohort.StochasticModel";
 
     patient.Diabetic = 0;
@@ -42,7 +42,7 @@ function ICING2_model_sim_init(patient, timeSoln, egp)
     IQ0 = [1,patient.gamma]*Iss; # I = 2Q at steady state
 
     #-------------------------------------------------------------------------------
-        #Initialise TimeSoln
+        #Initialize TimeSoln
     timeSoln.T = [patient.Treal_orig[1]];
     timeSoln.GIQ = [patient.Greal_orig[1] IQ0[1] IQ0[2]] ;
     timeSoln.P = [patient.Po/patient.d1 patient.Po/patient.d2];

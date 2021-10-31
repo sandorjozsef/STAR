@@ -100,7 +100,6 @@ mutable struct Simulation
     mode::Int64
     nutrition_dosing::Int64
     protocol_timing::Int64
-    protocol_treatment::Int64
     Simulation() = new()
 end
 

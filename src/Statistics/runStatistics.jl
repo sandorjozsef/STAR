@@ -1,8 +1,12 @@
 include("JuliaStatistics.jl")
 using .JuliaStatistics
     
-julpath1 = "$(pwd())\\sim_results\\JuliaResults\\Simresults-2021-10-30_15_10"
-julpath2 = "$(pwd())\\sim_results\\JuliaResults\\Simresults-2021-10-30_17_27"
+if ispath("$(pwd())\\sim_stats") == false
+    mkdir("$(pwd())\\sim_stats")
+end
+
+julpath1 = "$(pwd())\\sim_results\\JuliaResults\\Simresults-2021-10-31_13_43"
+julpath2 = "$(pwd())\\sim_results\\JuliaResults\\Simresults-2021-10-31_13_44"
     
 matpath1 = "$(pwd())\\sim_results\\MatLabResults\\3hour_ode45_1e_6"
 # all 1 hour treatment by matlab
@@ -20,9 +24,9 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 #JuliaStatistics.calculate_signDiffBG(julpath2, matpath1)
 #JuliaStatistics.calculate_signDiffBG(matpath2, matpath1)
 #JuliaStatistics.calculate_signDiffBG(julpath2, julpath1) 
-JuliaStatistics.calculate_signDiffBG(javapath1, julpath1)
+#JuliaStatistics.calculate_signDiffBG(javapath1, julpath1)
 
-#JuliaStatistics.plot_simulation(julpath1)
+JuliaStatistics.plot_simulation(julpath1)
 #JuliaStatistics.plot_simulation(javapath1)
 #JuliaStatistics.plot_simulation(matpath4)
 

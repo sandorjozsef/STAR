@@ -86,7 +86,7 @@ module JuliaStatistics
 
         h = Visualizer.plot_histogram(signDiffBG_all)
         display(h)
-        VisualiserExporter.savePNG_plot(h, "$(pwd())\\graphs\\asd.png")
+        #VisualiserExporter.savePNG_plot(h, "$(pwd())\\graphs\\asd.png")
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -96,11 +96,11 @@ module JuliaStatistics
        
     end
 
-    function plot_simulation(srcpath1)
+    function plot_simulation(srcpath)
 
-        for filename in readdir(srcpath1)
+        for filename in readdir(srcpath)
             patientName = splitext(filename)[1]
-            Patient1 = Serializer.deserialize(srcpath1, patientName)
+            Patient1 = Serializer.deserialize(srcpath, patientName)
             p1 = Visualizer.plot_patient_metabolics(Patient1) 
             display(p1)
             #VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")

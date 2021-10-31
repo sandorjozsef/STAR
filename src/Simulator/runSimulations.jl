@@ -5,6 +5,8 @@ srcDir = pwd() * "/input/Interesting_Patients_mat"
 
 dstDir = pwd() * "/sim_results/JuliaResults"
 
-egp = 1.16
- 
-runSimulationOnPatients(srcDir, dstDir, egp)
+if ispath(dstDir) == false
+    mkdir(dstDir)
+end
+
+runSimulationOnPatients(srcDir, dstDir)

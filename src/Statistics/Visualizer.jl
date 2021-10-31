@@ -3,6 +3,8 @@ module Visualizer
     include("Resampler.jl")
     using .Resampler
     using Plots
+    using Plots.PlotMeasures
+    Plots.theme(:dao)
 
     export plot_compare_methods_BG
     function plot_compare_methods_BG(Patient1, Patient2)
@@ -50,8 +52,8 @@ module Visualizer
 
         PN1 = Resampler.convert_to_stepfunction(Patient1.PN)
         PN2 = Resampler.convert_to_stepfunction(Patient2.PN)
-        plot!(p3, PN[2:end,1], PN[1:(end-1),2], label = "PN1")
-        plot!(p3, PN[2:end,1], PN[1:(end-1),2], label = "PN2")
+        plot!(p3, PN1[2:end,1], PN1[1:(end-1),2], label = "PN1")
+        plot!(p3, PN2[2:end,1], PN2[1:(end-1),2], label = "PN2")
 
         SI = Resampler.convert_to_stepfunction(Patient1.rawSI)
         p4 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
@@ -74,11 +76,18 @@ module Visualizer
     end
     
     function plotPatientBG(patient)
+
         p = plot(patient.Treal, patient.Greal, label = "BG")
-        plot!(p, patient.Treal_orig, patient.Greal_orig, label ="BG orig")
-        xlabel!("time (min)")
-        ylabel!("Blood Glucose (mmol/l)")
-        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)", minorgrid = true);
+        plot!(p, patient.Treal_orig, patient.Greal_orig,
+        minorgrid = true,
+        label ="BG orig",
+        left_margin = 20px,
+        bottom_margin = 20px,
+        size = (1000, 400),
+        xlabel = "time (min)",
+        ylabel = "Blood Glucose (mmol/l)")
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)")
+       
         return p
     end
 

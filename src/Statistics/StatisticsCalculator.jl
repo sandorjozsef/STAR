@@ -203,7 +203,53 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
         )
         
     end
+
+    Median_insulin_rate = quantile(u_all, [0.25, 0.5, 0.75])
+
+    Median_glucose_rate1 = quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]) # convert mmol/min to g/hour
+
+    Median_glucose_rate2 = (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
+                                filter(x -> (!isinf(x) && !isnan(x)), _) |>
+                                quantile(_, [0.25, 0.5, 0.75]) )
+
+    Median_Enteral_glucose = (@pipe P_all |> 
+                                map(x -> x * 180 * 60 / 1000, _) |> 
+                                quantile(_, [0.25, 0.5, 0.75]) )
+
+    Median_Parental_glucose = (@pipe PN_all |> 
+                                map(x -> x * 180 * 60 / 1000, _) |> 
+                                quantile(_, [0.25, 0.5, 0.75]) )
+
+    Total_hours_not_fed = length(filter(x -> x < eps, P_all+PN_all))
+
+    Median_glucose_rate_fed1 = (@pipe (P_all + PN_all) |> 
+                                filter(x -> x > eps, _) |> 
+                                map(x -> x * 180 * 60 / 1000, _) |> 
+                                quantile(_, [0.25, 0.5, 0.75]) )
+
+    Median_glucose_rate_fed2 = (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
+                                filter(x -> (x > eps && !isinf(x) && !isnan(x)), _) |>
+                                quantile(_, [0.25, 0.5, 0.75]) )
+
+    Enteral_glucose_fed = (@pipe P_all |> 
+                                filter(x -> x!=0,_) |> 
+                                map(x -> x * 180 * 60 / 1000, _) )
+    if length(Enteral_glucose_fed) != 0
+        Median_Enteral_glucose_fed = quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75])
+    else
+        Median_Enteral_glucose_fed = missing
+    end
+
+    Parenteral_glucose_fed = (@pipe PN_all |> 
+                                filter(x -> x!=0,_) |> 
+                                map(x -> x * 180 * 60 / 1000, _) )
+    if length(Parenteral_glucose_fed) != 0
+        Median_Parenteral_glucose_fed = quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75])
+    else
+        Median_Parenteral_glucose_fed = missing
+    end
     
+
     mn = DataFrame(KeyName = [
         ". . . Intervention Cohort Stats (Hourly Average)",
         "Median insulin rate [IQR] (U/hr)",
@@ -222,35 +268,18 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
         ],
               Value = [
                   ". . .",
-                  quantile(u_all, [0.25, 0.5, 0.75]),
+                  Median_insulin_rate,
                   "",
-                  quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]), # convert mmol/min to g/hour
-                  (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
-                   filter(x -> (!isinf(x) && !isnan(x)), _) |>
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                   (@pipe P_all |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                  (@pipe PN_all |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  Median_glucose_rate1,
+                  Median_glucose_rate2,
+                  Median_Enteral_glucose,
+                  Median_Parental_glucose,
                   "",
-                  length(filter(x -> x < eps, P_all+PN_all)),
-                  (@pipe (P_all + PN_all) |> 
-                   filter(x -> x > eps, _) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                  (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
-                   filter(x -> (x > eps && !isinf(x) && !isnan(x)), _) |>
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                  (@pipe P_all |> 
-                   filter(x -> x!=0,_) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                  (@pipe PN_all |> 
-                   filter(x -> x!=0,_) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
+                  Total_hours_not_fed,
+                  Median_glucose_rate_fed1,
+                  Median_glucose_rate_fed2,
+                  Median_Enteral_glucose_fed,
+                  Median_Parenteral_glucose_fed,
                   "-----------------------"
               ])
     return mn
@@ -270,6 +299,76 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
         end
         push!(Feed_all, PN_ + P_)
     end
+
+    Median_insulin_rate = (@pipe u |>
+                            map(x -> Resampler.resample_hourly(x, y -> trunc(y * 60 / 1000)), _) |>
+                            map(x -> mean(x), _) |>
+                            quantile(_, [0.25, 0.5, 0.75]))
+
+    Median_glucose_rate1 = (@pipe Feed_all |>
+                            map(x -> mean(x), _) |>
+                            map(x -> x * 180 * 60 / 1000, _) |>
+                            quantile(_, [0.25, 0.5, 0.75])) # convert mmol/min to g/hour
+
+    Median_glucose_rate2 = (@pipe (Feed_all ./ GoalFeeds) |>
+                            map(y -> filter(x -> (!isinf(x) && !isnan(x)), y), _) |>
+                            filter(x -> x != [], _) |>
+                            map(x -> mean(x) * 100, _) |>
+                            quantile(_, [0.25, 0.5, 0.75]))
+
+    Median_Enteral_glucose = (@pipe P |>
+                            map(x -> Resampler.resample_hourly(x, y -> y ), _) |>
+                            map(x -> mean(x), _) |>
+                            map(x -> x * 180 * 60 / 1000, _) |>
+                            quantile(_, [0.25, 0.5, 0.75]))
+
+    Median_Parental_glucose = (@pipe PN |>
+                            map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |>
+                            map(x -> mean(x), _) |>
+                            map(x -> x * 180 * 60 / 1000, _) |>
+                            quantile(_, [0.25, 0.5, 0.75]))
+
+    Total_hours_not_fed = (@pipe Feed_all |>
+                            map(x -> filter(y -> y < eps, x), _) |>
+                            filter(x -> x != [], _) |>
+                            map(x -> length(x), _) |> sum )
+
+    Median_glucose_rate_fed1 = (@pipe Feed_all |>
+                            map(x -> filter(y -> y > eps, x), _) |>
+                            filter(x -> x != [], _) |>
+                            map(x -> mean(x), _) |> 
+                            map(x -> x * 180 * 60 / 1000, _) |> 
+                            quantile(_, [0.25, 0.5, 0.75]) )
+
+    Median_glucose_rate_fed2 = (@pipe (Feed_all ./ GoalFeeds) |>
+                            map(y -> filter(x -> (x > eps && !isinf(x) && !isnan(x)), y), _) |>
+                            filter(x -> x != [], _) |>
+                            map(x -> mean(x) * 100, _) |>
+                            quantile(_, [0.25, 0.5, 0.75]))
+
+    Enteral_glucose_fed = (@pipe P |> 
+                            map(x -> Resampler.resample_hourly(x, y -> y), _) |> 
+                            map(x -> filter(y -> y > eps, x), _) |> 
+                            filter(x -> x != [], _) |>
+                            map(x -> mean(x), _) |> 
+                            map(x -> x * 180 * 60 / 1000, _) )
+    if length(Enteral_glucose_fed) != 0
+        Median_Enteral_glucose_fed = quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75])
+    else
+        Median_Enteral_glucose_fed = missing
+    end
+                            
+    Parenteral_glucose_fed = (@pipe PN |> 
+                            map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |> 
+                            map(x -> filter(y -> y > eps, x), _) |> 
+                            filter(x -> x != [], _) |> 
+                            map(x -> mean(x), _) |> 
+                            map(x -> x * 180 * 60 / 1000, _))
+    if length(Parenteral_glucose_fed) != 0
+        Median_Parenteral_glucose_fed = quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75])
+    else
+        Median_Parenteral_glucose_fed = missing
+    end
     
     mn = DataFrame(KeyName = [
         ". . . Intervention Per-episode Stats (Hourly Average)",
@@ -288,61 +387,19 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
         "-----------------------"
         ],
               Value = [
-                  ". . .",
-                  (@pipe u |>
-                   map(x -> Resampler.resample_hourly(x, y -> trunc(y * 60 / 1000)), _) |>
-                   map(x -> mean(x), _) |>
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  "",
-                  (@pipe Feed_all |>
-                   map(x -> mean(x), _) |>
-                   map(x -> x * 180 * 60 / 1000, _) |>
-                   quantile(_, [0.25, 0.5, 0.75])), # convert mmol/min to g/hour
-                  (@pipe (Feed_all ./ GoalFeeds) |>
-                   map(y -> filter(x -> (!isinf(x) && !isnan(x)), y), _) |>
-                   filter(x -> x != [], _) |>
-                   map(x -> mean(x) * 100, _) |>
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  (@pipe P |>
-                   map(x -> Resampler.resample_hourly(x, y -> y ), _) |>
-                   map(x -> mean(x), _) |>
-                   map(x -> x * 180 * 60 / 1000, _) |>
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  (@pipe PN |>
-                   map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |>
-                   map(x -> mean(x), _) |>
-                   map(x -> x * 180 * 60 / 1000, _) |>
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  "",
-                  (@pipe Feed_all |>
-                   map(x -> filter(y -> y < eps, x), _) |>
-                   filter(x -> x != [], _) |>
-                   map(x -> length(x), _) |> sum ),
-                  (@pipe Feed_all |>
-                   map(x -> filter(y -> y > eps, x), _) |>
-                   filter(x -> x != [], _) |>
-                   map(x -> mean(x), _) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75]) ),
-                  (@pipe (Feed_all ./ GoalFeeds) |>
-                   map(y -> filter(x -> (x > eps && !isinf(x) && !isnan(x)), y), _) |>
-                   filter(x -> x != [], _) |>
-                   map(x -> mean(x) * 100, _) |>
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  (@pipe P |> 
-                   map(x -> Resampler.resample_hourly(x, y -> y), _) |> 
-                   map(x -> filter(y -> y > eps, x), _) |> 
-                   filter(x -> x != [], _) |>
-                   map(x -> mean(x), _) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75])),
-                  (@pipe PN |> 
-                   map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |> 
-                   map(x -> filter(y -> y > eps, x), _) |> 
-                   filter(x -> x != [], _) |> 
-                   map(x -> mean(x), _) |> 
-                   map(x -> x * 180 * 60 / 1000, _) |> 
-                   quantile(_, [0.25, 0.5, 0.75])),
+                ". . .",
+                Median_insulin_rate,
+                "",
+                Median_glucose_rate1,
+                Median_glucose_rate2,
+                Median_Enteral_glucose,
+                Median_Parental_glucose,
+                "",
+                Total_hours_not_fed,
+                Median_glucose_rate_fed1,
+                Median_glucose_rate_fed2,
+                Median_Enteral_glucose_fed,
+                Median_Parenteral_glucose_fed,
                   "-----------------------"
               ])
     return mn

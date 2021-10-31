@@ -4,7 +4,7 @@ include("$(pwd())\\src\\Statistics\\Serializer.jl")
 using Dates
 using .Serializer
 
-    function runSimulationOnPatients(srcDir, dstDir, egp)
+    function runSimulationOnPatients(srcDir, dstDir)
 
         simFolderOut = joinpath(dstDir , "Simresults-" * 
             string(today()) *"_"* string(hour(now())) *"_"* string(minute(now())));
@@ -18,7 +18,7 @@ using .Serializer
         for name in readdir(srcDir)
             patientname = splitext(name)[1]
             println("\nProcess patient: ", patientname);
-            @time (patient, timeSoln) = simulateOnePatientJul(srcDir, patientname, egp)
+            @time (patient, timeSoln) = simulateOnePatientJul(srcDir, patientname)
 
             serPatient = Serializer.SerializablePatient()
             serPatient.TimeSolnGIQ = timeSoln.GIQ

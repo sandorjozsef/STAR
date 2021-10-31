@@ -9,7 +9,7 @@ function STAR_controller_simulator(patient, simulation)
     TargetUpper = 8.0
 
     if length(patient.Treal) == 1
-
+        println("### STAR_controller_simulator ###")
         patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/Simulator/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
