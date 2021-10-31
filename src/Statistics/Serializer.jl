@@ -127,7 +127,7 @@ module Serializer
             Patient.rawSI = [ vars["PatientStruct"]["rawSI"][1] vars["PatientStruct"]["rawSI"][2] ]
         else
             Patient.TimeSolnGIQ = [Patient.Greal zeros(length(Patient.Greal)) zeros(length(Patient.Greal))]
-            Patient.hourlyBG = [0.0]
+            Patient.hourlyBG = zeros(length(Patient.Greal))
             Patient.GoalFeed = Patient.Po
             Patient.P = vars["PatientStruct"]["P"]
             Patient.PN = vars["PatientStruct"]["PN"]

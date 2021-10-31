@@ -4,13 +4,22 @@ module Visualizer
     using .Resampler
     using Plots
     using Plots.PlotMeasures
-    Plots.theme(:dao)
+    using PlotThemes
+    
+    Plots.theme(:dao, legend = :topright, minorgrid = true )
 
-    export plot_compare_methods_BG
-    function plot_compare_methods_BG(Patient1, Patient2)
-        p = plot(Patient1.Treal, Patient1.TimeSolnGIQ[:,1], label = "Method 1", title = Patient1.Name)
+    export plot_compare_patient_BG
+    function plot_compare_patient_BG(Patient1, Patient2)
+        p = plot(Patient1.Treal, Patient1.TimeSolnGIQ[:,1], label = "Method 1")
         plot!(p, Patient2.Treal, Patient2.TimeSolnGIQ[:,1], label = "Method 2")
-        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)", minorgrid = true);
+        hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
+        plot!(p,
+        left_margin = 20px,
+        bottom_margin = 20px,
+        size = (1000, 400),
+        xlabel = "time (min)",
+        ylabel = "Blood Glucose (mmol/l)",
+        title = Patient1.Name)
         return p
     end
 
@@ -32,12 +41,12 @@ module Visualizer
         SI = Resampler.convert_to_stepfunction(Patient.rawSI)
         p3 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
 
-        p = plot(p1,p2, p3, layout = (3,1), size = (1000, 900), minorgrid = true)
+        p = plot(p1,p2, p3, layout = (3,1), size = (1000, 900))
         return p
     end
 
-    export plot_compare_patient_metabolics
-    function plot_compare_patient_metabolics(Patient1, Patient2)
+    export plot_compare_patient_treatment
+    function plot_compare_patient_treatment(Patient1, Patient2)
         p1 = plot(Patient1.Treal, Patient1.TimeSolnGIQ[:,1], label = "G1 (mmol/l)", title = Patient1.Name)
         plot!(p1, Patient2.Treal, Patient2.TimeSolnGIQ[:,1], label = "G2 (mmol/l)")
         hspan!(p1,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)");
@@ -57,7 +66,12 @@ module Visualizer
 
         SI = Resampler.convert_to_stepfunction(Patient1.rawSI)
         p4 = plot(SI[2:end,1], SI[1:(end-1),2], label = "SI", xlabel = "time (min)", ylims = (0, 0.005))
-        p = plot(p1,p2, p3,p4, layout = (4,1), size = (1000, 1200), minorgrid = true)
+        p = plot(p1,p2, p3,p4,
+        layout = (4,1),
+        size = (1000, 1200),
+        left_margin = 20px,
+        bottom_margin = 20px,
+        title = Patient1.Name)
         return p
     end
 
@@ -66,26 +80,30 @@ module Visualizer
         return histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log)
     end
 
-    function plotCDF(allHourlyBG)
-        sortedBG = sort(allHourlyBG)
-        p = range(0, stop=1, length=length(allHourlyBG))
-        cdf = plot(sortedBG, p, label = "egp 1.16", title = "BG CDF - Resampled Hourly")
-        xlabel!("BG (mmol/l)")
-        ylabel!("Cummulative Freq")
+    export plot_CDF
+    function plot_CDF(HourlyBG)
+        sortedBG = sort(HourlyBG)
+        p = range(0, stop=1, length=length(HourlyBG))
+        cdf = plot(sortedBG, p,
+        label = "egp 1.16",
+        title = "BG CDF - Resampled Hourly",
+        xlabel = "BG (mmol/l)",
+        ylabel = "Cummulative Freq")
         return cdf
     end
     
-    function plotPatientBG(patient)
+    export plot_patient_BG
+    function plot_patient_BG(patient)
 
         p = plot(patient.Treal, patient.Greal, label = "BG")
         plot!(p, patient.Treal_orig, patient.Greal_orig,
-        minorgrid = true,
         label ="BG orig",
         left_margin = 20px,
         bottom_margin = 20px,
         size = (1000, 400),
         xlabel = "time (min)",
-        ylabel = "Blood Glucose (mmol/l)")
+        ylabel = "Blood Glucose (mmol/l)",
+        title = patient.Name)
         hspan!(p,[4.4,8.0], color = :green, alpha = 0.2, labels = "normoglycaemia (4.4 - 8.0)")
        
         return p

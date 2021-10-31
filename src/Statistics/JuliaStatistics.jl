@@ -39,7 +39,7 @@ module JuliaStatistics
 
     end
 
-    function calculate_signDiffBG(srcpath1, srcpath2)
+    function calculate_treatments_signDiffBG(srcpath1, srcpath2)
 
         signDiffBG_all = []
         maxi = 0.0
@@ -79,14 +79,10 @@ module JuliaStatistics
 
             signDiffBG_all = cat(signDiffBG_all, signDiffBG, dims=1)
 
-            #Visualizer.plot_compare_patient_metabolics(Patient1, Patient2)
-            #Visualizer.plot_patient_BG(Patient1, Patient2)
-           
         end
 
         h = Visualizer.plot_histogram(signDiffBG_all)
         display(h)
-        #VisualiserExporter.savePNG_plot(h, "$(pwd())\\graphs\\asd.png")
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -96,23 +92,47 @@ module JuliaStatistics
        
     end
 
+    export compare_treatments
+    function compare_treatments(srcpath1, srcpath2)
+        srcpath = srcpath1
+        if length(readdir(srcpath1)) > length(readdir(srcpath2)) 
+            srcpath = srcpath2
+        end
+        for filename in readdir(srcpath)
+            patientName = splitext(filename)[1]
+
+            Patient1 = Serializer.deserialize(srcpath1, patientName)
+            Patient2 = Serializer.deserialize(srcpath2, patientName)
+            
+            p1 = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
+            display(p1)
+
+            p2 = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
+            display(p2)
+        end
+    end
+
+    export plot_simulation
     function plot_simulation(srcpath)
 
         for filename in readdir(srcpath)
             patientName = splitext(filename)[1]
-            Patient1 = Serializer.deserialize(srcpath, patientName)
-            p1 = Visualizer.plot_patient_metabolics(Patient1) 
+            Patient = Serializer.deserialize(srcpath, patientName)
+            p1 = Visualizer.plot_patient_metabolics(Patient) 
             display(p1)
-            #VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
-            p2 = Visualizer.plotPatientBG(Patient1)
+            p2 = Visualizer.plot_patient_BG(Patient)
             display(p2)
+            cdf = plot_CDF(Patient.hourlyBG)
+            display(cdf)
         end
 
     end
 
-    function createStatistics(srcpath, dstpath)
+    export create_statistics
+    function create_statistics(srcpath, dstpath)
 
         createDataStructures(srcpath)
+
         if isfile(dstpath)
             rm(dstpath)
         end
@@ -135,8 +155,8 @@ module JuliaStatistics
         ip = StatisticsCalculator.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
         StatisticsExporter.writeCSV_Stats(ip, dstpath)
 
-        cdf = Visualizer.plotCDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
-        #display(cdf)
+        cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
+        display(cdf)
 
         empty!(RawBG)
         empty!(Treal)
