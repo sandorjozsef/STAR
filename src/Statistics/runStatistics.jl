@@ -34,11 +34,11 @@ JuliaStatistics.plot_simulation(javapath1)
 JuliaStatistics.plot_simulation(matpath4)
 =#
 
-#=
+
 JuliaStatistics.create_statistics(matpath4, dstpath1)
 JuliaStatistics.create_statistics(julpath1, dstpath2)
 JuliaStatistics.create_statistics(javapath1, dstpath3)
-=#
+
 
 #=
 JuliaStatistics.compare_treatments(julpath1, julpath2)

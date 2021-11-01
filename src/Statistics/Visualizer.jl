@@ -70,8 +70,7 @@ module Visualizer
         layout = (4,1),
         size = (1000, 1200),
         left_margin = 20px,
-        bottom_margin = 20px,
-        title = Patient1.Name)
+        bottom_margin = 20px,)
         return p
     end
 

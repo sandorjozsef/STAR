@@ -34,12 +34,12 @@ function wholeCohortStats(RawBG, HourlyBG, Treal)
               Value = [
                   ". . .",
                   length(RawBG),
-                  sum( Treal[i][end] / 60.0 for i in 1:length(Treal)),
+                  (@pipe sum( Treal[i][end] / 60.0 for i in 1:length(Treal)) |> round(_,digits = 2)),
                   length(allRawBG),
-                  mean([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]),
-                  quantile([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)], [0.25 0.5 0.75]), 
-                  length(allRawBG) / (length(allHourlyBG) / 24),
-                  quantile([length(RawBG[i])/(length(HourlyBG[i])/24.0) for i in 1:length(RawBG)], [0.25 0.5 0.75]),
+                  round( mean([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)]), digits = 2),
+                  (@pipe quantile([length(HourlyBG[i])/24.0 for i in 1:length(HourlyBG)], [0.25 0.5 0.75]) |> map(x -> round(x, digits = 2), _)), 
+                  round( length(allRawBG) / (length(allHourlyBG) / 24), digits = 2),
+                  (@pipe quantile([length(RawBG[i])/(length(HourlyBG[i])/24.0) for i in 1:length(RawBG)], [0.25 0.5 0.75]) |> map(x -> round(x, digits = 2), _)),
                   "-----------------------"
               ])
     return mn
@@ -73,19 +73,19 @@ function rawBGStats(RawBG)
         ],
               Value = [
                   ". . .",
-                  quantile(allRawBG, [0.25 0.5 0.75]),
-                  mean(allRawBG),
-                  std(allRawBG),
+                  (@pipe quantile(allRawBG, [0.25 0.5 0.75]) |> map(x -> round(x, digits = 2), _)),
+                  (@pipe mean(allRawBG) |> round(_, digits = 2)),
+                  (@pipe std(allRawBG) |> round(_, digits = 2)),
                   length(filter(a -> length([a[i] for i in 1:length(a) if a[i] < 4.0]) != 0, RawBG)),
                   length(filter(a -> length([a[i] for i in 1:length(a) if a[i] < 2.2]) != 0, RawBG)), 
-                  length(filter(x -> x < 2.2, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x < 4.0, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x <= 4.4, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x > 4.4 && x < 6.5, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x > 4.4 && x < 7.0, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x > 4.4 && x < 8.0, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x -> x > 8.0 && x <= 10.0, allRawBG)) / length(allRawBG) * 100.0,
-                  length(filter(x ->  x > 10.0, allRawBG)) / length(allRawBG) * 100.0,
+                  (@pipe (length(filter(x -> x < 2.2, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x < 4.0, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x <= 4.4, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x > 4.4 && x < 6.5, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x > 4.4 && x < 7.0, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x > 4.4 && x < 8.0, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x -> x > 8.0 && x <= 10.0, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
+                  (@pipe (length(filter(x ->  x > 10.0, allRawBG)) / length(allRawBG) * 100.0) |> round(_, digits = 2)),
                   "-----------------------"
               ])
                   
@@ -120,19 +120,19 @@ function hourlyResampledBGStats(HourlyBG)
     ],
           Value = [
               ". . .",
-              quantile(allHourlyBG, [0.25 0.5 0.75]),
-              mean(allHourlyBG),
-              std(allHourlyBG),
-              length(filter(x -> x < 2.2, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x < 4.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x <= 4.4, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 4.4 && x < 6.1, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 4.4 && x < 7.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 4.4 && x < 8.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 4.4 && x < 9.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 6.0 && x < 9.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x -> x > 8.0 && x <= 10.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
-              length(filter(x ->  x > 10.0, allHourlyBG)) / length(allHourlyBG) * 100.0,
+              (@pipe quantile(allHourlyBG, [0.25 0.5 0.75]) |> map(x -> round(x, digits = 2), _)),
+              (@pipe mean(allHourlyBG) |> round(_, digits = 2)),
+              (@pipe std(allHourlyBG) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x < 2.2, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x < 4.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x <= 4.4, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 4.4 && x < 6.1, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 4.4 && x < 7.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 4.4 && x < 8.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 4.4 && x < 9.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 6.0 && x < 9.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x -> x > 8.0 && x <= 10.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
+              (@pipe (length(filter(x ->  x > 10.0, allHourlyBG)) / length(allHourlyBG) * 100.0) |> round(_, digits = 2)),
               "-----------------------"
           ])
     return mn
@@ -162,19 +162,32 @@ function perEpisode_statistics(RawBG, Treal)
               Value = [
                   ". . .",
                   "",
-                  quantile(Treal[:][end] / 60, [0.25 0.5 0.75]),
-                  quantile([ length(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ RawBG[i][1] for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ median(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]), 
-                  quantile([ mean(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ std(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x > 10.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x > 4.0 && x < 6.1, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x > 4.0 && x < 7.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x > 4.0 && x < 8.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x < 4.4 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x < 4.0 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
-                  quantile([ length(filter(x ->  x < 2.22 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]),
+                  (@pipe quantile(Treal[:][end] / 60, [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ RawBG[i][1] for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ median(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)), 
+                  (@pipe quantile([ mean(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ std(RawBG[i]) for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x > 10.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x > 4.0 && x < 6.1, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x > 4.0 && x < 7.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x > 4.0 && x < 8.0, RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x < 4.4 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x < 4.0 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
+                  (@pipe quantile([ length(filter(x ->  x < 2.22 , RawBG[i])) / length(RawBG[i]) * 100.0 for i in 1:length(RawBG) ], [0.25 0.5 0.75]) |>
+                   map(x -> round(x, digits = 2), _)),
                   "-----------------------"
               ])
     return mn
@@ -204,38 +217,44 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
         
     end
 
-    Median_insulin_rate = quantile(u_all, [0.25, 0.5, 0.75])
+    Median_insulin_rate = (@pipe quantile(u_all, [0.25, 0.5, 0.75]) |> map(x -> round(x, digits = 2), _))
 
-    Median_glucose_rate1 = quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]) # convert mmol/min to g/hour
+    Median_glucose_rate1 = (@pipe quantile(map(x -> x * 180 * 60 / 1000, P_all + PN_all), [0.25, 0.5, 0.75]) |> # convert mmol/min to g/hour
+                            map(x -> round(x, digits = 2), _))
 
     Median_glucose_rate2 = (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
                                 filter(x -> (!isinf(x) && !isnan(x)), _) |>
-                                quantile(_, [0.25, 0.5, 0.75]) )
+                                quantile(_, [0.25, 0.5, 0.75]) |>
+                                map(x -> round(x, digits = 2), _))
 
     Median_Enteral_glucose = (@pipe P_all |> 
                                 map(x -> x * 180 * 60 / 1000, _) |> 
-                                quantile(_, [0.25, 0.5, 0.75]) )
+                                quantile(_, [0.25, 0.5, 0.75]) |>
+                                map(x -> round(x, digits = 2), _))
 
     Median_Parental_glucose = (@pipe PN_all |> 
                                 map(x -> x * 180 * 60 / 1000, _) |> 
-                                quantile(_, [0.25, 0.5, 0.75]) )
+                                quantile(_, [0.25, 0.5, 0.75]) |>
+                                map(x -> round(x, digits = 2), _))
 
     Total_hours_not_fed = length(filter(x -> x < eps, P_all+PN_all))
 
     Median_glucose_rate_fed1 = (@pipe (P_all + PN_all) |> 
                                 filter(x -> x > eps, _) |> 
                                 map(x -> x * 180 * 60 / 1000, _) |> 
-                                quantile(_, [0.25, 0.5, 0.75]) )
+                                quantile(_, [0.25, 0.5, 0.75]) |>
+                                map(x -> round(x, digits = 2), _))
 
     Median_glucose_rate_fed2 = (@pipe ((P_all + PN_all) ./ GoalFeed_hourly * 100) |> 
                                 filter(x -> (x > eps && !isinf(x) && !isnan(x)), _) |>
-                                quantile(_, [0.25, 0.5, 0.75]) )
+                                quantile(_, [0.25, 0.5, 0.75]) |>
+                                map(x -> round(x, digits = 2), _))
 
     Enteral_glucose_fed = (@pipe P_all |> 
                                 filter(x -> x!=0,_) |> 
                                 map(x -> x * 180 * 60 / 1000, _) )
     if length(Enteral_glucose_fed) != 0
-        Median_Enteral_glucose_fed = quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75])
+        Median_Enteral_glucose_fed = (@pipe quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75]) |> map(x -> round(x, digits = 2), _))
     else
         Median_Enteral_glucose_fed = missing
     end
@@ -244,7 +263,7 @@ function intervention_cohort_stats_hourlyAverage(u, P, PN, GoalFeeds)
                                 filter(x -> x!=0,_) |> 
                                 map(x -> x * 180 * 60 / 1000, _) )
     if length(Parenteral_glucose_fed) != 0
-        Median_Parenteral_glucose_fed = quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75])
+        Median_Parenteral_glucose_fed = (@pipe quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75]) |> map(x -> round(x, digits = 2), _))
     else
         Median_Parenteral_glucose_fed = missing
     end
@@ -303,30 +322,35 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
     Median_insulin_rate = (@pipe u |>
                             map(x -> Resampler.resample_hourly(x, y -> trunc(y * 60 / 1000)), _) |>
                             map(x -> mean(x), _) |>
-                            quantile(_, [0.25, 0.5, 0.75]))
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Median_glucose_rate1 = (@pipe Feed_all |>
                             map(x -> mean(x), _) |>
                             map(x -> x * 180 * 60 / 1000, _) |>
-                            quantile(_, [0.25, 0.5, 0.75])) # convert mmol/min to g/hour
+                            quantile(_, [0.25, 0.5, 0.75]) |> # convert mmol/min to g/hour
+                            map(x -> round(x, digits = 2), _))
 
     Median_glucose_rate2 = (@pipe (Feed_all ./ GoalFeeds) |>
                             map(y -> filter(x -> (!isinf(x) && !isnan(x)), y), _) |>
                             filter(x -> x != [], _) |>
                             map(x -> mean(x) * 100, _) |>
-                            quantile(_, [0.25, 0.5, 0.75]))
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Median_Enteral_glucose = (@pipe P |>
                             map(x -> Resampler.resample_hourly(x, y -> y ), _) |>
                             map(x -> mean(x), _) |>
                             map(x -> x * 180 * 60 / 1000, _) |>
-                            quantile(_, [0.25, 0.5, 0.75]))
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Median_Parental_glucose = (@pipe PN |>
                             map(x -> Resampler.resample_hourly(x, y -> y / 12), _) |>
                             map(x -> mean(x), _) |>
                             map(x -> x * 180 * 60 / 1000, _) |>
-                            quantile(_, [0.25, 0.5, 0.75]))
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Total_hours_not_fed = (@pipe Feed_all |>
                             map(x -> filter(y -> y < eps, x), _) |>
@@ -338,13 +362,15 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
                             filter(x -> x != [], _) |>
                             map(x -> mean(x), _) |> 
                             map(x -> x * 180 * 60 / 1000, _) |> 
-                            quantile(_, [0.25, 0.5, 0.75]) )
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Median_glucose_rate_fed2 = (@pipe (Feed_all ./ GoalFeeds) |>
                             map(y -> filter(x -> (x > eps && !isinf(x) && !isnan(x)), y), _) |>
                             filter(x -> x != [], _) |>
                             map(x -> mean(x) * 100, _) |>
-                            quantile(_, [0.25, 0.5, 0.75]))
+                            quantile(_, [0.25, 0.5, 0.75]) |>
+                            map(x -> round(x, digits = 2), _))
 
     Enteral_glucose_fed = (@pipe P |> 
                             map(x -> Resampler.resample_hourly(x, y -> y), _) |> 
@@ -353,7 +379,7 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
                             map(x -> mean(x), _) |> 
                             map(x -> x * 180 * 60 / 1000, _) )
     if length(Enteral_glucose_fed) != 0
-        Median_Enteral_glucose_fed = quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75])
+        Median_Enteral_glucose_fed = (@pipe quantile(Enteral_glucose_fed, [0.25, 0.5, 0.75]) |> map(x -> round(x, digits = 2), _))
     else
         Median_Enteral_glucose_fed = missing
     end
@@ -365,7 +391,7 @@ function intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
                             map(x -> mean(x), _) |> 
                             map(x -> x * 180 * 60 / 1000, _))
     if length(Parenteral_glucose_fed) != 0
-        Median_Parenteral_glucose_fed = quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75])
+        Median_Parenteral_glucose_fed = (@pipe quantile(Parenteral_glucose_fed, [0.25, 0.5, 0.75]) |> map(x -> round(x, digits = 2), _))
     else
         Median_Parenteral_glucose_fed = missing
     end
