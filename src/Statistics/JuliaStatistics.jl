@@ -124,6 +124,7 @@ module JuliaStatistics
             display(p2)
             cdf = plot_CDF(Patient.hourlyBG)
             display(cdf)
+            VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
         end
 
     end

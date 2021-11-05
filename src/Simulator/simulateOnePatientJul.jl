@@ -10,33 +10,14 @@ include("$(pwd())\\src\\Statistics\\Serializer.jl")
 using .Simulation_Structs
 using .Serializer
 
-function simulateOnePatientJul(srcPath, name)
+function simulateOnePatientJul(srcPath, name, simulation)
    
-    simulation = Simulation();
+    
     simulation.stop_simulation = 0;
     simulation.measurement_time = 0.0;
     simulation.t_now = 0.0;
     simulation.t_start = now();
 
-    # 1 -> STAR recommended
-    # 2 -> SIMPLE
-    # 3 -> HISTORIC
-    simulation.mode = 3 ; 
-
-    # Only for STAR and SIMPLE
-    # longest allowed treatment: 1 / 2 / 3
-    simulation.longest_allowed = 3;
-
-    # Only for STAR and SIMPLE (HISTORIC is always historic)
-    # 1 -> exact longest allowed
-    # 2 -> historic
-    simulation.protocol_timing = 1 ;
-
-    # Only for SIMPLE controller
-    # 1 -> low nutrition 
-    # 2 -> normal nutrition 
-    # 3 -> high nutrition
-    simulation.nutrition_dosing = 2;
 
     patient = Simulation_Structs.Patient();
     patient.SimulationDate = now();

@@ -84,7 +84,7 @@ module Visualizer
         sortedBG = sort(HourlyBG)
         p = range(0, stop=1, length=length(HourlyBG))
         cdf = plot(sortedBG, p,
-        label = "egp 1.16",
+        label = "EGP 1.16",
         title = "BG CDF - Resampled Hourly",
         xlabel = "BG (mmol/l)",
         ylabel = "Cummulative Freq")
