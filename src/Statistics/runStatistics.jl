@@ -5,6 +5,10 @@ if ispath("$(pwd())\\sim_stats") == false
     mkdir("$(pwd())\\sim_stats")
 end
 
+if ispath("$(pwd())\\graphs") == false
+    mkdir("$(pwd())\\graphs")
+end
+
 julpath1 = "$(pwd())\\patients_data\\simulated\\julia_results\\Simresults-2021-11-05_14_20"
 
     
