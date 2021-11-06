@@ -23,6 +23,8 @@ module JuliaStatistics
 
     function createDataStructures(srcpath)
 
+        emptyDataStructures()
+
         for filename in readdir(srcpath)
 
             patientName = splitext(filename)[1]
@@ -124,9 +126,18 @@ module JuliaStatistics
             display(p2)
             cdf = plot_CDF(Patient.hourlyBG)
             display(cdf)
-            VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
+            #VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
         end
 
+    end
+
+    export plot_cohort_CDF
+    function plot_cohort_CDF(srcpath)
+        
+        createDataStructures(srcpath)
+        cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
+        display(cdf)
+        
     end
 
     export create_statistics
@@ -156,9 +167,10 @@ module JuliaStatistics
         ip = StatisticsCalculator.intervention_perEpisode_stats_hourlyAverage(u, P, PN, GoalFeeds)
         StatisticsExporter.writeCSV_Stats(ip, dstpath)
 
-        cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
-        display(cdf)
+        println("Created statistics in: $dstpath")
+    end
 
+    function emptyDataStructures()
         empty!(RawBG)
         empty!(Treal)
         empty!(u)
@@ -166,8 +178,6 @@ module JuliaStatistics
         empty!(PN)
         empty!(HourlyBG)
         empty!(GoalFeeds)
-
-        println("Created statistics in: $dstpath")
     end
 
 end
