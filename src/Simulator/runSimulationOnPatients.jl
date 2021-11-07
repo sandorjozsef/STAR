@@ -13,7 +13,10 @@ using .Serializer
             mkdir(simFolderOut)
         end
 
-        setup_java_libraries()
+        # if STAR is the actual controller
+        if simulation.mode == 1
+            setup_java_libraries()
+        end
 
         for name in readdir(srcDir)
             patientname = splitext(name)[1]

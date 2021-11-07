@@ -1,8 +1,8 @@
 include("ICING2_model_sim_init.jl")
 include("ICING2_model_solver.jl")
 include("BG_sensor.jl")
-include("STAR_controller_simulator.jl")
 include("Simulation_Structs.jl")
+include("STAR_controller_simulator.jl")
 include("SIMPLE_controller_simulator.jl")
 include("HISTORIC_controller_simulator.jl")
 include("$(pwd())\\src\\Statistics\\Serializer.jl")
@@ -13,21 +13,21 @@ using .Serializer
 function simulateOnePatientJul(srcPath, name, simulation)
    
     
-    simulation.stop_simulation = 0;
-    simulation.measurement_time = 0.0;
-    simulation.t_now = 0.0;
-    simulation.t_start = now();
+    simulation.stop_simulation = 0
+    simulation.measurement_time = 0.0
+    simulation.t_now = 0.0
+    simulation.t_start = now()
 
 
-    patient = Simulation_Structs.Patient();
-    patient.SimulationDate = now();
+    patient = Simulation_Structs.Patient()
+    patient.SimulationDate = now()
     
     serPatient = Serializer.deserialize(srcPath, name)
     patient.Treal_orig = serPatient.Treal
     patient.Greal_orig = serPatient.Greal
     patient.u_orig = serPatient.u
     patient.P_orig = serPatient.P
-    patient.PN_orig  = serPatient.PN
+    patient.PN_orig = serPatient.PN
     patient.Uo = serPatient.Uo 
     patient.Po = serPatient.Po 
     patient.rawSI = serPatient.rawSI
