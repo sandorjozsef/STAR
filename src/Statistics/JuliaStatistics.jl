@@ -126,7 +126,7 @@ module JuliaStatistics
             display(p2)
             cdf = plot_CDF(Patient.hourlyBG)
             display(cdf)
-            #VisualiserExporter.savePNG_plot(p1, "$(pwd())\\graphs\\$patientName.png")
+            VisualiserExporter.saveSVG_plot(p1, "$patientName")
         end
 
     end
@@ -137,7 +137,8 @@ module JuliaStatistics
         createDataStructures(srcpath)
         cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
         display(cdf)
-        
+        #VisualiserExporter.saveSVG_plot(cdf, "CDF1")
+        #VisualiserExporter.savePNG_plot(cdf, "CDF1")
     end
 
     export create_statistics

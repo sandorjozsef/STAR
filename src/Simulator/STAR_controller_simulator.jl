@@ -10,7 +10,7 @@ function STAR_controller_simulator(patient, simulation)
 
     if length(patient.Treal) == 1
         println("### STAR_controller_simulator ###")
-        patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/Simulator/SPRINT_whole_cohort.StochasticModel" );
+        patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/JavaCall/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
         JavaCallHelper.setAge(patient.guiData, 65.0);
@@ -171,7 +171,7 @@ function STAR_controller_simulator(patient, simulation)
     end
 
     # Update the stochastic model data
-    patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/Simulator/SPRINT_whole_cohort.StochasticModel" );
+    patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/JavaCall/SPRINT_whole_cohort.StochasticModel" );
     
     BGList = JavaCallHelper.getBGList(patient.guiData);
 
