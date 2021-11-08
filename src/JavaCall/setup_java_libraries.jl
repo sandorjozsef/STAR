@@ -11,15 +11,14 @@ function setup_java_libraries()
         JavaCall.addClassPath(package_list[1])
         JavaCall.addClassPath(package_list[2])
         JavaCall.addClassPath(package_list[3])
-        JavaCall.init(["-Xmx128M"])
-
+        
         # The parameter is an array containing JVM initialisation arguments.
         # This can be used to set, for example, the system classpath,
         # and the maximum Java heap.
         # Any valid commandline argument to the java command can be used.
         # Unrecognised arguments are silently discarded.
-        
-        #JavaCall.init(["-Xmx512M", "-Djava.class.path=$(@__DIR__)" , "-verbose:jni", "-verbose:gc" ])
+        JavaCall.init(["-Xmx1024M", "-Djava.class.path=$(@__DIR__)" , "-verbose:jni", "-verbose:gc" ])
+        #JavaCall.init(["-Xmx256M"])
     end
     
 end

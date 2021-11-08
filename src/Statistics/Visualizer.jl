@@ -76,7 +76,10 @@ module Visualizer
 
     export plot_histogram
     function plot_histogram(array)
-        return histogram(array, bins=range(minimum(array), stop = maximum(array), length = 300), yaxis = :log)
+        return histogram(array,
+            bins=range(minimum(array), stop = maximum(array), length = 150),
+            yaxis = :log,
+            label = "Sign Difference")
     end
 
     export plot_CDF

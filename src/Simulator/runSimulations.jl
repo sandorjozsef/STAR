@@ -4,7 +4,7 @@ srcDir = pwd() * "/patients_data/original/interesting_patients_mat"
 
 dstDir = pwd() * "/patients_data/simulated/julia_results"
 
-if ispath(dstDir) == false
+if ispath(dstDir) == false 
     mkdir(dstDir)
 end
 
