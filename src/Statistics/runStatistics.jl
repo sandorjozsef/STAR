@@ -9,12 +9,15 @@ if ispath("$(pwd())\\graphs") == false
     mkdir("$(pwd())\\graphs")
 end
 
-julpath1 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_3hour"
+julpath1 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_3hour_Tsit_8"
+julpath2 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_3hour_DP5_8"
+julpath3 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_1hour_Tsit_8"
 
 matpath1 = "$(pwd())\\patients_data\\simulated\\matlab_results\\3hour_ode45_1e_6"
 # all 1 hour treatment by matlab
-matpath2 = "$(pwd())\\patients_data\\simulated\\matlab_results\\ode45_1e_8"
-matpath3 = "$(pwd())\\patients_data\\simulated\\matlab_results\\ode45_1e_12"
+matpath2 = "$(pwd())\\patients_data\\simulated\\matlab_results\\1hour_ode45_1e_8"
+matpath3 = "$(pwd())\\patients_data\\simulated\\matlab_results\\1hour_ode45_1e_12"
+
 matpath4 = "$(pwd())\\patients_data\\original\\Interesting_Patients_mat"
 
 javapath1 = "$(pwd())\\patients_data\\original\\Interesting_Patients_java"
@@ -25,7 +28,7 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 
 
 #JuliaStatistics.calculate_treatments_signDiffBG(julpath1, julpath2)
-#JuliaStatistics.calculate_treatments_signDiffBG(julpath1, matpath1)
+JuliaStatistics.calculate_treatments_signDiffBG(julpath3, matpath2)
 #JuliaStatistics.calculate_treatments_signDiffBG(matpath2, matpath1)
 #JuliaStatistics.calculate_treatments_signDiffBG(julpath2, julpath1) 
 #JuliaStatistics.calculate_treatments_signDiffBG(javapath1, julpath1)
@@ -35,7 +38,7 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 #JuliaStatistics.plot_simulation(matpath4)
 
 #JuliaStatistics.create_statistics(matpath4, dstpath1)
-JuliaStatistics.create_statistics(julpath1, dstpath2)
+#JuliaStatistics.create_statistics(julpath1, dstpath2)
 #JuliaStatistics.create_statistics(javapath1, dstpath3)
 
 #JuliaStatistics.compare_treatments(julpath1, julpath2)

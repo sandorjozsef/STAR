@@ -1,6 +1,6 @@
 include("runSimulationOnPatients.jl")
 
-srcDir = pwd() * "/patients_data/original/interesting_patients_mat"
+srcDir = pwd() * "/patients_data/original/HU_mat"
 
 dstDir = pwd() * "/patients_data/simulated/julia_results"
 
@@ -17,7 +17,7 @@ simulation.mode = 1 ;
 
 # Only for STAR and SIMPLE
 # longest allowed treatment: 1 / 2 / 3
-simulation.longest_allowed = 3;
+simulation.longest_allowed = 1;
 
 # Only for STAR and SIMPLE (HISTORIC is always historic)
 # 1 -> exact longest allowed
