@@ -13,11 +13,11 @@ simulation = Simulation();
 # 1 -> STAR recommended
 # 2 -> SIMPLE
 # 3 -> HISTORIC
-simulation.mode = 1 ; 
+simulation.mode = 3 ; 
 
 # Only for STAR and SIMPLE
 # longest allowed treatment: 1 / 2 / 3
-simulation.longest_allowed = 1;
+simulation.longest_allowed = 3;
 
 # Only for STAR and SIMPLE (HISTORIC is always historic)
 # 1 -> exact longest allowed
