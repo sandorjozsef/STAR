@@ -124,12 +124,12 @@ module JuliaStatistics
             Patient = Serializer.deserialize(srcpath, patientName)
             p1 = Visualizer.plot_patient_metabolics(Patient) 
             display(p1)
-            #VisualiserExporter.saveSVG_plot(p1, patientName)
+            VisualiserExporter.saveSVG_plot(p1, patientName)
             p2 = Visualizer.plot_patient_BG(Patient)
-            display(p2)
+            #display(p2)
             #VisualiserExporter.saveSVG_plot(p2, patientName)
             cdf = plot_CDF(Patient.hourlyBG)
-            display(cdf)
+            #display(cdf)
             #VisualiserExporter.saveSVG_plot(cdf, patientName)
         end
 

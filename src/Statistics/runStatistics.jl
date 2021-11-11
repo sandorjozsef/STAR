@@ -14,6 +14,7 @@ julpath2 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_3hour_DP
 julpath3 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_STAR_1hour_Tsit_8"
 julpath4 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_SIMPLE_3hour_normNutr"
 julpath5 = "$(pwd())\\patients_data\\simulated\\julia_results\\all_HISTORIC"
+julpath6 = "$(pwd())\\patients_data\\simulated\\julia_results\\intr_STAR_3hour_Tsit_8"
 
 matpath1 = "$(pwd())\\patients_data\\simulated\\matlab_results\\3hour_ode45_1e_6"
 matpath2 = "$(pwd())\\patients_data\\simulated\\matlab_results\\1hour_ode45_1e_8"
@@ -36,11 +37,11 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 #JuliaStatistics.calculate_treatments_signDiffBG(julpath2, julpath1) 
 #JuliaStatistics.calculate_treatments_signDiffBG(javapath1, julpath1)
 
-#JuliaStatistics.plot_simulation(julpath1)
+JuliaStatistics.plot_simulation(julpath6)
 #JuliaStatistics.plot_simulation(javapath1)
 #JuliaStatistics.plot_simulation(matpath4)
 
-JuliaStatistics.create_statistics(matpath5, dstpath1)
+#JuliaStatistics.create_statistics(matpath5, dstpath1)
 #JuliaStatistics.create_statistics(javapath2, dstpath3)
 #JuliaStatistics.create_statistics(javapath1, dstpath3)
 
