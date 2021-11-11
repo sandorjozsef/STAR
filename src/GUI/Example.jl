@@ -1,15 +1,15 @@
 using Gtk
 
-win = GtkWindow("My First Gtk.jl Program", 400, 200)
+builder = GtkBuilder(filename="src/GUI/example.glade")
 
-b = GtkButton("Click Me")
-push!(win,b)
+win = builder["window1"]
+b = builder["button1"]
 
 function on_button_clicked(w)
-    println("The button has been clicked")
+    println(  "\"", get_gtk_property(w, :label, String),"\"", " button has been clicked")
 end
-
 signal_connect(on_button_clicked, b, "clicked")
-  
+
 
 showall(win)
+
