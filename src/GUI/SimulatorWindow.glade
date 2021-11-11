@@ -39,14 +39,25 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFileChooserButton" id="srcDir">
+                  <object class="GtkEntry" id="srcDir">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="action">select-folder</property>
-                    <property name="title" translatable="yes"/>
+                    <property name="can-focus">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="srcDir_btn">
+                    <property name="label" translatable="yes">Select folder</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">2</property>
                   </packing>
@@ -77,11 +88,22 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFileChooserButton" id="dstDir">
+                  <object class="GtkEntry" id="dstDir">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="action">select-folder</property>
-                    <property name="title" translatable="yes"/>
+                    <property name="can-focus">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="dstDir_btn">
+                    <property name="label" translatable="yes">Select folder</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -257,7 +279,6 @@
           <object class="GtkTextView" id="output_text">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="editable">False</property>
           </object>
           <packing>
             <property name="expand">True</property>
