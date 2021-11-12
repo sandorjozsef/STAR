@@ -1,6 +1,8 @@
 include("$(pwd())\\src\\JavaCall\\JavaCallHelper.jl")
 include("$(pwd())\\src\\JavaCall\\JavaClasses.jl")
+include("$(pwd())\\src\\Logger.jl")
 
+using .Logger
 using .JavaCallHelper
 
 function STAR_controller_simulator(patient, simulation)
@@ -9,7 +11,11 @@ function STAR_controller_simulator(patient, simulation)
     TargetUpper = 8.0
 
     if length(patient.Treal) == 1
-        println("### STAR_controller_simulator ###")
+        
+        log = "### STAR_controller_simulator ###"
+        println(log)
+        Logger.log(log)
+
         patient.StochasticModel = JavaCallHelper.loadStochasticModelData( pwd() * "/src/JavaCall/SPRINT_whole_cohort.StochasticModel" );
         
         patient.guiData = J_GUIData_class(());
@@ -177,8 +183,11 @@ function STAR_controller_simulator(patient, simulation)
 
     legacyBg = convert(J_BGData_class, JavaCallHelper.getByIndex(BGList, JavaCallHelper.getListSize(BGList) - 1));
     actualBG = JavaCallHelper.getBg(legacyBg)
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",JavaCallHelper.convertToJuliaDateTime(JavaCallHelper.getDate(legacyBg)) ,", BG = ", round(actualBG, digits=6), " ...");
+    #println("calculating treatments for (nr = ", patient.nrBg, "): ",JavaCallHelper.convertToJuliaDateTime(JavaCallHelper.getDate(legacyBg)) ,", BG = ", round(actualBG, digits=6), " ...");
 
+    log = "calculating treatments for (nr = $(patient.nrBg)) : $(JavaCallHelper.convertToJuliaDateTime(JavaCallHelper.getDate(legacyBg))), BG = $(round(actualBG, digits=6)) "
+    println(log);
+    Logger.log(log)
     
     # Run the STAR controller
     patient.patient = JavaCallHelper.UpdateRates(patient.guiData, patient.patient);

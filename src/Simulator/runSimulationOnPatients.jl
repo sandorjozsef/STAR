@@ -1,6 +1,8 @@
 include("$(pwd())\\src\\JavaCall\\setup_java_libraries.jl")
 include("simulateOnePatientJul.jl")
 include("$(pwd())\\src\\Statistics\\Serializer.jl")
+include("$(pwd())\\src\\Logger.jl")
+using .Logger
 using Dates
 using .Serializer
 
@@ -13,6 +15,8 @@ using .Serializer
             mkdir(simFolderOut)
         end
 
+        Logger.clear_log()
+
         # if STAR is the actual controller
         if simulation.mode == 1
             setup_java_libraries()
@@ -20,7 +24,10 @@ using .Serializer
 
         for name in readdir(srcDir)
             patientname = splitext(name)[1]
-            println("\nProcess patient: ", patientname);
+
+            log = "\nProcess patient: $patientname"
+            println(log)
+            Logger.log(log)
             @time (patient, timeSoln) = simulateOnePatientJul(srcDir, patientname, simulation)
 
             serPatient = Serializer.SerializablePatient()

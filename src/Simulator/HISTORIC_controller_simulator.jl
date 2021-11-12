@@ -1,7 +1,13 @@
+include("$(pwd())\\src\\Logger.jl")
+using .Logger
+
 function HISTORIC_controller_simulator(patient, simulation)
   
     if length(patient.Treal) == 1
-        println("### HISTORIC_controller_simulator ###")
+
+        log = "### HISTORIC_controller_simulator ###"
+        println(log)
+        Logger.log(log)
         patient.nrBg = 1;
 
         patient.PN = patient.PN_orig
@@ -13,7 +19,10 @@ function HISTORIC_controller_simulator(patient, simulation)
     end
 
     actualBG = patient.Greal[end]
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",simulation.t_start + Dates.Minute(round(simulation.t_now)) ,", BG = ", round(actualBG, digits=6), " ...");
+
+    log = "calculating treatments for (nr = $(patient.nrBg)) : $(simulation.t_start + Dates.Minute(round(simulation.t_now))), BG = $(round(actualBG, digits=6)) "
+    println(log);
+    Logger.log(log)
 
     i = findlast(t -> t <= patient.Treal[end], patient.Treal_orig)
     if i < length(patient.Treal_orig)
