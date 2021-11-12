@@ -17,8 +17,9 @@ function setup_java_libraries()
         # and the maximum Java heap.
         # Any valid commandline argument to the java command can be used.
         # Unrecognised arguments are silently discarded.
-        JavaCall.init(["-Xmx1024M", "-Djava.class.path=$(@__DIR__)" , "-verbose:jni", "-verbose:gc" ])
-        #JavaCall.init(["-Xmx256M"])
+
+        #JavaCall.init(["-Xmx1024M", "-Djava.class.path=$(@__DIR__)" , "-verbose:jni", "-verbose:gc" ])
+        JavaCall.init(["-Xmx1024M"])
     end
     
 end

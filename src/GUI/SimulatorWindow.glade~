@@ -2,7 +2,53 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkTextBuffer" id="text_buffer"/>
+  <object class="GtkTextBuffer" id="text_buffer">
+    <property name="text" translatable="yes">a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+c
+c
+c
+c
+c
+d
+c
+c</property>
+  </object>
   <object class="GtkWindow" id="SimulatorWindow">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">Julia Simulator</property>
