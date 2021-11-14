@@ -124,22 +124,27 @@ module JuliaStatistics
             Patient = Serializer.deserialize(srcpath, patientName)
             p1 = Visualizer.plot_patient_metabolics(Patient) 
             display(p1)
-            VisualiserExporter.saveSVG_plot(p1, patientName)
+            #VisualiserExporter.saveSVG_plot(p1, patientName)
             p2 = Visualizer.plot_patient_BG(Patient)
-            #display(p2)
+            display(p2) 
             #VisualiserExporter.saveSVG_plot(p2, patientName)
             cdf = plot_CDF(Patient.hourlyBG)
-            #display(cdf)
+            display(cdf)
             #VisualiserExporter.saveSVG_plot(cdf, patientName)
         end
 
     end
 
-    export plot_cohort_CDF
-    function plot_cohort_CDF(srcpath)
-        
+    export cohort_CDF
+    function cohort_CDF(srcpath)
         createDataStructures(srcpath)
         cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
+        return cdf
+    end
+
+    export plot_cohort_CDF
+    function plot_cohort_CDF(srcpath)
+        cdf = cohort_CDF(srcpath)
         display(cdf)
         #VisualiserExporter.saveSVG_plot(cdf, "CDF1")
         #VisualiserExporter.savePNG_plot(cdf, "CDF1")
