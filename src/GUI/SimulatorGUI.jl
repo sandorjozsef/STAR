@@ -1,8 +1,10 @@
 module SimulatorGUI
 
+using ThreadPools
 using Gtk
 include("SimulatorGUIInfo.jl")
 include("$(pwd())\\src\\Simulator\\runSimulations.jl")
+
 
 
 builder = GtkBuilder(filename="src/GUI/SimulatorWindow.glade")
@@ -19,6 +21,13 @@ protocol_timing = builder["protocol_timing"]
 nutrition_dosing = builder["nutrition_dosing"]
 text_buffer = builder["text_buffer"]
 
+#=
+simInfo = undef
+
+function startSimulation()
+    runSimulationsGUI(simInfo)
+end
+=#
 
 function initialize()
     set_gtk_property!(srcDir, :text, pwd() * "/patients_data/original/interesting_patients_mat")
@@ -36,7 +45,12 @@ signal_connect(start_btn, "clicked") do widget
     simInfo.protocol_timing = get_gtk_property(protocol_timing, :active, Int) + 1
     simInfo.nutrition_dosing = get_gtk_property(nutrition_dosing, :active, Int) + 1
 
+    #ThreadPools.spawnbg(runSimulationsGUI(simInfo))
     runSimulationsGUI(simInfo)
+    #@async checked_fetch(spawn_backGround(runSimulationsGUI(simInfo)))
+    #Threads.@threadcall runSimulationsGUI(siminfo)
+
+    #checked_fetch(spawnbg(runSimulations))
 
     myText = open("$(pwd())\\src\\Simulator\\simulator_log.txt") do myFile
         read(myFile, String)

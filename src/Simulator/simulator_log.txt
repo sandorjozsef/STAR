@@ -4,7 +4,9 @@ Process patient: bb8daa4e-6e40-4c05-827f-fc213c8b696b
 calculating treatments for (nr = 1) : 2021-11-12T21:31:52.397, BG = 4.1 
 calculating treatments for (nr = 2) : 2021-11-12T21:34:52.397, BG = 4.098375 
 calculating treatments for (nr = 3) : 2021-11-12T22:35:52.397, BG = 4.607238 
-calculating treatments for (nr = 4) : 2021-11-12T23:56:52.397, BG = 7.47728 
+calculating treatments for (nr = 4) : 2021-11
+
+-12T23:56:52.397, BG = 7.47728 
 calculating treatments for (nr = 5) : 2021-11-13T00:44:52.397, BG = 8.566801 
 calculating treatments for (nr = 6) : 2021-11-13T01:57:52.397, BG = 8.429898 
 calculating treatments for (nr = 7) : 2021-11-13T03:02:52.397, BG = 6.897138 

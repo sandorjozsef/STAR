@@ -1,5 +1,6 @@
 using Gtk
-using Distributed
+using ThreadPools
+include("example2.jl")
 
 btn = GtkButton("Start")
 sp = GtkSpinner()
@@ -10,27 +11,20 @@ grid[1,1] = btn
 grid[2,1] = sp
 grid[1:2,2] = ent
 
-id = addprocs(1)[1]
+function foo(asd)
+    println(asd)
+end
 
-@everywhere function working()
-    println("working")
+
+
+function working()
+    run("hi")
+    sleep(4)
+    println("done")
 end
 
 signal_connect(btn, "clicked") do widget
-    start(sp)
-    
-        @async begin
-            s = @fetchfrom id begin
-                working()
-                sleep(4)
-                return "I am back"
-            end
-            @Gtk.sigatom begin
-                stop(sp)
-                set_gtk_property!(ent,:text,s)
-            end
-        end
-    
+    spawnbg(working)
 end
 
 win = GtkWindow(grid, "Progress Bar", 200, 200)

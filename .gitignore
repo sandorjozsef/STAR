@@ -1,5 +1,6 @@
-**/patients_data/simulated/
+**/simulated/
 **/sim_stats/
 **/graphs/
-
+Manifest.toml
+*.txt
 
