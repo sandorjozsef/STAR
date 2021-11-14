@@ -1,6 +1,6 @@
-**/simulated/
-**/sim_stats/
-**/graphs/
+simulated
+sim_stats
+graphs
 Manifest.toml
 src/Simulator/simulator_log.txt
 
