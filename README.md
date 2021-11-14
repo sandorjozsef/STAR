@@ -1,6 +1,10 @@
 # Szakdolgozat
 
--BEST
- 
+
+ To activate environment :
+
  ]
- activate .
+
+  activate .
+
+  

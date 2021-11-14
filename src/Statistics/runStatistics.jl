@@ -36,8 +36,9 @@ dstpath3 = "$(pwd())\\sim_stats\\res3.csv"
 #JuliaStatistics.calculate_treatments_signDiffBG(matpath2, matpath1)
 #JuliaStatistics.calculate_treatments_signDiffBG(julpath2, julpath1) 
 #JuliaStatistics.calculate_treatments_signDiffBG(javapath1, julpath1)
+#JuliaStatistics.calculate_treatments_signDiffBG(matpath5, julpath5)
 
-JuliaStatistics.plot_simulation(julpath6)
+JuliaStatistics.plot_simulation(julpath5)
 #JuliaStatistics.plot_simulation(javapath1)
 #JuliaStatistics.plot_simulation(matpath4)
 

@@ -85,7 +85,7 @@ module JuliaStatistics
 
         h = Visualizer.plot_histogram(signDiffBG_all)
         display(h)
-        #VisualiserExporter.saveSVG_plot(h, "Sign_diff")
+        VisualiserExporter.saveSVG_plot(h, "Sign_diff")
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
