@@ -2,5 +2,5 @@
 **/sim_stats/
 **/graphs/
 Manifest.toml
-*.txt
+src/Simulator/simulator_log.txt
 

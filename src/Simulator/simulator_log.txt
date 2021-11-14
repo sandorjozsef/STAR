@@ -9,7 +9,9 @@ calculating treatments for (nr = 4) : 2021-11
 -12T23:56:52.397, BG = 7.47728 
 calculating treatments for (nr = 5) : 2021-11-13T00:44:52.397, BG = 8.566801 
 calculating treatments for (nr = 6) : 2021-11-13T01:57:52.397, BG = 8.429898 
-calculating treatments for (nr = 7) : 2021-11-13T03:02:52.397, BG = 6.897138 
+calculating treatments for (
+    
+    nr = 7) : 2021-11-13T03:02:52.397, BG = 6.897138 
 calculating treatments for (nr = 8) : 2021-11-13T06:17:52.397, BG = 4.401725 
 calculating treatments for (nr = 9) : 2021-11-13T07:08:52.397, BG = 5.254856 
 calculating treatments for (nr = 10) : 2021-11-13T10:08:52.397, BG = 7.125051 
