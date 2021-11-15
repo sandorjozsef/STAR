@@ -1,10 +1,8 @@
 module SimulatorGUI
 
-    using ThreadPools
-
     include("$(pwd())\\src\\Simulator\\runSimulationOnPatients.jl")
     include("$(pwd())\\src\\Simulator\\Simulation_Structs.jl")
-
+    using ThreadPools
     using .Simulation_Structs
     using Gtk
 
@@ -48,7 +46,8 @@ module SimulatorGUI
     signal_connect(GTKstart_btn, "clicked") do widget
         println(  "\"", get_gtk_property(widget, :label, String),"\"", " button has been clicked")
 
-        spawnbg(runSimulations)
+        #spawnbg(runSimulations)
+        runSimulations()
         
         log = open("$(pwd())\\src\\Simulator\\simulator_log.txt") do myFile
             read(myFile, String)

@@ -3,13 +3,13 @@ module VisualiserExporter
     using Plots
 
     export saveSVG_plot
-    function saveSVG_plot(p, filename)
-        savefig(p, pwd() * "\\graphs\\$filename.svg")
+    function saveSVG_plot(p, filename, path)
+        savefig(p, path * "\\$filename.svg")
     end
 
     export savePNG_plot
-    function savePNG_plot(p, filename)
-        savefig(p, pwd() * "\\graphs\\$filename.png")
+    function savePNG_plot(p, filename, path)
+        savefig(p, path * "\\$filename.png")
     end
 
 end
