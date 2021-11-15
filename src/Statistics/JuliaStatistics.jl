@@ -19,6 +19,8 @@ module JuliaStatistics
     u = [] #Vector{Matrix{Float64}}
     P = [] #Vector{Matrix{Float64}}
     PN = [] #Vector{Matrix{Float64}}
+
+    dst = "$(pwd())\\graphs"
     
 
     function createDataStructures(srcpath)
@@ -112,7 +114,7 @@ module JuliaStatistics
             #VisualiserExporter.saveSVG_plot(p1,patientName)
             p2 = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
             display(p2)
-            VisualiserExporter.saveSVG_plot(p2,patientName)
+            VisualiserExporter.saveSVG_plot(p2,patientName, dst)
         end
     end
 
@@ -126,9 +128,9 @@ module JuliaStatistics
             display(p1)
             #VisualiserExporter.saveSVG_plot(p1, patientName)
             p2 = Visualizer.plot_patient_BG(Patient)
-            display(p2) 
+            display(p2)
             #VisualiserExporter.saveSVG_plot(p2, patientName)
-            cdf = plot_CDF(Patient.hourlyBG)
+            cdf = Visualizer.plot_CDF(Patient.hourlyBG)
             display(cdf)
             #VisualiserExporter.saveSVG_plot(cdf, patientName)
         end
