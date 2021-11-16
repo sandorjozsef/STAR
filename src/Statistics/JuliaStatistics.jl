@@ -87,7 +87,7 @@ module JuliaStatistics
 
         h = Visualizer.plot_histogram(signDiffBG_all)
         display(h)
-        VisualiserExporter.saveSVG_plot(h, "Sign_diff")
+        VisualiserExporter.saveSVG_plot(h, "Sign_diff", dst)
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -111,10 +111,10 @@ module JuliaStatistics
             
             p1 = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
             display(p1)
-            #VisualiserExporter.saveSVG_plot(p1,patientName)
+            #VisualiserExporter.saveSVG_plot(p1,patientName, dst)
             p2 = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
             display(p2)
-            VisualiserExporter.saveSVG_plot(p2,patientName, dst)
+            #VisualiserExporter.saveSVG_plot(p2,patientName, dst)
         end
     end
 
