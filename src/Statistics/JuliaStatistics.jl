@@ -110,7 +110,7 @@ module JuliaStatistics
             Patient2 = Serializer.deserialize(srcpath2, patientName)
             
             p1 = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
-            #display(p1)
+            display(p1)
             #VisualiserExporter.saveSVG_plot(p1,patientName)
             p2 = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
             display(p2)

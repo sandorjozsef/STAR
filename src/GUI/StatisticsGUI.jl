@@ -9,6 +9,8 @@ module StatisticsGUI
     using .VisualiserExporter
     using .JuliaStatistics
     using Gtk
+    using ImageView
+    using Images
 
     builder = GtkBuilder(filename="src/GUI/StatisticsWindow.glade")
     win = builder["StatisticsWindow"]
@@ -23,12 +25,17 @@ module StatisticsGUI
     process_btn = builder["process_btn"]
     input1 = builder["input1"]
     input2 = builder["input2"]
-    image = builder["image"]
+    mainbox = builder["mainbox"]
 
 
     radios = [radbtn1, radbtn2, radbtn3, radbtn4, radbtn5, radbtn6, radbtn7]
     activeFunction = Vector{Int}(undef,1)
     tmp = "$(pwd())\\src\\GUI\\tmp"
+
+    
+    frame, c = ImageView.frame_canvas(:auto)
+    push!(mainbox, frame)
+   
 
     function initialize()
         if isdir(tmp)
@@ -55,6 +62,9 @@ module StatisticsGUI
 
         inputtext1 = get_gtk_property(input1, :text, String)
         dir1 = dirname(inputtext1)
+
+        inputtext2 = get_gtk_property(input2, :text, String)
+        dir2 = dirname(inputtext2)
         
 
         if activeFunction[1] == 1
@@ -62,7 +72,8 @@ module StatisticsGUI
             Patient1 = Serializer.deserialize(dir1, patientName1)
             p = Visualizer.plot_patient_metabolics(Patient1)
             VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            set_gtk_property!(image, :file, "$tmp\\graph.png")
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
         end
 
         if activeFunction[1] == 2
@@ -70,7 +81,8 @@ module StatisticsGUI
             Patient1 = Serializer.deserialize(dir1, patientName1)
             p = Visualizer.plot_patient_BG(Patient1)
             VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            set_gtk_property!(image, :file, "$tmp\\graph.png")
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
         end
 
         if activeFunction[1] == 3
@@ -78,13 +90,37 @@ module StatisticsGUI
             Patient1 = Serializer.deserialize(dir1, patientName1)
             p = Visualizer.plot_CDF(Patient1.hourlyBG)
             VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            set_gtk_property!(image, :file, "$tmp\\graph.png")
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
         end
 
         if activeFunction[1] == 4
             p = JuliaStatistics.cohort_CDF(dir1)
             VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            set_gtk_property!(image, :file, "$tmp\\graph.png")
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
+        end
+
+        if activeFunction[1] == 5
+            patientName1 = splitext(readdir(dir1)[1])[1]
+            Patient1 = Serializer.deserialize(dir1, patientName1)
+            patientName2 = splitext(readdir(dir2)[1])[1]
+            Patient2 = Serializer.deserialize(dir2, patientName2)
+            p = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
+            VisualiserExporter.savePNG_plot(p, "graph", tmp)
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
+        end
+
+        if activeFunction[1] == 6
+            patientName1 = splitext(readdir(dir1)[1])[1]
+            Patient1 = Serializer.deserialize(dir1, patientName1)
+            patientName2 = splitext(readdir(dir2)[1])[1]
+            Patient2 = Serializer.deserialize(dir2, patientName2)
+            p = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
+            VisualiserExporter.savePNG_plot(p, "graph", tmp)
+            img = load("$tmp\\graph.png")
+            imshow(c, img)
         end
 
         rm(tmp)
