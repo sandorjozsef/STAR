@@ -16,7 +16,6 @@ module StatisticsGUI
 
     builder = GtkBuilder(filename="src/GUI/StatisticsWindow.glade")
     win = builder["StatisticsWindow"]
-   
     radbtn1 = builder["radiobutton1"]
     radbtn2 = builder["radiobutton2"]
     radbtn3 = builder["radiobutton3"]
@@ -36,8 +35,6 @@ module StatisticsGUI
     radios = [radbtn1, radbtn2, radbtn3, radbtn4, radbtn5, radbtn6, radbtn7]
     activeFunction = Vector{Int}(undef,1)
     tmp = "$(pwd())\\src\\GUI\\tmp"
-
-    
     frame, c = ImageView.frame_canvas(:auto)
     push!(mainbox, frame)
    
@@ -50,7 +47,7 @@ module StatisticsGUI
 
         activeFunction[1] = 1
         for r in radios
-            signal_connect(r, "pressed") do _
+            signal_connect(r, "toggled") do _
                 println("Changed to: $(get_gtk_property(r, :label, String))")
                 activeFunction[1] = findfirst(x -> x == r, radios)
                 println(activeFunction[1])
@@ -60,7 +57,7 @@ module StatisticsGUI
         set_gtk_property!(input2, :text, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_historic_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
         set_gtk_property!(output, :text, pwd() * "\\sim_stats\\")
     end
-    initialize()
+    
 
     signal_connect(process_btn, "clicked") do _
         println("Processing ...")
@@ -149,6 +146,7 @@ module StatisticsGUI
        
     end
 
+    initialize()
     maximize(win)
     showall(win)
     
