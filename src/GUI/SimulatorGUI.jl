@@ -73,7 +73,7 @@ module SimulatorGUI
     signal_connect(on_dst_select_click, GTKdstDir_btn, "clicked")
 
     initialize()
-    maximize(GtKwin)
+    maximize(GTKwin)
     showall(GTKwin)
 
 

@@ -27,6 +27,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="padding">5</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -51,6 +52,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="padding">5</property>
                 <property name="position">2</property>
               </packing>
             </child>
@@ -103,6 +105,7 @@
                     </child>
                     <child>
                       <object class="GtkEntry" id="input1">
+                        <property name="width-request">200</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                       </object>
@@ -151,6 +154,7 @@
                     </child>
                     <child>
                       <object class="GtkEntry" id="input2">
+                        <property name="width-request">200</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                       </object>
@@ -336,6 +340,7 @@
                     </child>
                     <child>
                       <object class="GtkEntry" id="output">
+                        <property name="width-request">200</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                       </object>
