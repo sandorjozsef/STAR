@@ -2,7 +2,13 @@ include("runSimulationOnPatients.jl")
 using ThreadPools
 
 function runSimulations()
-    srcDir = pwd() * "/patients_data/original/interesting_patients_mat"
+    
+srcDir = pwd() * "/patients_data/original/interesting_patients_mat"
+baseDir = pwd() * "/patients_data/simulated"
+if ispath(baseDir) == false 
+    mkdir(baseDir)
+end
+
 dstDir = pwd() * "/patients_data/simulated/julia_results"
 if ispath(dstDir) == false 
     mkdir(dstDir)
