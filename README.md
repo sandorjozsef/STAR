@@ -1,10 +1,16 @@
 # Szakdolgozat
 
 
- To activate environment :
+ - To activate environment :
 
  ]
 
   activate .
+  
+  - To include required packages :
+  
+  ]
+  
+  instantiate
 
   
