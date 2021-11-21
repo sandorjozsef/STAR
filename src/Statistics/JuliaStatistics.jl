@@ -19,6 +19,8 @@ module JuliaStatistics
     u = [] #Vector{Matrix{Float64}}
     P = [] #Vector{Matrix{Float64}}
     PN = [] #Vector{Matrix{Float64}}
+
+    dst = "$(pwd())\\graphs"
     
 
     function createDataStructures(srcpath)
@@ -85,7 +87,7 @@ module JuliaStatistics
 
         h = Visualizer.plot_histogram(signDiffBG_all)
         display(h)
-        #VisualiserExporter.saveSVG_plot(h, "Sign_diff")
+        VisualiserExporter.saveSVG_plot(h, "Sign_diff", dst)
         
         println("max diff: ", maximum(signDiffBG_all), " -- ", maxName)
         println("min diff: ", minimum(signDiffBG_all), " -- ", minName)
@@ -108,11 +110,11 @@ module JuliaStatistics
             Patient2 = Serializer.deserialize(srcpath2, patientName)
             
             p1 = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
-            #display(p1)
-            #VisualiserExporter.saveSVG_plot(p1,patientName)
+            display(p1)
+            #VisualiserExporter.saveSVG_plot(p1,patientName, dst)
             p2 = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
             display(p2)
-            VisualiserExporter.saveSVG_plot(p2,patientName)
+            #VisualiserExporter.saveSVG_plot(p2,patientName, dst)
         end
     end
 
@@ -124,22 +126,27 @@ module JuliaStatistics
             Patient = Serializer.deserialize(srcpath, patientName)
             p1 = Visualizer.plot_patient_metabolics(Patient) 
             display(p1)
-            VisualiserExporter.saveSVG_plot(p1, patientName)
+            #VisualiserExporter.saveSVG_plot(p1, patientName)
             p2 = Visualizer.plot_patient_BG(Patient)
-            #display(p2)
+            display(p2)
             #VisualiserExporter.saveSVG_plot(p2, patientName)
-            cdf = plot_CDF(Patient.hourlyBG)
-            #display(cdf)
+            cdf = Visualizer.plot_CDF(Patient.hourlyBG)
+            display(cdf)
             #VisualiserExporter.saveSVG_plot(cdf, patientName)
         end
 
     end
 
-    export plot_cohort_CDF
-    function plot_cohort_CDF(srcpath)
-        
+    export cohort_CDF
+    function cohort_CDF(srcpath)
         createDataStructures(srcpath)
         cdf = Visualizer.plot_CDF([HourlyBG[i][j] for i in 1:length(HourlyBG) for j in 1:length(HourlyBG[i])])
+        return cdf
+    end
+
+    export plot_cohort_CDF
+    function plot_cohort_CDF(srcpath)
+        cdf = cohort_CDF(srcpath)
         display(cdf)
         #VisualiserExporter.saveSVG_plot(cdf, "CDF1")
         #VisualiserExporter.savePNG_plot(cdf, "CDF1")

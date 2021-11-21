@@ -1,14 +1,23 @@
+include("$(pwd())\\src\\Logger.jl")
+using .Logger
+
 function SIMPLE_controller_simulator(patient, simulation)
   
     if length(patient.Treal) == 1
         patient.nrBg = 1;
-        println("### SIMPLE_controller_simulator ###")
+
+        log = "### SIMPLE_controller_simulator ###"
+        println(log)
+        Logger.log(log)
+
     else
         patient.nrBg += 1;
     end
 
     actualBG = patient.Greal[end]
-    println("calculating treatments for (nr = ", patient.nrBg, "): ",simulation.t_start + Dates.Minute(round(simulation.t_now)) ,", BG = ", round(actualBG, digits=6), " ...");
+    log = "calculating treatments for (nr = $(patient.nrBg)) : $(simulation.t_start + Dates.Minute(round(simulation.t_now))), BG = $(round(actualBG, digits=6)) "
+    println(log);
+    Logger.log(log)
 
     selection = simulation.longest_allowed
     

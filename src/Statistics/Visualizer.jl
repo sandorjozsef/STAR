@@ -90,7 +90,8 @@ module Visualizer
         label = "EGP 1.16",
         title = "BG CDF - Resampled Hourly",
         xlabel = "BG (mmol/l)",
-        ylabel = "Cummulative Freq")
+        ylabel = "Cummulative Freq",
+        legend = :bottomright)
         return cdf
     end
     
