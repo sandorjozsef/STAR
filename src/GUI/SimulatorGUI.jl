@@ -49,7 +49,7 @@ module SimulatorGUI
         #spawnbg(runSimulations)
         runSimulations()
         
-        log = open("$(pwd())\\src\\Simulator\\simulator_log.txt") do myFile
+        log  = open("$(pwd())\\src\\Simulator\\simulator_log.txt") do myFile
             read(myFile, String)
         end
         set_gtk_property!(GTKtext_buffer, :text, log)

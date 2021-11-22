@@ -116,7 +116,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="btn_input1">
                         <property name="label" translatable="yes">Select</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -165,7 +165,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="btn_input2">
                         <property name="label" translatable="yes">Select</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -351,7 +351,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="btn_output">
                         <property name="label" translatable="yes">Select</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>

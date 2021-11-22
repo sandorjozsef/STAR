@@ -25,8 +25,11 @@ module StatisticsGUI
     radbtn7 = builder["radiobutton7"]
     process_btn = builder["process_btn"]
     input1 = builder["input1"]
+    btn_input1 = builder["btn_input1"]
     input2 = builder["input2"]
+    btn_input2 = builder["btn_input2"]
     output = builder["output"]
+    btn_output = builder["btn_output"]
     mainbox = builder["mainbox"]
     help = builder["help"]
     error = builder["error"]
@@ -35,6 +38,8 @@ module StatisticsGUI
     dirs = ["", "", ""]
     frame, c = ImageView.frame_canvas(:auto)
     push!(mainbox, frame)
+
+    
 
     function  plot_patient_metabolics_GUI()
         patientName1 = splitext(readdir(dirs[1])[1])[1]
@@ -147,6 +152,7 @@ module StatisticsGUI
         
     end
     
+   
 
     signal_connect(process_btn, "clicked") do _
         println("Processing ...")
@@ -159,6 +165,25 @@ module StatisticsGUI
         run_active_function()
 
     end
+
+    function on_input1_select_click(w)
+        println("Clicked on opening file button")
+        dir = open_dialog("Select Patient Dataset", action=GtkFileChooserAction.OPEN)
+        set_gtk_property!(input1, :text, dir)
+    end
+    signal_connect(on_input1_select_click, btn_input1, "clicked")
+
+    function on_input2_select_click(w)
+        dir = open_dialog("Select Patient Dataset", action=GtkFileChooserAction.OPEN)
+        set_gtk_property!(input2, :text, dir)
+    end
+    signal_connect(on_input2_select_click, btn_input2, "clicked")
+
+    function on_output_select_click(w)
+        dir = open_dialog("Select Destination Folder", action=GtkFileChooserAction.OPEN)
+        set_gtk_property!(output, :text, dir)
+    end
+    signal_connect(on_output_select_click, btn_output, "clicked")
 
     initialize()
     maximize(win)
