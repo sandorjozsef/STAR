@@ -30,14 +30,86 @@ module StatisticsGUI
     mainbox = builder["mainbox"]
     help = builder["help"]
     error = builder["error"]
-
-
-    radios = [radbtn1, radbtn2, radbtn3, radbtn4, radbtn5, radbtn6, radbtn7]
-    activeFunction = Vector{Int}(undef,1)
+    activeBtn = Vector{GtkRadioButton}(undef,1)
     tmp = "$(pwd())\\src\\GUI\\tmp"
+    dirs = ["", "", ""]
     frame, c = ImageView.frame_canvas(:auto)
     push!(mainbox, frame)
-   
+
+    function  plot_patient_metabolics_GUI()
+        patientName1 = splitext(readdir(dirs[1])[1])[1]
+        Patient1 = Serializer.deserialize(dirs[1], patientName1)
+        p = Visualizer.plot_patient_metabolics(Patient1)
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function plot_patient_BG_GUI()
+        patientName1 = splitext(readdir(dirs[1])[1])[1]
+        Patient1 = Serializer.deserialize(dirs[1], patientName1)
+        p = Visualizer.plot_patient_BG(Patient1)
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function plot_CDF_GUI()
+        patientName1 = splitext(readdir(dirs[1])[1])[1]
+        Patient1 = Serializer.deserialize(dirs[1], patientName1)
+        p = Visualizer.plot_CDF(Patient1.hourlyBG)
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function plot_cohort_CDF_GUI()
+        p = JuliaStatistics.cohort_CDF(dirs[1])
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function plot_compare_patient_BG_GUI()
+        patientName1 = splitext(readdir(dirs[1])[1])[1]
+        Patient1 = Serializer.deserialize(dirs[1], patientName1)
+        patientName2 = splitext(readdir(dirs[2])[1])[1]
+        Patient2 = Serializer.deserialize(dirs[2], patientName2)
+        p = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function plot_compare_patient_treatment_GUI()
+        patientName1 = splitext(readdir(dirs[1])[1])[1]
+        Patient1 = Serializer.deserialize(dirs[1], patientName1)
+        patientName2 = splitext(readdir(dirs[2])[1])[1]
+        Patient2 = Serializer.deserialize(dirs[2], patientName2)
+        p = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
+        VisualiserExporter.savePNG_plot(p, "graph", tmp)
+        img = load("$tmp\\graph.png")
+        imshow(c, img)
+    end
+
+    function create_statistics_GUI()
+        img = testimage("lena_color")
+        imshow(c, img)
+        filename = "Stats-" * string(today()) *"_"* string(hour(now())) *"_"* string(minute(now()))
+        dstpath =  "$(dirs[3])/$filename.csv"
+        JuliaStatistics.create_statistics(dirs[1], dstpath)
+        set_gtk_property!(help, :label, "Created statistics in: $dstpath")
+    end
+
+    btn_func_dict = Dict(
+        radbtn1 => plot_patient_metabolics_GUI,
+        radbtn2 => plot_patient_BG_GUI,
+        radbtn3 => plot_CDF_GUI,
+        radbtn4 => plot_cohort_CDF_GUI,
+        radbtn5 => plot_compare_patient_BG_GUI,
+        radbtn6 => plot_compare_patient_treatment_GUI,
+        radbtn7 => create_statistics_GUI
+    )
 
     function initialize()
         if isdir(tmp)
@@ -45,17 +117,34 @@ module StatisticsGUI
         end
         mkdir(tmp)
 
-        activeFunction[1] = 1
-        for r in radios
+        activeBtn[1] = radbtn1
+
+        for r in keys(btn_func_dict)
             signal_connect(r, "toggled") do _
-                println("Changed to: $(get_gtk_property(r, :label, String))")
-                activeFunction[1] = findfirst(x -> x == r, radios)
-                println(activeFunction[1])
+                println("Changed to: ", get_gtk_property(r, :label, String))
+                activeBtn[1] = r
             end
         end
+
         set_gtk_property!(input1, :text, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_3hour_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
         set_gtk_property!(input2, :text, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_historic_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
         set_gtk_property!(output, :text, pwd() * "\\sim_stats\\")
+
+    end
+
+    function run_active_function()
+
+        inputtext1 = get_gtk_property(input1, :text, String)
+        dirs[1] = dirname(inputtext1)
+
+        inputtext2 = get_gtk_property(input2, :text, String)
+        dirs[2] = dirname(inputtext2)
+
+        outputtext = get_gtk_property(output, :text, String)
+        dirs[3] = dirname(outputtext)
+
+        btn_func_dict[activeBtn[1]]()
+        
     end
     
 
@@ -67,83 +156,8 @@ module StatisticsGUI
         end
         mkdir(tmp)
 
-        inputtext1 = get_gtk_property(input1, :text, String)
-        dir1 = dirname(inputtext1)
+        run_active_function()
 
-        inputtext2 = get_gtk_property(input2, :text, String)
-        dir2 = dirname(inputtext2)
-
-        outputtext = get_gtk_property(output, :text, String)
-        dir3 = dirname(outputtext)
-        
-
-        if activeFunction[1] == 1
-            patientName1 = splitext(readdir(dir1)[1])[1]
-            Patient1 = Serializer.deserialize(dir1, patientName1)
-            p = Visualizer.plot_patient_metabolics(Patient1)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 2
-            patientName1 = splitext(readdir(dir1)[1])[1]
-            Patient1 = Serializer.deserialize(dir1, patientName1)
-            p = Visualizer.plot_patient_BG(Patient1)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 3
-            patientName1 = splitext(readdir(dir1)[1])[1]
-            Patient1 = Serializer.deserialize(dir1, patientName1)
-            p = Visualizer.plot_CDF(Patient1.hourlyBG)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 4
-            p = JuliaStatistics.cohort_CDF(dir1)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 5
-            patientName1 = splitext(readdir(dir1)[1])[1]
-            Patient1 = Serializer.deserialize(dir1, patientName1)
-            patientName2 = splitext(readdir(dir2)[1])[1]
-            Patient2 = Serializer.deserialize(dir2, patientName2)
-            p = Visualizer.plot_compare_patient_BG(Patient1, Patient2)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 6
-            patientName1 = splitext(readdir(dir1)[1])[1]
-            Patient1 = Serializer.deserialize(dir1, patientName1)
-            patientName2 = splitext(readdir(dir2)[1])[1]
-            Patient2 = Serializer.deserialize(dir2, patientName2)
-            p = Visualizer.plot_compare_patient_treatment(Patient1, Patient2)
-            VisualiserExporter.savePNG_plot(p, "graph", tmp)
-            img = load("$tmp\\graph.png")
-            imshow(c, img)
-        end
-
-        if activeFunction[1] == 7
-            img = testimage("lena_color")
-            imshow(c, img)
-            filename = "Stats-" * string(today()) *"_"* string(hour(now())) *"_"* string(minute(now()))
-            dstpath =  "$dir3/$filename.csv"
-            JuliaStatistics.create_statistics(dir1, dstpath)
-            set_gtk_property!(help, :label, "Created statistics in: $dstpath")
-            
-        end
-
-       
     end
 
     initialize()
