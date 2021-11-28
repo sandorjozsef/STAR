@@ -41,6 +41,13 @@ module StatisticsGUI
     frame, c = ImageView.frame_canvas(:auto)
     push!(mainbox, frame)
 
+    function saveImage(plot)
+        if isdir(dirs[3])
+            filename = "Stats-" * string(today()) *"_"* string(hour(now())) *"_"* string(minute(now()))
+            VisualiserExporter.savePNG_plot(plot, "$(filename)_PNG", dirs[3])
+            VisualiserExporter.saveSVG_plot(plot, "$(filename)_SVG", dirs[3])
+        end
+    end
 
     function  plot_patient_metabolics_GUI()
         patientName1 = splitext(splitdir(dirs[1])[2])[1]
@@ -49,6 +56,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function plot_patient_BG_GUI()
@@ -58,6 +66,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function plot_CDF_GUI()
@@ -67,6 +76,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function plot_cohort_CDF_GUI()
@@ -74,6 +84,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function plot_compare_patient_BG_GUI()
@@ -85,6 +96,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function plot_compare_patient_treatment_GUI()
@@ -96,6 +108,7 @@ module StatisticsGUI
         VisualiserExporter.savePNG_plot(p, "graph", tmp)
         img = load("$tmp\\graph.png")
         imshow(c, img)
+        saveImage(p)
     end
 
     function create_statistics_GUI()
@@ -134,6 +147,8 @@ module StatisticsGUI
 
         set_gtk_property!(input1, :text, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_3hour_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
         set_gtk_property!(input2, :text, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_historic_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
+        set_gtk_property!(label_input1, :label, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_3hour_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
+        set_gtk_property!(label_input2, :label, pwd() * "\\patients_data\\simulated\\julia_results\\intr_STAR_historic_Tsit_8\\bb8daa4e-6e40-4c05-827f-fc213c8b696b.jld2")
         set_gtk_property!(output, :text, pwd() * "\\sim_stats\\")
 
     end
@@ -143,6 +158,10 @@ module StatisticsGUI
         dirs[1] = get_gtk_property(input1, :text, String)
         dirs[2] = get_gtk_property(input2, :text, String)
         dirs[3] = get_gtk_property(output, :text, String)
+
+        if dirs[3] == "" 
+            set_gtk_property!(help, :label, "Output library is empty")
+        end
 
         btn_func_dict[activeBtn[1]]()
 
@@ -177,7 +196,7 @@ module StatisticsGUI
     signal_connect(on_input2_select_click, btn_input2, "clicked")
 
     function on_output_select_click(w)
-        dir = open_dialog("Select Destination Folder", action=GtkFileChooserAction.OPEN)
+        dir = open_dialog("Select Destination Folder", action=GtkFileChooserAction.SELECT_FOLDER)
         set_gtk_property!(output, :text, dir)
     end
     signal_connect(on_output_select_click, btn_output, "clicked")
