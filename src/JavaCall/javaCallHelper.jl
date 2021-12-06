@@ -127,7 +127,8 @@ function clearNutritionInfusionEnteral(guiData::J_GUIData_class)
     jcall(guiData, "clearNutritionInfusionEnteral", Nothing, ());
 end
 
-#=
+#= Currently it is not used, but maybe it would be useful someday
+
 function loadGUIData(guiData, fullpath)
 
     J_GUIData = J_GUIData_class(())

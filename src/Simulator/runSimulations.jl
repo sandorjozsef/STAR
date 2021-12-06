@@ -42,12 +42,6 @@ end
 
 runSimulations()
 
-#=
-spawnbg(runSimulations)
-while true
-    sleep(2)
-    println("working")
-end
-=#
+
 
 

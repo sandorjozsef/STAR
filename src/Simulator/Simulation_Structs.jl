@@ -5,7 +5,7 @@ using Dates
 
 export Patient, Simulation, GUIData, TimeSoln
 
-
+# Currently it is not used, but maybe it would be useful someday
 mutable struct TargetRangeData
     date::DateTime
     targetUpper::Float64
@@ -13,7 +13,7 @@ mutable struct TargetRangeData
     TargetRangeData() = new()
 end
 
-
+# Currently it is not used, but maybe it would be useful someday
 mutable struct GUIData
     Age::Float64
     Gender::String

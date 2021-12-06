@@ -46,7 +46,7 @@ module SimulatorGUI
     signal_connect(GTKstart_btn, "clicked") do widget
         println(  "\"", get_gtk_property(widget, :label, String),"\"", " button has been clicked")
 
-        #spawnbg(runSimulations)
+        #spawnbg(runSimulations) # new working thread
         runSimulations()
         
         log  = open("$(pwd())\\src\\Simulator\\simulator_log.txt") do myFile

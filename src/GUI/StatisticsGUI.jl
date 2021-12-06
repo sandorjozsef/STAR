@@ -182,7 +182,7 @@ module StatisticsGUI
     end
 
     function on_input1_select_click(w)
-        dir = open_dialog("Select Patient Dataset", action=GtkFileChooserAction.GTK_FILE_CHOOSER_ACTION_OPEN)
+        dir = open_dialog("Select Patient Dataset", action=GtkFileChooserAction.OPEN)
         set_gtk_property!(input1, :text, dir)
         set_gtk_property!(label_input1, :label, dir)
     end

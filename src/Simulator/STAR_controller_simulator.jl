@@ -183,7 +183,6 @@ function STAR_controller_simulator(patient, simulation)
 
     legacyBg = convert(J_BGData_class, JavaCallHelper.getByIndex(BGList, JavaCallHelper.getListSize(BGList) - 1));
     actualBG = JavaCallHelper.getBg(legacyBg)
-    #println("calculating treatments for (nr = ", patient.nrBg, "): ",JavaCallHelper.convertToJuliaDateTime(JavaCallHelper.getDate(legacyBg)) ,", BG = ", round(actualBG, digits=6), " ...");
 
     log = "calculating treatments for (nr = $(patient.nrBg)) : $(JavaCallHelper.convertToJuliaDateTime(JavaCallHelper.getDate(legacyBg))), BG = $(round(actualBG, digits=6)) "
     println(log);
