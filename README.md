@@ -1,5 +1,6 @@
-# Szakdolgozat
+# Mentions
 
+ - For the development I used Visual Studio.
 
  - To activate environment :
 
