@@ -1,7 +1,7 @@
 # Mentions
 
- - For the development I used Visual Studio.
-
+ - For the development I used VS Code (https://code.visualstudio.com/docs/languages/julia).
+ - 
  - To activate environment :
 
  ]
