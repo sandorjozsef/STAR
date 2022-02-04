@@ -7,7 +7,7 @@
 
   activate .
   
-    - To include required packages :
+  - To include required packages :
   
   ]
   
