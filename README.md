@@ -13,7 +13,7 @@
   
   instantiate
 
- - GUI was creaed with Glade User Interface Designer
+ - GUI was created with Glade User Interface Designer
 
 ## Hint
 - If something goes wrong, try to kill the actual process and start a new Julia REPL
