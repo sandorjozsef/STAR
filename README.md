@@ -1,4 +1,6 @@
-# Mentions
+# My BSc Diploma project
+
+## Mentions
 
  - For the development I used VS Code (https://code.visualstudio.com/docs/languages/julia).
  - To activate environment :
